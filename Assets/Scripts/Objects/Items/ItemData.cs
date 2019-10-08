@@ -10,9 +10,12 @@ public class ItemData : ScriptableObject
     {
         Resource,
         Armour,
-        MeleeWeapon,
-        RangedWeapon
+        MeleeSharp,
+        MeleeBlunt,
+        RangedBow,
+        RangedFirearm
     }
+
     [Flags]
     public enum ItemFlags
     {

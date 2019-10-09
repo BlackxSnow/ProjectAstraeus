@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //Class containing serializable data for items
+[System.Serializable]
 public class ItemData : ScriptableObject
 {
     public enum Types
@@ -31,6 +32,7 @@ public class ItemData : ScriptableObject
         SecondaryWep = 512,
     }
 
+    [System.Serializable]
     public struct ItemStats
     {
         //Weapon Stats
@@ -71,7 +73,7 @@ public class ItemData : ScriptableObject
     //Item 'definitions'
     public Types Type;
     public ItemFlags Flags;
-
+    
     public ItemData(ItemData data)
     {
         Stats = data.Stats;

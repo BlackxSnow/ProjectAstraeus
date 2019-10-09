@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UIController : MonoBehaviour
 {
@@ -39,7 +40,7 @@ public class UIController : MonoBehaviour
     public static GameObject InstantiateText<T>(T Value, Transform Parent)
     {
         GameObject TextInstance = Instantiate(TextObject, Parent);
-        TextInstance.GetComponent<Text>().text = string.Format("{0}", Value);
+        TextInstance.GetComponent<TextMeshProUGUI>().text = string.Format("{0}", Value);
 
         return TextInstance;
     }
@@ -52,12 +53,12 @@ public class UIController : MonoBehaviour
     public static GameObject InstantiateKVP<T>(string Key, T Value, Transform Parent, Gradient gradient = null, float Min = 0, float Max = 0)
     {
         GameObject Panel;
-        Text KeyText;
-        Text ValueText;
+        TextMeshProUGUI KeyText;
+        TextMeshProUGUI ValueText;
 
         Panel = Instantiate(KeyValuePanel, Parent);
-        KeyText = Panel.transform.GetChild(0).GetComponent<Text>();
-        ValueText = Panel.transform.GetChild(1).GetComponent<Text>();
+        KeyText = Panel.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        ValueText = Panel.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
 
         dynamic Result = Value;
         Color color;
@@ -90,7 +91,7 @@ public class UIController : MonoBehaviour
     {
         GameObject ListPanel = Instantiate(KeyValueList, Parent);
         Transform ListContent = ListPanel.transform.GetChild(1);
-        Text ListNameText = ListPanel.transform.GetChild(0).GetComponent<Text>();
+        TextMeshProUGUI ListNameText = ListPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
 
         ListNameText.text = ListName;
 

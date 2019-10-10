@@ -7,31 +7,6 @@ using UnityEngine;
 [System.Serializable]
 public class ItemData : ScriptableObject
 {
-    public enum Types
-    {
-        Resource,
-        Armour,
-        MeleeSharp,
-        MeleeBlunt,
-        RangedBow,
-        RangedFirearm
-    }
-
-    [Flags]
-    public enum ItemFlags
-    {
-        Equipable = 1,
-        Consumable = 2,
-        Head = 4,
-        Torso = 8,
-        Legs = 16,
-        Arms = 32,
-        Back = 64,
-        Accessory = 128,
-        PrimaryWep = 256,
-        SecondaryWep = 512,
-    }
-
     [System.Serializable]
     public struct ItemStats
     {
@@ -39,10 +14,12 @@ public class ItemData : ScriptableObject
         public float Damage;
         public float AttackSpeed; //Attacks per second
         public float ArmourPiercing;
+        public float Range;
 
         //Equipment Stats
         public float Armour;
         public float Power;
+        public float PowerUse;
         public float Shield;
 
         //General Stats
@@ -50,13 +27,15 @@ public class ItemData : ScriptableObject
         public float Mass;
         public Resources Cost;
 
-        public ItemStats(Vector2Int Size, Resources Cost, float Damage = 0, float AttackSpeed = 0, float ArmourPiercing = 0, float Armour = 0, float Power = 0, float Shield = 0, float Mass = 0)
+        public ItemStats(Vector2Int Size, Resources Cost, float Damage = 0, float AttackSpeed = 0, float ArmourPiercing = 0, float Range = 0, float Armour = 0, float Power = 0, float PowerUse = 0, float Shield = 0, float Mass = 0)
         {
             this.Damage = Damage;
             this.AttackSpeed = AttackSpeed;
             this.ArmourPiercing = ArmourPiercing;
+            this.Range = Range;
             this.Armour = Armour;
             this.Power = Power;
+            this.PowerUse = PowerUse;
             this.Shield = Shield;
             this.Size = Size;
             this.Mass = Mass;
@@ -68,27 +47,16 @@ public class ItemData : ScriptableObject
 
     //Modular Parts
     public ItemModule.CoreModule Core;
-    public List<ItemModule.AdditionalModule> Modules;
+    public List<ItemModule.AdditionalModule> Modules = new List<ItemModule.AdditionalModule>();
 
     //Item 'definitions'
-    public Types Type;
-    public ItemFlags Flags;
+    public ItemTypes.Types Type;
     
-    public ItemData(ItemData data)
+    public ItemData(ItemTypes.Types _Type)
     {
-        Stats = data.Stats;
-        Core = data.Core;
-        Modules = data.Modules;
-        Type = data.Type;
-        Flags = data.Flags;
-    }
-    public ItemData(ItemStats Stats, ItemModule.CoreModule Core, List<ItemModule.AdditionalModule> Modules, Types Type, ItemFlags Flags)
-    {
-        this.Stats = Stats;
-        this.Core = Core;
-        this.Modules = Modules;
-        this.Type = Type;
-        this.Flags = Flags;
+        this.Type = _Type;
+        ItemTypes.TypeCores.TryGetValue(_Type, out Core);
+        SetStats();
     }
 
     public void SetStats()

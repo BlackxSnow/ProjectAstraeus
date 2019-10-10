@@ -6,14 +6,14 @@ using TMPro;
 
 public class UIController : MonoBehaviour
 {
-    public static GameObject KeyValuePanel;
-    public static GameObject KeyValueList;
+    public static GameObject KeyValuePanelObject;
+    public static GameObject KeyValueListObject;
     public static GameObject TextObject;
 
     private void Awake()
     {
-        KeyValuePanel = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/KeyValuePanel");
-        KeyValueList = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/KeyValueList");
+        KeyValuePanelObject = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/KeyValuePanel");
+        KeyValueListObject = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/KeyValueList");
         TextObject = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/TextObject");
     }
 
@@ -55,10 +55,12 @@ public class UIController : MonoBehaviour
         GameObject Panel;
         TextMeshProUGUI KeyText;
         TextMeshProUGUI ValueText;
+        KeyValuePanel KVPScript;
 
-        Panel = Instantiate(KeyValuePanel, Parent);
-        KeyText = Panel.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-        ValueText = Panel.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+        Panel = Instantiate(KeyValuePanelObject, Parent);
+        KVPScript = Panel.GetComponent<KeyValuePanel>();
+        KeyText = KVPScript.Key.TextMesh;
+        ValueText = KVPScript.Value.TextMesh;
 
         dynamic Result = Value;
         Color color;
@@ -89,7 +91,7 @@ public class UIController : MonoBehaviour
     //Instantiates a prefab for a list of Key Value Panels
     public static GameObject InstantiateKVPList<T>(string ListName, KVPData<T>[] KeyValuePanels, Transform Parent)
     {
-        GameObject ListPanel = Instantiate(KeyValueList, Parent);
+        GameObject ListPanel = Instantiate(KeyValueListObject, Parent);
         Transform ListContent = ListPanel.transform.GetChild(1);
         TextMeshProUGUI ListNameText = ListPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
 

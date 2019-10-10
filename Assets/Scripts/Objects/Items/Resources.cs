@@ -4,6 +4,8 @@ using UnityEngine;
 
 public struct Resources
 {
+    public static int ResourceCount = 3;
+
     public int Iron;
     public int Copper;
     public int Alloy;

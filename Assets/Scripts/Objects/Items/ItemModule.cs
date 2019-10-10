@@ -1,14 +1,35 @@
-﻿using System.Collections;
+﻿using System;
+using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ItemModule : ScriptableObject
 {
+
+
     public class CoreModule : ItemModule
     {
-        public Vector2Int Size;
-        public float Mass;
-        public Resources Cost = new Resources(0,0,0);
+        public Vector2Int Size = new Vector2Int(1, 1);
+        public float Mass = 1f;
+        public Resources Cost = new Resources(0, 0, 0);
+        public ItemTypes.ItemFlags Flags;
+        public ItemTypes.StatFlags StatFlags;
+
+        public CoreModule() { }
+        public CoreModule (Vector2Int Size, float Mass, Resources Cost, ItemTypes.ItemFlags Flags)
+        {
+            this.Size = Size;
+            this.Mass = Mass;
+            this.Cost = Cost;
+            this.Flags = Flags;
+
+            foreach(ItemTypes.ItemFlags Flag in Utility.GetFlags(Flags))
+            {
+                ItemTypes.FlagStats.TryGetValue(Flag, out ItemTypes.StatFlags _StatFlags );
+                StatFlags = StatFlags | _StatFlags;
+            }
+        }
     }
 
     //Additional Modules

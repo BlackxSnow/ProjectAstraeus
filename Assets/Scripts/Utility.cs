@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System.Linq;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -71,9 +73,16 @@ public class Utility : MonoBehaviour
         Vector3 Result = new Vector3(BaseVector.x - SubractVector.x, BaseVector.y - SubractVector.y, BaseVector.z);
         return Result;
     }
-    public static Vector3 AddVector2ToVector3(Vector3 BaseVector, Vector2 SubractVector)
+    public static Vector3 AddVector2ToVector3(Vector3 BaseVector, Vector2 AddVector)
     {
-        Vector3 Result = new Vector3(BaseVector.x + SubractVector.x, BaseVector.y + SubractVector.y, BaseVector.z);
+        Vector3 Result = new Vector3(BaseVector.x + AddVector.x, BaseVector.y + AddVector.y, BaseVector.z);
         return Result;
+    }
+
+    public static IEnumerable<Enum> GetFlags(Enum input)
+    {
+        foreach (Enum value in Enum.GetValues(input.GetType()))
+            if (input.HasFlag(value))
+                yield return value;
     }
 }

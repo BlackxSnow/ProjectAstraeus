@@ -9,12 +9,14 @@ public class UIController : MonoBehaviour
     public static GameObject KeyValuePanelObject;
     public static GameObject KeyValueListObject;
     public static GameObject TextObject;
+    public static GameObject ValueSlider;
 
     private void Awake()
     {
         KeyValuePanelObject = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/KeyValuePanel");
         KeyValueListObject = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/KeyValueList");
         TextObject = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/TextObject");
+        ValueSlider = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/ValueSlider");
     }
 
     public struct KVPData<T>

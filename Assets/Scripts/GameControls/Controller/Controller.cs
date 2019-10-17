@@ -9,6 +9,8 @@ public class Controller : MonoBehaviour {
     public static Controller Control;
     public bool SplashStart;
 
+    public static bool Dev = true; //Development / debug mode
+
 	void Awake () {
         if (Control == null)
         {

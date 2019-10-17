@@ -134,7 +134,7 @@ public class Selection : MonoBehaviour
 
             MonoBehaviour SelectableObj = _Selectable as MonoBehaviour;
             Vector3 _WTSP = Cam.WorldToScreenPoint(SelectableObj.transform.position);
-            Vector3 _ScreenPoint = new Vector3(_WTSP.x, Screen.height - _WTSP.y, _WTSP.z); //WTSP y must be flipped, because either Unity or Calvin is stupid.
+            Vector3 _ScreenPoint = new Vector3(_WTSP.x, Screen.height - _WTSP.y, _WTSP.z); //WTSP y must be flipped
             if (RectSelect.Contains(_ScreenPoint, true))
             {
                 if (!SelectedObjs.Contains(_Selectable)) SelectedObjs.Add(_Selectable);

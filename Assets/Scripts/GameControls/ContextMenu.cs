@@ -33,11 +33,16 @@ public class ContextMenu : MonoBehaviour
     Entity ObjEntity;
     RaycastHit RayHit;
 
-    // Start is called before the first frame update
-    void Start()
+    Canvas canvas;
+
+    private void Start()
     {
-        Canvas canvas = FindObjectOfType<Canvas>();
-        ContextGUIInstance = Instantiate<GameObject>(ContextGUI, canvas.transform, false);
+        Initialise();
+    }
+    void Initialise()
+    {
+        canvas = FindObjectOfType<Canvas>();
+        ContextGUIInstance = Instantiate(ContextGUI, canvas.transform, false);
     }
 
     // Update is called once per frame
@@ -48,6 +53,7 @@ public class ContextMenu : MonoBehaviour
 
     void SetUIStates()
     {
+        if (!ContextGUIInstance) Initialise();
         foreach (string ButtonName in Enum.GetNames(typeof(ContextButtons)))
         {
             ContextButtons ButtonFlag;

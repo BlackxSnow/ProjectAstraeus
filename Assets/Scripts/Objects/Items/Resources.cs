@@ -5,6 +5,12 @@ using UnityEngine;
 public struct Resources
 {
     public static int ResourceCount = 3;
+    public enum ResourceList
+    {
+        Iron,
+        Copper,
+        Alloy
+    }
 
     public int Iron;
     public int Copper;

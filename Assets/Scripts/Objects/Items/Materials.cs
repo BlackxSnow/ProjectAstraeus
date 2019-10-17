@@ -11,7 +11,7 @@ public class Materials
         //Additional materials here
     }
 
-    public Dictionary<MaterialTypes, Material> MaterialDict = new Dictionary<MaterialTypes, Material>()
+    public static Dictionary<MaterialTypes, Material> MaterialDict = new Dictionary<MaterialTypes, Material>()
     {
         { MaterialTypes.Iron, new Material(1,0.25f,0.25f) },
         { MaterialTypes.Steel, new Material(1.1f, 0.5f, 0.5f) }

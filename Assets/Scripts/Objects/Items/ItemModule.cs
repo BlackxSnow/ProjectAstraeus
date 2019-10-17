@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Materials;
 
 public class ItemModule : ScriptableObject
 {
@@ -15,14 +16,16 @@ public class ItemModule : ScriptableObject
         public Resources Cost = new Resources(0, 0, 0);
         public ItemTypes.ItemFlags Flags;
         public ItemTypes.StatFlags StatFlags;
+        public AdditionalModule.ModuleList AvailableModules;
 
         public CoreModule() { }
-        public CoreModule (Vector2Int Size, float Mass, Resources Cost, ItemTypes.ItemFlags Flags)
+        public CoreModule (Vector2Int Size, float Mass, Resources Cost, ItemTypes.ItemFlags Flags, AdditionalModule.ModuleList AvailableModules)
         {
             this.Size = Size;
             this.Mass = Mass;
             this.Cost = Cost;
             this.Flags = Flags;
+            this.AvailableModules = AvailableModules;
 
             foreach(ItemTypes.ItemFlags Flag in Utility.GetFlags(Flags))
             {
@@ -39,25 +42,62 @@ public class ItemModule : ScriptableObject
         public float MassMultiplier;
         public Resources Cost = new Resources(0,0,0);
 
-        public AdditionalModule (Vector2 _SizeMultiplier, float _MassMultiplier, Resources _Cost)
+        [Flags]
+        public enum ModuleList
         {
-            SizeMultiplier = _SizeMultiplier;
-            MassMultiplier = _MassMultiplier;
-            Cost = _Cost;
+            Plating = 1 << 0,
+            Reactor = 1 << 1,
+            Shielding = 1 << 2,
+            WeaponPlaceHolderModule = 1 << 3
         }
+
+        public enum ModifiableStats
+        {
+            Thickness,
+            Material,
+            Power,
+            Shield
+        }
+
+        public enum DisplayStats
+        {
+            Damage,
+            AttackSpeed,
+            ArmourPiercing,
+            Range,
+            Armour,
+            Power,
+            PowerUse,
+            Shield,
+            SizeMod,
+            MassMod,
+            Cost
+        }
+
+        public virtual void CalculateStats() { }
 
         public class Plating : AdditionalModule
         {
             public float Thickness;
-            Material material;
+            public Materials.Material @Material;
             public float Armour;
 
-            public Plating(Vector2 _Size, float _Mass, Resources _Cost, float _Thickness, Material _material, float _Armour) : base(_Size, _Mass, _Cost)
+
+
+            public override void CalculateStats()
+            {
+                base.CalculateStats();
+                MassMultiplier = (1 + Thickness) * Material.MassModifier;
+                SizeMultiplier = new Vector2(1 + (Thickness / 10), 1 + (Thickness / 10));
+
+                Armour = Thickness * Material.ArmourModifier;
+            }
+
+            public Plating(float _Thickness = 1)
             {
                 Thickness = _Thickness;
-                material = _material;
-                Armour = _Armour;
-                material = _material;
+                MaterialDict.TryGetValue(MaterialTypes.Iron, out Material);
+                CalculateStats();
             }
         }
 
@@ -65,9 +105,17 @@ public class ItemModule : ScriptableObject
         {
             public float Power;
 
-            public Reactor(Vector2 _Size, float _Mass, Resources _Cost, float _Power) : base(_Size, _Mass, _Cost)
+            public override void CalculateStats()
+            {
+                base.CalculateStats();
+                MassMultiplier = 1 + (Power / 10);
+                SizeMultiplier = new Vector2(1 + (Power / 10), 1 + (Power / 10));
+            }
+
+            public Reactor(float _Power = 1)
             {
                 Power = _Power;
+                CalculateStats();
             }
         }
 
@@ -75,11 +123,25 @@ public class ItemModule : ScriptableObject
         {
             public float Shield;
             public float PowerUsage;
-            public Shielding(Vector2 _Size, float _Mass, Resources _Cost, float _Shield, float _PowerUsage) : base(_Size, _Mass, _Cost)
+
+            public override void CalculateStats()
+            {
+                base.CalculateStats();
+                MassMultiplier = 1 + (Shield / 10);
+                SizeMultiplier = new Vector2(1 + (Shield / 10), 1 + (Shield / 10));
+                PowerUsage = Shield / 10;
+            }
+
+            public Shielding(float _Shield = 1)
             {
                 Shield = _Shield;
-                PowerUsage = _PowerUsage;
+                CalculateStats();
             }
+        }
+
+        public class WeaponPlaceHolderModule : AdditionalModule
+        {
+
         }
     }
 }

@@ -15,6 +15,11 @@ public class Item : DynamicEntity
         base.Start();
         EntityManager.RegisterItem(this);
         if(Data) Data.SetStats();
+        else if(!Data && Controller.Dev)
+        {
+            Data = new ItemData(ItemTypes.Types.Torso);
+
+        }
     }
 
     //Three functions for moving items from world to inventory and vice versa

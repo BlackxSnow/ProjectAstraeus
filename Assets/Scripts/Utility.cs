@@ -39,6 +39,19 @@ public class Utility : MonoBehaviour
         }
     }
 
+    public static float RoundToNDecimals<T>(T Value, int Decimals)
+    {
+        dynamic ValueF = 0;
+        if (Value is float || Value is int || Value is double)
+        {
+            ValueF = Value;
+        } else throw new System.ArgumentException("Parameter must be numerical type", "Value");
+
+        float MultipliedValue = ValueF * Mathf.Pow(10, Decimals);
+        MultipliedValue = Mathf.Round(MultipliedValue);
+        return MultipliedValue / Mathf.Pow(10, Decimals);
+    }
+
     public static Vector3 FlipY(Vector3 vector)
     {
         Vector3 FlippedVector = new Vector3(vector.x, Screen.height - vector.y, vector.z);

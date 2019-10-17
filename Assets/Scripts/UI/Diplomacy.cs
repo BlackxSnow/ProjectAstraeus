@@ -26,12 +26,12 @@ public class Diplomacy : Window
             if (_KVP.Key == ID)
             {
                 Gradient gradient = Utility.CreateGradient(Color.green);
-                Panels.Add(UIController.InstantiateKVP(FactionManager.Factions[_KVP.Key].Name, "SELF", RelationsPanel, gradient));
+                Panels.Add(UIController.InstantiateKVP(FactionManager.Factions[_KVP.Key].Name, "SELF", RelationsPanel, 0, gradient));
             }
             else
             {
                 Gradient gradient = Utility.CreateGradient(Color.red, Color.white, Color.green);
-                Panels.Add(UIController.InstantiateKVP(FactionManager.Factions[_KVP.Key].Name, FactionManager.Factions[ID].GetRelations(_KVP.Key), RelationsPanel, gradient, -100, 100));
+                Panels.Add(UIController.InstantiateKVP(FactionManager.Factions[_KVP.Key].Name, FactionManager.Factions[ID].GetRelations(_KVP.Key), RelationsPanel, 0, gradient, -100, 100));
             }
         }
     }

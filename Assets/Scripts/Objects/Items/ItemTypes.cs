@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static ItemModule.AdditionalModule;
 
 public class ItemTypes : MonoBehaviour
 {
@@ -57,16 +58,16 @@ public class ItemTypes : MonoBehaviour
 
     public static Dictionary<Types, ItemModule.CoreModule> TypeCores = new Dictionary<Types, ItemModule.CoreModule>()
     {
-        { Types.Head,          new ItemModule.CoreModule(   new Vector2Int(3, 5),   0.5f,   new Resources(1,0,0),   ItemFlags.Armour                       ) },
-        { Types.Torso,         new ItemModule.CoreModule(   new Vector2Int(7,10),   1.0f,   new Resources(2,0,0),   ItemFlags.Armour                       ) },
-        { Types.Legs,          new ItemModule.CoreModule(   new Vector2Int(6,15),   1.0f,   new Resources(2,0,0),   ItemFlags.Armour                       ) },
-        { Types.Feet,          new ItemModule.CoreModule(   new Vector2Int(3, 5),   0.5f,   new Resources(1,0,0),   ItemFlags.Armour                       ) },
-        { Types.Arms,          new ItemModule.CoreModule(   new Vector2Int(2, 5),   0.5f,   new Resources(1,0,0),   ItemFlags.Armour                       ) },
-        { Types.Back,          new ItemModule.CoreModule(   new Vector2Int(4,10),   1.0f,   new Resources(2,0,0),   ItemFlags.Armour                       ) },
-        { Types.Accessory,     new ItemModule.CoreModule(   new Vector2Int(1, 1),   0.1f,   new Resources(1,0,0),   ItemFlags.Armour                       ) },
-        { Types.MeleeSharp,    new ItemModule.CoreModule(   new Vector2Int(4, 2),   0.5f,   new Resources(1,0,0),   ItemFlags.Melee  | ItemFlags.Weapon    ) },
-        { Types.MeleeBlunt,    new ItemModule.CoreModule(   new Vector2Int(4, 2),   1.0f,   new Resources(1,0,0),   ItemFlags.Melee  | ItemFlags.Weapon    ) },
-        { Types.RangedBow,     new ItemModule.CoreModule(   new Vector2Int(4, 5),   0.5f,   new Resources(1,0,0),   ItemFlags.Ranged | ItemFlags.Weapon    ) },
-        { Types.RangedFirearm, new ItemModule.CoreModule(   new Vector2Int(5, 4),   1.0f,   new Resources(1,0,0),   ItemFlags.Ranged | ItemFlags.Weapon    ) }
+        { Types.Head,          new ItemModule.CoreModule(   new Vector2Int(3, 5),   0.5f,   new Resources(1,0,0),   (ItemFlags.Armour                   ),    (ModuleList.Plating | ModuleList.Reactor | ModuleList.Shielding)  ) },
+        { Types.Torso,         new ItemModule.CoreModule(   new Vector2Int(7,10),   1.0f,   new Resources(2,0,0),   (ItemFlags.Armour                   ),    (ModuleList.Plating | ModuleList.Reactor | ModuleList.Shielding)  ) },
+        { Types.Legs,          new ItemModule.CoreModule(   new Vector2Int(6,15),   1.0f,   new Resources(2,0,0),   (ItemFlags.Armour                   ),    (ModuleList.Plating | ModuleList.Reactor | ModuleList.Shielding)  ) },
+        { Types.Feet,          new ItemModule.CoreModule(   new Vector2Int(3, 5),   0.5f,   new Resources(1,0,0),   (ItemFlags.Armour                   ),    (ModuleList.Plating | ModuleList.Reactor | ModuleList.Shielding)  ) },
+        { Types.Arms,          new ItemModule.CoreModule(   new Vector2Int(2, 5),   0.5f,   new Resources(1,0,0),   (ItemFlags.Armour                   ),    (ModuleList.Plating | ModuleList.Reactor | ModuleList.Shielding)  ) },
+        { Types.Back,          new ItemModule.CoreModule(   new Vector2Int(4,10),   1.0f,   new Resources(2,0,0),   (ItemFlags.Armour                   ),    (ModuleList.Plating | ModuleList.Reactor | ModuleList.Shielding)  ) },
+        { Types.Accessory,     new ItemModule.CoreModule(   new Vector2Int(1, 1),   0.1f,   new Resources(1,0,0),   (ItemFlags.Armour                   ),    (ModuleList.Plating | ModuleList.Reactor | ModuleList.Shielding)  ) },
+        { Types.MeleeSharp,    new ItemModule.CoreModule(   new Vector2Int(4, 2),   0.5f,   new Resources(1,0,0),   (ItemFlags.Melee  | ItemFlags.Weapon),    (ModuleList.WeaponPlaceHolderModule)                              ) },
+        { Types.MeleeBlunt,    new ItemModule.CoreModule(   new Vector2Int(4, 2),   1.0f,   new Resources(1,0,0),   (ItemFlags.Melee  | ItemFlags.Weapon),    (ModuleList.WeaponPlaceHolderModule)                              ) },
+        { Types.RangedBow,     new ItemModule.CoreModule(   new Vector2Int(4, 5),   0.5f,   new Resources(1,0,0),   (ItemFlags.Ranged | ItemFlags.Weapon),    (ModuleList.WeaponPlaceHolderModule)                              ) },
+        { Types.RangedFirearm, new ItemModule.CoreModule(   new Vector2Int(5, 4),   1.0f,   new Resources(1,0,0),   (ItemFlags.Ranged | ItemFlags.Weapon),    (ModuleList.WeaponPlaceHolderModule)                              ) }
     };
 }

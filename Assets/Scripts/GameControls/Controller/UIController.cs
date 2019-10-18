@@ -12,6 +12,7 @@ public class UIController : MonoBehaviour
     public static GameObject KeyValueListObjectPrefab;
     public static GameObject TextObjectPrefab;
     public static GameObject ValueSliderPrefab;
+    public static GameObject ModuleDisplayPrefab;
 
     private void Awake()
     {
@@ -19,6 +20,7 @@ public class UIController : MonoBehaviour
         KeyValueListObjectPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/KeyValueList");
         TextObjectPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/TextObject");
         ValueSliderPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/ValueSlider");
+        ModuleDisplayPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/ModuleDisplayPanel");
     }
 
     public struct KVPData<T>
@@ -103,7 +105,10 @@ public class UIController : MonoBehaviour
         ValueText.text = string.Format("{0}", Result);
 
         if (ValueDelegate != null) KVPScript.GetValue = ValueDelegate;
-        else KVPScript.DoNotUpdate = true;
+        else
+        {
+            KVPScript.DoNotUpdate = true;
+        }
 
         return Panel;
     }
@@ -117,11 +122,14 @@ public class UIController : MonoBehaviour
 
         ListNameText.text = ListName;
 
+        KeyValueList ListScript = ListPanel.GetComponent<KeyValueList>();
+        ListScript.KVPs = new Transform[KeyValuePanels.Length];
+
         //Iterate over KVPs and instantiate
-        for(int i = 0; i < KeyValuePanels.Length; i++)
+        for (int i = 0; i < KeyValuePanels.Length; i++)
         {
             KeyValuePanels[i].Parent = ListContent;
-            InstantiateKVP(KeyValuePanels[i]);
+            ListScript.KVPs[i] = InstantiateKVP(KeyValuePanels[i]).transform;
         }
 
         return ListPanel;
@@ -145,5 +153,18 @@ public class UIController : MonoBehaviour
 
         return ValueSlider;
 
+    }
+
+    public static GameObject InstantiateModulePanel(ItemModule.AdditionalModule Module, Transform Parent)
+    {
+        GameObject DisplayPanel = Instantiate(ModuleDisplayPrefab, Parent);
+        ModuleDisplayPanel Script = DisplayPanel.GetComponent<ModuleDisplayPanel>();
+        Script.Module = Module;
+
+        KeyValueGroup Group = new KeyValueGroup();
+        Module.InstantiateStatKVPs(Script.StatPanel.transform, Group, out GameObject[] KVPListArray);
+        Script.Name.text = Module.ModuleName;
+
+        return DisplayPanel;
     }
 }

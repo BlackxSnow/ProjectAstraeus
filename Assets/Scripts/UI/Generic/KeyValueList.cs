@@ -9,9 +9,10 @@ public class KeyValueList : MonoBehaviour
     GameObject ContentPanel;
     LayoutElement ContentLayout;
 
+    public Transform[] KVPs;
     private int lastcount;
 
-    private void Start()
+    private void Awake()
     {
         ListLayout = GetComponent<LayoutElement>();
         ContentPanel = transform.Find("Content").gameObject;
@@ -23,6 +24,7 @@ public class KeyValueList : MonoBehaviour
         if(lastcount != ContentPanel.transform.childCount)
         {
             SetContentSize();
+            KVPs = Utility.GetChildren(ContentPanel.transform);
             lastcount = ContentPanel.transform.childCount;
         }
     }

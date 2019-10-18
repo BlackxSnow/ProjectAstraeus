@@ -38,9 +38,10 @@ public class ItemModule : ScriptableObject
     //Additional Modules
     public class AdditionalModule : ItemModule
     {
+        public virtual string ModuleName { get; protected set; }
         public Vector2 SizeMultiplier;
         public float MassMultiplier;
-        public Resources Cost = new Resources(0,0,0);
+        public Resources Cost = new Resources(0, 0, 0);
 
         [Flags]
         public enum ModuleList
@@ -74,6 +75,21 @@ public class ItemModule : ScriptableObject
             Cost
         }
 
+        public virtual GameObject[] InstantiateStatKVPs(Transform Parent, KeyValueGroup KVPGroup, out GameObject[] KVPListArray)
+        {
+            GameObject[] KVPArray = new GameObject[2];
+            KVPListArray = new GameObject[1];
+
+            UIController.KVPData<float>[] CostData = new UIController.KVPData<float>[Resources.ResourceCount];
+            CostData[0] = new UIController.KVPData<float>("Iron", Cost.Iron, null, Group: KVPGroup, ValueDelegate: KeyValuePanel.ModuleGetValue.Cost_Iron);
+            CostData[1] = new UIController.KVPData<float>("Copper", Cost.Copper, null, Group: KVPGroup, ValueDelegate: KeyValuePanel.ModuleGetValue.Cost_Copper);
+            CostData[2] = new UIController.KVPData<float>("Alloy", Cost.Alloy, null, Group: KVPGroup, ValueDelegate: KeyValuePanel.ItemGetValue.Cost_Alloy);
+
+            KVPArray[0] = UIController.InstantiateKVP("Size Modifier", SizeMultiplier, Parent, 2, Group: KVPGroup, ValueDelegate: KeyValuePanel.ModuleGetValue.SizeMod);
+            KVPArray[1] = UIController.InstantiateKVP("Mass Modifier", MassMultiplier, Parent, 2, Group: KVPGroup, ValueDelegate: KeyValuePanel.ModuleGetValue.MassMod);
+            KVPListArray[0] = UIController.InstantiateKVPList("Cost", CostData, Parent);
+            return KVPArray;
+        }
         public virtual void CalculateStats() { }
 
         public class Plating : AdditionalModule
@@ -82,7 +98,16 @@ public class ItemModule : ScriptableObject
             public Materials.Material @Material;
             public float Armour;
 
+            public override GameObject[] InstantiateStatKVPs(Transform Parent, KeyValueGroup KVPGroup, out GameObject[] KVPListArray)
+            {
+                GameObject[] ThisKVPArray = new GameObject[1];
 
+                ThisKVPArray[0] = UIController.InstantiateKVP("Armour", Armour, Parent, 0, Group: KVPGroup, ValueDelegate: KeyValuePanel.ModuleGetValue.Armour);
+
+                GameObject[] BaseKVPArray = base.InstantiateStatKVPs(Parent, KVPGroup, out KVPListArray);
+                GameObject[] ReturnKVPArray = Utility.CombineArrays(BaseKVPArray, ThisKVPArray);
+                return ReturnKVPArray;
+            }
 
             public override void CalculateStats()
             {
@@ -91,10 +116,11 @@ public class ItemModule : ScriptableObject
                 SizeMultiplier = new Vector2(1 + (Thickness / 10), 1 + (Thickness / 10));
 
                 Armour = Thickness * Material.ArmourModifier;
+                Cost.Iron = (int)Mathf.Round(Thickness);
             }
-
             public Plating(float _Thickness = 1)
             {
+                ModuleName = "Plating";
                 Thickness = _Thickness;
                 MaterialDict.TryGetValue(MaterialTypes.Iron, out Material);
                 CalculateStats();
@@ -112,6 +138,20 @@ public class ItemModule : ScriptableObject
                 SizeMultiplier = new Vector2(1 + (Power / 10), 1 + (Power / 10));
             }
 
+            public override GameObject[] InstantiateStatKVPs(Transform Parent, KeyValueGroup KVPGroup, out GameObject[] KVPListArray)
+            {
+                GameObject[] ThisKVPArray = new GameObject[1];
+
+                ThisKVPArray[0] = UIController.InstantiateKVP("Power", Power, Parent, 0, ValueDelegate: KeyValuePanel.ModuleGetValue.Power);
+
+                GameObject[] BaseKVPArray = base.InstantiateStatKVPs(Parent, KVPGroup, out KVPListArray);
+                GameObject[] ReturnKVPArray = Utility.CombineArrays(BaseKVPArray, ThisKVPArray);
+                return ReturnKVPArray;
+            }
+            public Reactor()
+            {
+                ModuleName = "Reactor";
+            }
             public Reactor(float _Power = 1)
             {
                 Power = _Power;
@@ -132,6 +172,21 @@ public class ItemModule : ScriptableObject
                 PowerUsage = Shield / 10;
             }
 
+            public override GameObject[] InstantiateStatKVPs(Transform Parent, KeyValueGroup KVPGroup, out GameObject[] KVPListArray)
+            {
+                GameObject[] ThisKVPArray = new GameObject[2];
+
+                ThisKVPArray[0] = UIController.InstantiateKVP("Shield", Shield, Parent, 0, ValueDelegate: KeyValuePanel.ModuleGetValue.Shield);
+                ThisKVPArray[1] = UIController.InstantiateKVP("Power Use", PowerUsage, Parent, 0, ValueDelegate: KeyValuePanel.ModuleGetValue.PowerUsage);
+
+                GameObject[] BaseKVPArray = base.InstantiateStatKVPs(Parent, KVPGroup, out KVPListArray);
+                GameObject[] ReturnKVPArray = Utility.CombineArrays(BaseKVPArray, ThisKVPArray);
+                return ReturnKVPArray;
+            }
+            public Shielding()
+            {
+                ModuleName = "Shield";
+            }
             public Shielding(float _Shield = 1)
             {
                 Shield = _Shield;

@@ -8,6 +8,7 @@ using static ItemModule.AdditionalModule;
 public class KeyValuePanel : MonoBehaviour
 {
     public KeyValueGroup Group;
+    public float GroupTargetSize;
 
     struct FontSizes
     {
@@ -60,12 +61,19 @@ public class KeyValuePanel : MonoBehaviour
                 Group.SetDirty();
             LastSize = RectComponent.rect.size;
         }
+        if(Group && (Key.TextMesh.fontSize != GroupTargetSize || Value.TextMesh.fontSize != GroupTargetSize))
+        {
+            SetSize(GroupTargetSize);
+        }
     }
 
     public void SetSize(float TargetSize)
     {
         Key.TextMesh.fontSize = TargetSize;
         Value.TextMesh.fontSize = TargetSize;
+
+        if (Group) GroupTargetSize = TargetSize;
+
         Key.TextMesh.ForceMeshUpdate();
         Value.TextMesh.ForceMeshUpdate();
     }
@@ -106,9 +114,9 @@ public class KeyValuePanel : MonoBehaviour
     public static class ModuleGetValue
     {
         public static string Armour() =>        string.Format("{0}", Utility.RoundToNDecimals(( CraftingUI.CurrentModule as Plating).Armour,        1));
-        public static string Cost_Iron() =>     string.Format("{0}", Utility.RoundToNDecimals(  CraftingUI.CurrentModule.Cost.Iron,                 1));
-        public static string Cost_Copper() =>   string.Format("{0}", Utility.RoundToNDecimals(  CraftingUI.CurrentModule.Cost.Copper,               1));
-        public static string Cost_Alloy() =>    string.Format("{0}", Utility.RoundToNDecimals(  CraftingUI.CurrentModule.Cost.Alloy,                1));
+        public static string Cost_Iron() =>     string.Format("{0}",                            CraftingUI.CurrentModule.Cost.Iron                   );
+        public static string Cost_Copper() =>   string.Format("{0}",                            CraftingUI.CurrentModule.Cost.Copper                 );
+        public static string Cost_Alloy() =>    string.Format("{0}",                            CraftingUI.CurrentModule.Cost.Alloy                  );
         public static string MassMod() =>       string.Format("{0}", Utility.RoundToNDecimals(  CraftingUI.CurrentModule.MassMultiplier,            1));
         public static string Power() =>         string.Format("{0}", Utility.RoundToNDecimals(( CraftingUI.CurrentModule as Reactor).Power,         1));
         public static string PowerUsage() =>    string.Format("{0}", Utility.RoundToNDecimals(( CraftingUI.CurrentModule as Shielding).PowerUsage,  1));

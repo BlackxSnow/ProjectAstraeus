@@ -6,6 +6,8 @@ using static ItemModule.AdditionalModule;
 
 public class ItemTypes : MonoBehaviour
 {
+    public static GameObject ItemBasePrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/Objects/Generic/ItemBase");
+
     public enum Types
     {
         Resource,

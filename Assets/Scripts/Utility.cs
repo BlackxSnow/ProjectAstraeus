@@ -98,4 +98,31 @@ public class Utility : MonoBehaviour
             if (input.HasFlag(value))
                 yield return value;
     }
+
+    public static T[] CombineArrays<T>(params T[][] Arrays)
+    {
+        int ArrayLength = 0;
+        for (int i = 0; i < Arrays.Length; i++)
+        {
+            ArrayLength += Arrays[i].Length;
+        }
+        T[] ReturnArray = new T[ArrayLength];
+        int CurrentIndex = 0;
+        for (int i = 0; i < Arrays.Length; i++)
+        {
+            Array.Copy(Arrays[i], 0, ReturnArray, CurrentIndex, Arrays[i].Length);
+            CurrentIndex += Arrays[i].Length;
+        }
+        return ReturnArray;
+    }
+
+    public static Transform[] GetChildren(Transform Parent)
+    {
+        Transform[] Children = new Transform[Parent.childCount];
+        for (int i = 0; i < Parent.childCount; i++)
+        {
+            Children[i] = Parent.GetChild(i);
+        }
+        return Children;
+    }
 }

@@ -51,6 +51,13 @@ public class CraftingUI : Window
                 AddKVP(KVPs[i]);
             }
         }
+        public void AddKVP(List<GameObject> KVPs)
+        {
+            foreach(GameObject KVP in KVPs)
+            {
+                AddKVP(KVP);
+            }
+        }
         public void AddKVPList(GameObject KVPList)
         {
             gameObjects.Add(KVPList);
@@ -66,6 +73,13 @@ public class CraftingUI : Window
             for (int i = 0; i < KVPLists.Length; i++)
             {
                 AddKVPList(KVPLists[i]);
+            }
+        }
+        public void AddKVPList(List<GameObject> KVPLists)
+        {
+            foreach (GameObject KVPList in KVPLists)
+            {
+                AddKVPList(KVPList);
             }
         }
         public void Clear()
@@ -85,8 +99,8 @@ public class CraftingUI : Window
     private void Awake()
     {
         ItemToggles = UI_ItemListPanel.GetComponent<ToggleGroup>();
-        TotalStatKVPInfo = new KVPStruct(UI_TotalStatsPanel.GetComponent<KeyValueGroup>());
-        ModuleStatKVPInfo = new KVPStruct(UI_ModuleStatsPanel.GetComponent<KeyValueGroup>());
+        TotalStatKVPInfo = new KVPStruct(new KeyValueGroup());
+        ModuleStatKVPInfo = new KVPStruct(new KeyValueGroup());
     }
     public void ClearAll()
     {
@@ -229,26 +243,9 @@ public class CraftingUI : Window
         ClearKVPs(false, true);
 
         //General Stats
-        UIController.KVPData<float>[] CostData = new UIController.KVPData<float>[Resources.ResourceCount];
-        CostData[0] = new UIController.KVPData<float>("Iron", CurrentItem.Stats.Cost.Iron, null, Group: TotalStatKVPInfo.Group, ValueDelegate: KeyValuePanel.ItemGetValue.Cost_Iron);
-        CostData[1] = new UIController.KVPData<float>("Copper", CurrentItem.Stats.Cost.Copper, null, Group: TotalStatKVPInfo.Group, ValueDelegate: KeyValuePanel.ItemGetValue.Cost_Copper);
-        CostData[2] = new UIController.KVPData<float>("Alloy", CurrentItem.Stats.Cost.Alloy, null, Group: TotalStatKVPInfo.Group, ValueDelegate: KeyValuePanel.ItemGetValue.Cost_Alloy);
-
-        TotalStatKVPInfo.AddKVP(UIController.InstantiateKVP("Item Type", CurrentItem.Type, UI_TotalStatsPanel.transform));
-
-        if (CurrentItem.Core.StatFlags.HasFlag(ItemTypes.StatFlags.Armour))         TotalStatKVPInfo.AddKVP(UIController.InstantiateKVP(string.Format("{0}", ItemTypes.StatFlags.Armour),         CurrentItem.Stats.Armour,           UI_TotalStatsPanel.transform, 1, Group: TotalStatKVPInfo.Group, ValueDelegate: KeyValuePanel.ItemGetValue.Armour));
-        if (CurrentItem.Core.StatFlags.HasFlag(ItemTypes.StatFlags.Shield))         TotalStatKVPInfo.AddKVP(UIController.InstantiateKVP(string.Format("{0}", ItemTypes.StatFlags.Shield),         CurrentItem.Stats.Shield,           UI_TotalStatsPanel.transform, 1, Group: TotalStatKVPInfo.Group, ValueDelegate: KeyValuePanel.ItemGetValue.Shield));
-        if (CurrentItem.Core.StatFlags.HasFlag(ItemTypes.StatFlags.Power))          TotalStatKVPInfo.AddKVP(UIController.InstantiateKVP(string.Format("{0}", ItemTypes.StatFlags.Power),          CurrentItem.Stats.Power,            UI_TotalStatsPanel.transform, 1, Group: TotalStatKVPInfo.Group, ValueDelegate: KeyValuePanel.ItemGetValue.Power));
-        if (CurrentItem.Core.StatFlags.HasFlag(ItemTypes.StatFlags.PowerUse))       TotalStatKVPInfo.AddKVP(UIController.InstantiateKVP(string.Format("{0}", ItemTypes.StatFlags.PowerUse),       CurrentItem.Stats.PowerUse,         UI_TotalStatsPanel.transform, 1, Group: TotalStatKVPInfo.Group, ValueDelegate: KeyValuePanel.ItemGetValue.PowerUse));
-        if (CurrentItem.Core.StatFlags.HasFlag(ItemTypes.StatFlags.Damage))         TotalStatKVPInfo.AddKVP(UIController.InstantiateKVP(string.Format("{0}", ItemTypes.StatFlags.Damage),         CurrentItem.Stats.Damage,           UI_TotalStatsPanel.transform, 1, Group: TotalStatKVPInfo.Group, ValueDelegate: KeyValuePanel.ItemGetValue.Damage));
-        if (CurrentItem.Core.StatFlags.HasFlag(ItemTypes.StatFlags.ArmourPiercing)) TotalStatKVPInfo.AddKVP(UIController.InstantiateKVP(string.Format("{0}", ItemTypes.StatFlags.ArmourPiercing), CurrentItem.Stats.ArmourPiercing,   UI_TotalStatsPanel.transform, 1, Group: TotalStatKVPInfo.Group, ValueDelegate: KeyValuePanel.ItemGetValue.ArmourPiercing));
-        if (CurrentItem.Core.StatFlags.HasFlag(ItemTypes.StatFlags.AttackSpeed))    TotalStatKVPInfo.AddKVP(UIController.InstantiateKVP(string.Format("{0}", ItemTypes.StatFlags.AttackSpeed),    CurrentItem.Stats.AttackSpeed,      UI_TotalStatsPanel.transform, 1, Group: TotalStatKVPInfo.Group, ValueDelegate: KeyValuePanel.ItemGetValue.AttackSpeed));
-        if (CurrentItem.Core.StatFlags.HasFlag(ItemTypes.StatFlags.Range))          TotalStatKVPInfo.AddKVP(UIController.InstantiateKVP(string.Format("{0}", ItemTypes.StatFlags.Range),          CurrentItem.Stats.Range,            UI_TotalStatsPanel.transform, 1, Group: TotalStatKVPInfo.Group, ValueDelegate: KeyValuePanel.ItemGetValue.Range));
-
-
-        TotalStatKVPInfo.AddKVP(UIController.InstantiateKVP("Size", CurrentItem.Stats.Size, UI_TotalStatsPanel.transform, Group: TotalStatKVPInfo.Group, ValueDelegate: KeyValuePanel.ItemGetValue.Size));
-        TotalStatKVPInfo.AddKVP(UIController.InstantiateKVP("Mass", CurrentItem.Stats.Mass, UI_TotalStatsPanel.transform, 1, Group: TotalStatKVPInfo.Group, ValueDelegate: KeyValuePanel.ItemGetValue.Mass));
-        TotalStatKVPInfo.AddKVPList(UIController.InstantiateKVPList("Cost", CostData, UI_TotalStatsPanel.transform));
+        List<GameObject> KVPs = CurrentItem.InstantiateStatKVPs(true, out List<GameObject> KVPLists, UI_TotalStatsPanel.transform, TotalStatKVPInfo.Group);
+        TotalStatKVPInfo.AddKVP(KVPs);
+        TotalStatKVPInfo.AddKVPList(KVPLists);
     }
 
     public static void UpdateKVPs(bool Module, bool Total)

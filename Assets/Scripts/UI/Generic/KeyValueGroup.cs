@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class KeyValueGroup : MonoBehaviour
+public class KeyValueGroup : ScriptableObject
 {
     List<KeyValuePanel> GroupMembers = new List<KeyValuePanel>();
     public float UniformSize;
 
     public bool Dirty;
+    bool Running;
 
     public void AddMember(KeyValuePanel Member)
     {
@@ -19,12 +20,16 @@ public class KeyValueGroup : MonoBehaviour
         GroupMembers.Clear();
     }
 
-    private void Update()
+    IEnumerator LoopRoutine()
     {
-        if (Dirty) UniformSize = Recalculate();
+        while (Running)
+        {
+            if (Dirty) UniformSize = Recalculate();
+            yield return new WaitForFixedUpdate();
+        }
     }
 
-    public void SetDirty()
+    public new void SetDirty()
     {
         Dirty = true;
     }
@@ -46,5 +51,11 @@ public class KeyValueGroup : MonoBehaviour
         }
         Dirty = false;
         return MinSize;
+    }
+
+    public KeyValueGroup()
+    {
+        Running = true;
+        Controller.Control.StartCoroutineWrapper(LoopRoutine());
     }
 }

@@ -50,6 +50,7 @@ public class Selection : MonoBehaviour
             Selecting = false;
             MultiSelected = false;
             FinaliseSelection();
+            SetSelectionDisplay();
         }
     }
 
@@ -124,7 +125,6 @@ public class Selection : MonoBehaviour
                 }
             }
         }
-        SetSelectionDisplay();
     }
 
     void MultiSelect() //Select multiple in rectangle
@@ -157,7 +157,6 @@ public class Selection : MonoBehaviour
         {
             if (_Selectable.Selected) { _Selectable.FinalisedSelection = true; }
         }
-        SetSelectionDisplay();
     }
 
     void SetSelectionDisplay()

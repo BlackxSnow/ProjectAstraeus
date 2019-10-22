@@ -55,12 +55,34 @@ public class HUDController : MonoBehaviour
         Window.SetActive(true);
     }
 
+    List<GameObject> SelectionUI;
     public void DisplaySelectionUI(ISelectable Selection)
+    {
+        Entity SelectedEntity = Selection as Entity;
+        SelectHUD.Name.text = SelectedEntity.name;
+        SelectHUD.Type.text = string.Format("{0}", SelectedEntity.GetEntityType());
+
+        if(Selection is Item)
+        {
+            SelectionUI = (Selection as Item).Data.InstantiateStatKVPs(false, out List<GameObject> KVPLists, SelectHUD.DetailsPanel.transform);
+            Utility.CombineLists(SelectionUI, KVPLists);
+        } else
+        {
+            SelectionUI = Selection.InstantiateStatDisplay();
+        }
+        DisplaySelectionButtons(Selection);
+    }
+    void DisplaySelectionButtons(ISelectable Selection)
     {
 
     }
     public void ClearSelectionUI()
     {
-
+        if (SelectionUI == null) return;
+        foreach (GameObject UIObject in SelectionUI)
+        {
+            Destroy(UIObject);
+        }
+        SelectionUI = null;
     }
 }

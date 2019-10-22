@@ -1,15 +1,30 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class Entity : MonoBehaviour, IOwnable
 {
+    public enum EntityTypes
+    {
+        Item,
+        Character,
+        Animal,
+        Vehicle,
+        Structure
+    }
     public int FactionID { get; set; }
 
     public string Name;
+    public EntityTypes EntityType;
 
     public Animator animator;
     protected Renderer rendererComponent;
+
+    public virtual Enum GetEntityType()
+    {
+        return EntityType;
+    }
 
     // Start is called before the first frame update
     protected virtual void Start()

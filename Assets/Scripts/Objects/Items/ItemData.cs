@@ -92,4 +92,35 @@ public class ItemData : ScriptableObject
         Stats.Mass = Core.Mass * MassMod;
         Stats.Cost = Core.Cost + ResourceMod;
     }
+
+    public List<GameObject> InstantiateStatKVPs(bool Cost, out List<GameObject> KVPLists, Transform Parent, KeyValueGroup Group = null)
+    {
+        List<GameObject> KVPs = new List<GameObject>();
+        KVPLists = new List<GameObject>();
+
+        KVPs.Add(UIController.InstantiateKVP("Item Type", Type, Parent));
+
+        if (Core.StatFlags.HasFlag(ItemTypes.StatFlags.Armour)) KVPs.Add(UIController.InstantiateKVP(string.Format("{0}", ItemTypes.StatFlags.Armour), Stats.Armour, Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.ItemGetValue.Armour, RefItem: this));
+        if (Core.StatFlags.HasFlag(ItemTypes.StatFlags.Shield)) KVPs.Add(UIController.InstantiateKVP(string.Format("{0}", ItemTypes.StatFlags.Shield), Stats.Shield, Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.ItemGetValue.Shield, RefItem: this));
+        if (Core.StatFlags.HasFlag(ItemTypes.StatFlags.Power)) KVPs.Add(UIController.InstantiateKVP(string.Format("{0}", ItemTypes.StatFlags.Power), Stats.Power, Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.ItemGetValue.Power, RefItem: this));
+        if (Core.StatFlags.HasFlag(ItemTypes.StatFlags.PowerUse)) KVPs.Add(UIController.InstantiateKVP(string.Format("{0}", ItemTypes.StatFlags.PowerUse), Stats.PowerUse, Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.ItemGetValue.PowerUse, RefItem: this));
+        if (Core.StatFlags.HasFlag(ItemTypes.StatFlags.Damage)) KVPs.Add(UIController.InstantiateKVP(string.Format("{0}", ItemTypes.StatFlags.Damage), Stats.Damage, Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.ItemGetValue.Damage, RefItem: this));
+        if (Core.StatFlags.HasFlag(ItemTypes.StatFlags.ArmourPiercing)) KVPs.Add(UIController.InstantiateKVP(string.Format("{0}", ItemTypes.StatFlags.ArmourPiercing), Stats.ArmourPiercing, Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.ItemGetValue.ArmourPiercing, RefItem: this));
+        if (Core.StatFlags.HasFlag(ItemTypes.StatFlags.AttackSpeed)) KVPs.Add(UIController.InstantiateKVP(string.Format("{0}", ItemTypes.StatFlags.AttackSpeed), Stats.AttackSpeed, Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.ItemGetValue.AttackSpeed, RefItem: this));
+        if (Core.StatFlags.HasFlag(ItemTypes.StatFlags.Range)) KVPs.Add(UIController.InstantiateKVP(string.Format("{0}", ItemTypes.StatFlags.Range), Stats.Range, Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.ItemGetValue.Range, RefItem: this));
+
+        KVPs.Add(UIController.InstantiateKVP("Size", Stats.Size, Parent, Group: Group, ValueDelegate: KeyValuePanel.ItemGetValue.Size, RefItem: this));
+        KVPs.Add(UIController.InstantiateKVP("Mass", Stats.Mass, Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.ItemGetValue.Mass, RefItem: this));
+        if (Cost)
+        {
+            UIController.KVPData<float>[] CostData = new UIController.KVPData<float>[Resources.ResourceCount];
+            CostData[0] = new UIController.KVPData<float>("Iron", Stats.Cost.Iron, null, Group: Group, ValueDelegate: KeyValuePanel.ItemGetValue.Cost_Iron, RefItem: this);
+            CostData[1] = new UIController.KVPData<float>("Copper", Stats.Cost.Copper, null, Group: Group, ValueDelegate: KeyValuePanel.ItemGetValue.Cost_Copper, RefItem: this);
+            CostData[2] = new UIController.KVPData<float>("Alloy", Stats.Cost.Alloy, null, Group: Group, ValueDelegate: KeyValuePanel.ItemGetValue.Cost_Alloy, RefItem: this);
+            KVPLists.Add(UIController.InstantiateKVPList("Cost", CostData, Parent));
+        }
+
+        return KVPs;
+    }
+
 }

@@ -41,8 +41,10 @@ public class UIController : MonoBehaviour
         public float Max;
         public KeyValueGroup Group;
         public KeyValuePanel.GetValueDelegate ValueDelegate;
+        public ItemModule.AdditionalModule RefModule;
+        public ItemData RefItem;
 
-        public KVPData(string Key, T Value, Transform Parent, int Rounding = 0, Gradient gradient = null, float Min = 0, float Max = 0, KeyValueGroup Group = null, KeyValuePanel.GetValueDelegate ValueDelegate = null)
+        public KVPData(string Key, T Value, Transform Parent, int Rounding = 0, Gradient gradient = null, float Min = 0, float Max = 0, KeyValueGroup Group = null, KeyValuePanel.GetValueDelegate ValueDelegate = null, ItemModule.AdditionalModule RefModule = null, ItemData RefItem = null)
         {
             this.Key = Key;
             this.Value = Value;
@@ -53,6 +55,8 @@ public class UIController : MonoBehaviour
             this.Max = Max;
             this.Group = Group;
             this.ValueDelegate = ValueDelegate;
+            this.RefModule = RefModule;
+            this.RefItem = RefItem;
         }
     }
 
@@ -67,9 +71,9 @@ public class UIController : MonoBehaviour
     //Instantiates a prefab panel with two texts designed to show a key and value
     public static GameObject InstantiateKVP<T>(KVPData<T> Data)
     {
-        return InstantiateKVP(Data.Key, Data.Value, Data.Parent, Data.Rounding, Data.gradient, Data.Min, Data.Max, Data.Group, Data.ValueDelegate);
+        return InstantiateKVP(Data.Key, Data.Value, Data.Parent, Data.Rounding, Data.gradient, Data.Min, Data.Max, Data.Group, Data.ValueDelegate, Data.RefModule, Data.RefItem);
     }
-    public static GameObject InstantiateKVP<T>(string Key, T Value, Transform Parent, int Rounding = 0, Gradient gradient = null, float Min = 0, float Max = 0, KeyValueGroup Group = null, KeyValuePanel.GetValueDelegate ValueDelegate = null)
+    public static GameObject InstantiateKVP<T>(string Key, T Value, Transform Parent, int Rounding = 0, Gradient gradient = null, float Min = 0, float Max = 0, KeyValueGroup Group = null, KeyValuePanel.GetValueDelegate ValueDelegate = null, ItemModule.AdditionalModule RefModule = null, ItemData RefItem = null)
     {
         GameObject Panel;
         TextMeshProUGUI KeyText;
@@ -116,6 +120,10 @@ public class UIController : MonoBehaviour
         {
             KVPScript.DoNotUpdate = true;
         }
+        if (ValueDelegate != null && !RefItem && !RefModule) throw new ArgumentException("KVP with ValueDelegate require either a RefItem or RefModule");
+
+        KVPScript.Refs.RefItem = RefItem;
+        KVPScript.Refs.RefModule = RefModule;
 
         return Panel;
     }
@@ -184,6 +192,9 @@ public class UIController : MonoBehaviour
         ItemData Data = item.Data;
 
         Script.SetInfo(Data.ItemName, string.Format("{0}", Data.Type));
+        KeyValueGroup Group = new KeyValueGroup();
+        
+        Data.InstantiateStatKVPs(false, out List<GameObject> _, Script.StatsPanel.transform, Group);
 
         return ToolTip;
     }

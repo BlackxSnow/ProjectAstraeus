@@ -12,7 +12,7 @@ public class Actor : DynamicEntity, IOrderable, IDamageable
     Movement MovementScript;
     bool Movable;
 
-    float PickupDistance = 1;
+    float PickupDistance = 1.5f;
 
     // Start is called before the first frame update
     protected override void Start()

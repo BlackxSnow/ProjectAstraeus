@@ -897,6 +897,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: TestItem
+  EntityType: 0
   animator: {fileID: 0}
   SelectObj: {fileID: 1572354535519592, guid: f9fcb5772e492334f860f10e13015ddd, type: 3}
   Data: {fileID: 0}
@@ -1456,6 +1457,7 @@ GameObject:
   - component: {fileID: 1123634003}
   - component: {fileID: 1123634005}
   - component: {fileID: 1123634004}
+  - component: {fileID: 1123634006}
   m_Layer: 5
   m_Name: DetailedInfo
   m_TagString: Untagged
@@ -1518,6 +1520,31 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1123634002}
   m_CullTransparentMesh: 0
+--- !u!114 &1123634006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1123634002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 0
+  m_Spacing: 0
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 1
+  m_ChildControlHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
 --- !u!1 &1147895008
 GameObject:
   m_ObjectHideFlags: 0
@@ -1642,6 +1669,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: TestItem
+  EntityType: 0
   animator: {fileID: 0}
   SelectObj: {fileID: 1572354535519592, guid: f9fcb5772e492334f860f10e13015ddd, type: 3}
   Data: {fileID: 0}
@@ -3621,5 +3649,6 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 0de2e8ea977dae647a0e462b191c6717, type: 3}

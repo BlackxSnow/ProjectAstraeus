@@ -10,9 +10,16 @@ public class Item : DynamicEntity
     bool Following;
     GameObject FollowTarget;
 
+    void InitialiseInheritedProperties()
+    {
+        EntityType = EntityTypes.Item;
+    }
+
     protected override void Start()
     {
         base.Start();
+        InitialiseInheritedProperties();
+        EntityType = EntityTypes.Item;
         EntityManager.RegisterItem(this);
         if(Data) Data.SetStats();
         else if(!Data && Controller.Dev)
@@ -40,4 +47,8 @@ public class Item : DynamicEntity
         transform.SetParent(Target.transform);
     }
 
+    public override Enum GetEntityType()
+    {
+        return Data.Type;
+    }
 }

@@ -81,12 +81,12 @@ public class ItemModule : ScriptableObject
             KVPListArray = new GameObject[1];
 
             UIController.KVPData<float>[] CostData = new UIController.KVPData<float>[Resources.ResourceCount];
-            CostData[0] = new UIController.KVPData<float>("Iron", Cost.Iron, null, Group: KVPGroup, ValueDelegate: KeyValuePanel.ModuleGetValue.Cost_Iron);
-            CostData[1] = new UIController.KVPData<float>("Copper", Cost.Copper, null, Group: KVPGroup, ValueDelegate: KeyValuePanel.ModuleGetValue.Cost_Copper);
-            CostData[2] = new UIController.KVPData<float>("Alloy", Cost.Alloy, null, Group: KVPGroup, ValueDelegate: KeyValuePanel.ItemGetValue.Cost_Alloy);
+            CostData[0] = new UIController.KVPData<float>("Iron", Cost.Iron, null, Group: KVPGroup, ValueDelegate: KeyValuePanel.ModuleGetValue.Cost_Iron, RefModule: this);
+            CostData[1] = new UIController.KVPData<float>("Copper", Cost.Copper, null, Group: KVPGroup, ValueDelegate: KeyValuePanel.ModuleGetValue.Cost_Copper, RefModule: this);
+            CostData[2] = new UIController.KVPData<float>("Alloy", Cost.Alloy, null, Group: KVPGroup, ValueDelegate: KeyValuePanel.ModuleGetValue.Cost_Alloy, RefModule: this);
 
-            KVPArray[0] = UIController.InstantiateKVP("Size Modifier", SizeMultiplier, Parent, 2, Group: KVPGroup, ValueDelegate: KeyValuePanel.ModuleGetValue.SizeMod);
-            KVPArray[1] = UIController.InstantiateKVP("Mass Modifier", MassMultiplier, Parent, 2, Group: KVPGroup, ValueDelegate: KeyValuePanel.ModuleGetValue.MassMod);
+            KVPArray[0] = UIController.InstantiateKVP("Size Modifier", SizeMultiplier, Parent, 2, Group: KVPGroup, ValueDelegate: KeyValuePanel.ModuleGetValue.SizeMod, RefModule: this);
+            KVPArray[1] = UIController.InstantiateKVP("Mass Modifier", MassMultiplier, Parent, 2, Group: KVPGroup, ValueDelegate: KeyValuePanel.ModuleGetValue.MassMod, RefModule: this);
             KVPListArray[0] = UIController.InstantiateKVPList("Cost", CostData, Parent);
             return KVPArray;
         }
@@ -102,7 +102,7 @@ public class ItemModule : ScriptableObject
             {
                 GameObject[] ThisKVPArray = new GameObject[1];
 
-                ThisKVPArray[0] = UIController.InstantiateKVP("Armour", Armour, Parent, 0, Group: KVPGroup, ValueDelegate: KeyValuePanel.ModuleGetValue.Armour);
+                ThisKVPArray[0] = UIController.InstantiateKVP("Armour", Armour, Parent, 0, Group: KVPGroup, ValueDelegate: KeyValuePanel.ModuleGetValue.Armour, RefModule: this);
 
                 GameObject[] BaseKVPArray = base.InstantiateStatKVPs(Parent, KVPGroup, out KVPListArray);
                 GameObject[] ReturnKVPArray = Utility.CombineArrays(BaseKVPArray, ThisKVPArray);
@@ -142,7 +142,7 @@ public class ItemModule : ScriptableObject
             {
                 GameObject[] ThisKVPArray = new GameObject[1];
 
-                ThisKVPArray[0] = UIController.InstantiateKVP("Power", Power, Parent, 0, ValueDelegate: KeyValuePanel.ModuleGetValue.Power);
+                ThisKVPArray[0] = UIController.InstantiateKVP("Power", Power, Parent, 0, ValueDelegate: KeyValuePanel.ModuleGetValue.Power, RefModule: this);
 
                 GameObject[] BaseKVPArray = base.InstantiateStatKVPs(Parent, KVPGroup, out KVPListArray);
                 GameObject[] ReturnKVPArray = Utility.CombineArrays(BaseKVPArray, ThisKVPArray);
@@ -176,8 +176,8 @@ public class ItemModule : ScriptableObject
             {
                 GameObject[] ThisKVPArray = new GameObject[2];
 
-                ThisKVPArray[0] = UIController.InstantiateKVP("Shield", Shield, Parent, 0, ValueDelegate: KeyValuePanel.ModuleGetValue.Shield);
-                ThisKVPArray[1] = UIController.InstantiateKVP("Power Use", PowerUsage, Parent, 0, ValueDelegate: KeyValuePanel.ModuleGetValue.PowerUsage);
+                ThisKVPArray[0] = UIController.InstantiateKVP("Shield", Shield, Parent, 0, ValueDelegate: KeyValuePanel.ModuleGetValue.Shield, RefModule: this);
+                ThisKVPArray[1] = UIController.InstantiateKVP("Power Use", PowerUsage, Parent, 0, ValueDelegate: KeyValuePanel.ModuleGetValue.PowerUsage, RefModule: this);
 
                 GameObject[] BaseKVPArray = base.InstantiateStatKVPs(Parent, KVPGroup, out KVPListArray);
                 GameObject[] ReturnKVPArray = Utility.CombineArrays(BaseKVPArray, ThisKVPArray);

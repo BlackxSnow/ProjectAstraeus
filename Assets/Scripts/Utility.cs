@@ -116,6 +116,18 @@ public class Utility : MonoBehaviour
         return ReturnArray;
     }
 
+    public static List<T> CombineLists<T>(List<T> BaseList, params List<T>[] AdditionalLists)
+    {
+        for(int i = 0; i < AdditionalLists.Length; i++)
+        {
+            foreach(T item in AdditionalLists[i])
+            {
+                BaseList.Add(item);
+            }
+        }
+        return BaseList;
+    }
+
     public static Transform[] GetChildren(Transform Parent)
     {
         Transform[] Children = new Transform[Parent.childCount];

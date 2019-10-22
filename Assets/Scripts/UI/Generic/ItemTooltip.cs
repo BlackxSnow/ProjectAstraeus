@@ -12,6 +12,7 @@ public class ItemTooltip : MonoBehaviour
     public Image ItemImageComp;
 
     public GameObject StatsPanel;
+    public KeyValueGroup KVPGroup;
 
     public void SetInfo(string Name, string Type, Sprite Icon = null)
     {

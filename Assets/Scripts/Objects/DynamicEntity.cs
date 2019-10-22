@@ -67,5 +67,5 @@ public class DynamicEntity : Entity, ISelectable
         SelectObjProjector.orthographicSize = _BoundsSize + 0.25f;
     }
 
-    public virtual GameObject[] InstantiateStatDisplay() { return null; }
+    public virtual List<GameObject> InstantiateStatDisplay() { return null; }
 }

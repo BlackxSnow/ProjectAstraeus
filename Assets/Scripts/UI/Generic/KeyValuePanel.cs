@@ -102,42 +102,50 @@ public class KeyValuePanel : MonoBehaviour
         return MinFont;
     }
 
-    public delegate string GetValueDelegate();
+    public delegate string GetValueDelegate(ItemModule.AdditionalModule RefModule, ItemData RefItem);
     public GetValueDelegate GetValue;
     public bool DoNotUpdate = false;
+    public struct RefStruct
+    {
+        public ItemModule.AdditionalModule RefModule;
+        public ItemData RefItem;
+    }
+    public RefStruct Refs = new RefStruct();
 
     public void UpdateValue()
     {
-        if(!DoNotUpdate)    Value.TextMesh.text = GetValue();
+        if (DoNotUpdate) return;
+
+        Value.TextMesh.text = GetValue(Refs.RefModule, Refs.RefItem);
     }
 
     public static class ModuleGetValue
     {
-        public static string Armour() =>        string.Format("{0}", Utility.RoundToNDecimals(( CraftingUI.CurrentModule as Plating).Armour,        1));
-        public static string Cost_Iron() =>     string.Format("{0}",                            CraftingUI.CurrentModule.Cost.Iron                   );
-        public static string Cost_Copper() =>   string.Format("{0}",                            CraftingUI.CurrentModule.Cost.Copper                 );
-        public static string Cost_Alloy() =>    string.Format("{0}",                            CraftingUI.CurrentModule.Cost.Alloy                  );
-        public static string MassMod() =>       string.Format("{0}", Utility.RoundToNDecimals(  CraftingUI.CurrentModule.MassMultiplier,            1));
-        public static string Power() =>         string.Format("{0}", Utility.RoundToNDecimals(( CraftingUI.CurrentModule as Reactor).Power,         1));
-        public static string PowerUsage() =>    string.Format("{0}", Utility.RoundToNDecimals(( CraftingUI.CurrentModule as Shielding).PowerUsage,  1));
-        public static string Shield() =>        string.Format("{0}", Utility.RoundToNDecimals(( CraftingUI.CurrentModule as Shielding).Shield,      1));
-        public static string SizeMod() =>       string.Format("{0}",                            CraftingUI.CurrentModule.SizeMultiplier,            1);
+        public static string Armour(ItemModule.AdditionalModule RefModule, ItemData RefItem) => string.Format("{0}", Utility.RoundToNDecimals((RefModule as Plating).Armour, 1));
+        public static string Cost_Iron(ItemModule.AdditionalModule RefModule, ItemData RefItem) => string.Format("{0}", RefModule.Cost.Iron);
+        public static string Cost_Copper(ItemModule.AdditionalModule RefModule, ItemData RefItem) => string.Format("{0}", RefModule.Cost.Copper);
+        public static string Cost_Alloy(ItemModule.AdditionalModule RefModule, ItemData RefItem) => string.Format("{0}", RefModule.Cost.Alloy);
+        public static string MassMod(ItemModule.AdditionalModule RefModule, ItemData RefItem) => string.Format("{0}", Utility.RoundToNDecimals(RefModule.MassMultiplier, 1));
+        public static string Power(ItemModule.AdditionalModule RefModule, ItemData RefItem) => string.Format("{0}", Utility.RoundToNDecimals((RefModule as Reactor).Power, 1));
+        public static string PowerUsage(ItemModule.AdditionalModule RefModule, ItemData RefItem) => string.Format("{0}", Utility.RoundToNDecimals((RefModule as Shielding).PowerUsage, 1));
+        public static string Shield(ItemModule.AdditionalModule RefModule, ItemData RefItem) => string.Format("{0}", Utility.RoundToNDecimals((RefModule as Shielding).Shield, 1));
+        public static string SizeMod(ItemModule.AdditionalModule RefModule, ItemData RefItem) => string.Format("{0}", RefModule.SizeMultiplier, 1);
     }
 
     public static class ItemGetValue
     {
-        public static string Armour() =>            string.Format("{0}", Utility.RoundToNDecimals(  CraftingUI.CurrentItem.Stats.Armour,            1));
-        public static string ArmourPiercing() =>    string.Format("{0}", Utility.RoundToNDecimals(  CraftingUI.CurrentItem.Stats.ArmourPiercing,    1));
-        public static string AttackSpeed() =>       string.Format("{0}", Utility.RoundToNDecimals(  CraftingUI.CurrentItem.Stats.AttackSpeed,       1));
-        public static string Cost_Iron() =>         string.Format("{0}", Utility.RoundToNDecimals(  CraftingUI.CurrentItem.Stats.Cost.Iron,         1));
-        public static string Cost_Copper() =>       string.Format("{0}", Utility.RoundToNDecimals(  CraftingUI.CurrentItem.Stats.Cost.Copper,       1));
-        public static string Cost_Alloy() =>        string.Format("{0}", Utility.RoundToNDecimals(  CraftingUI.CurrentItem.Stats.Cost.Alloy,        1));
-        public static string Damage() =>            string.Format("{0}", Utility.RoundToNDecimals(  CraftingUI.CurrentItem.Stats.Damage,            1));
-        public static string Mass() =>              string.Format("{0}", Utility.RoundToNDecimals(  CraftingUI.CurrentItem.Stats.Mass,              1));
-        public static string Power() =>             string.Format("{0}", Utility.RoundToNDecimals(  CraftingUI.CurrentItem.Stats.Power,             1));
-        public static string PowerUse() =>          string.Format("{0}", Utility.RoundToNDecimals(  CraftingUI.CurrentItem.Stats.PowerUse,          1));
-        public static string Range() =>             string.Format("{0}", Utility.RoundToNDecimals(  CraftingUI.CurrentItem.Stats.Range,             1));
-        public static string Shield() =>            string.Format("{0}", Utility.RoundToNDecimals(  CraftingUI.CurrentItem.Stats.Shield,            1));
-        public static string Size() =>              string.Format("{0}",                            CraftingUI.CurrentItem.Stats.Size,              1);
+        public static string Armour(ItemModule.AdditionalModule RefModule, ItemData RefItem) => string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.Armour, 1));
+        public static string ArmourPiercing(ItemModule.AdditionalModule RefModule, ItemData RefItem) => string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.ArmourPiercing, 1));
+        public static string AttackSpeed(ItemModule.AdditionalModule RefModule, ItemData RefItem) => string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.AttackSpeed, 1));
+        public static string Cost_Iron(ItemModule.AdditionalModule RefModule, ItemData RefItem) => string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.Cost.Iron, 1));
+        public static string Cost_Copper(ItemModule.AdditionalModule RefModule, ItemData RefItem) => string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.Cost.Copper, 1));
+        public static string Cost_Alloy(ItemModule.AdditionalModule RefModule, ItemData RefItem) => string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.Cost.Alloy, 1));
+        public static string Damage(ItemModule.AdditionalModule RefModule, ItemData RefItem) => string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.Damage, 1));
+        public static string Mass(ItemModule.AdditionalModule RefModule, ItemData RefItem) => string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.Mass, 1));
+        public static string Power(ItemModule.AdditionalModule RefModule, ItemData RefItem) => string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.Power, 1));
+        public static string PowerUse(ItemModule.AdditionalModule RefModule, ItemData RefItem) => string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.PowerUse, 1));
+        public static string Range(ItemModule.AdditionalModule RefModule, ItemData RefItem) => string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.Range, 1));
+        public static string Shield(ItemModule.AdditionalModule RefModule, ItemData RefItem) => string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.Shield, 1));
+        public static string Size(ItemModule.AdditionalModule RefModule, ItemData RefItem) => string.Format("{0}", RefItem.Stats.Size, 1);
     }
 }

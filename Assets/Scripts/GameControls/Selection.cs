@@ -67,6 +67,7 @@ public class Selection : MonoBehaviour
             _PC.Selected = true;
             SelectedObjs.Add(_PC);
         }
+        SetSelectionDisplay();
     }
     public void SelectPCByName (Text Name)
     {
@@ -82,6 +83,7 @@ public class Selection : MonoBehaviour
             _Selectable.FinalisedSelection = false;
         }
         SelectedObjs.Clear();
+        SetSelectionDisplay();
     }
 
     void SingleSelect() //Select single with raycast
@@ -122,6 +124,7 @@ public class Selection : MonoBehaviour
                 }
             }
         }
+        SetSelectionDisplay();
     }
 
     void MultiSelect() //Select multiple in rectangle
@@ -154,5 +157,16 @@ public class Selection : MonoBehaviour
         {
             if (_Selectable.Selected) { _Selectable.FinalisedSelection = true; }
         }
+        SetSelectionDisplay();
+    }
+
+    void SetSelectionDisplay()
+    {
+        if (SelectedObjs.Count == 0)
+        {
+            HUDController.HUDControl.ClearSelectionUI();
+            return;
+        }
+        HUDController.HUDControl.DisplaySelectionUI(SelectedObjs[0]);
     }
 }

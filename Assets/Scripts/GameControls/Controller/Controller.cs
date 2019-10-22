@@ -32,4 +32,13 @@ public class Controller : MonoBehaviour {
         SceneManager.LoadScene(1); //Loading Screen
         SceneManager.LoadScene(Index);
     }
+
+    public void StartCoroutineWrapper(IEnumerator Routine)
+    {
+        StartCoroutine(Routine);
+    }
+    public void StopCoroutineWrapper(IEnumerator Routine)
+    {
+        StopCoroutine(Routine);
+    }
 }

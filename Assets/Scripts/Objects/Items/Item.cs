@@ -35,7 +35,8 @@ public class Item : DynamicEntity
     }
     public void SetFollow(GameObject Target)
     {
-        transform.position = Target.transform.position;
+        if(Target)  transform.position = Target.transform.position;
+
         transform.SetParent(Target.transform);
     }
 

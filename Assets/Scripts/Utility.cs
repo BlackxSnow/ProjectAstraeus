@@ -125,4 +125,52 @@ public class Utility : MonoBehaviour
         }
         return Children;
     }
+
+    public class Timer : ScriptableObject
+    {
+        //Limit in seconds
+        public float Limit = 1f;
+        public float Current = 0f;
+        private float Interval;
+
+        public delegate void ElapsedDelegate();
+        public ElapsedDelegate Elapsed;
+
+        public bool Enabled = false;
+        public void Start()
+        {
+            Current = 0f;
+            Interval = Mathf.Min(Limit / 5, 1);
+            Enabled = true;
+            Controller.Control.StartCoroutine(Counter());
+        }
+        public void Stop()
+        {
+            Enabled = false;
+            Current = 0f;
+        }
+
+        IEnumerator Counter()
+        {
+            while (Enabled)
+            {
+
+                if (Current >= Limit)
+                {
+                    Elapsed();
+                    yield break;
+                }
+
+                Current += Interval;
+                yield return new WaitForSeconds(Interval);
+            }
+            if (!Enabled) yield break;
+        }
+
+        public Timer(float Seconds, ElapsedDelegate RunMethod)
+        {
+            Limit = Seconds;
+            Elapsed = RunMethod;
+        }
+    }
 }

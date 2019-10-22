@@ -64,6 +64,13 @@ public class Inventory : MonoBehaviour
             return false;
 
         InventoryList.Remove(item);
+
+        if (Drop)
+        {
+            item.SetFollow(null);
+            item.Unpack();
+        }
+
         return true;
     }
 

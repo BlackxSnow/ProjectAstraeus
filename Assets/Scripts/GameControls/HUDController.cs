@@ -2,12 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class HUDController : MonoBehaviour
 {
     public static HUDController HUDControl;
     Transform CharacterPanel;
     public GameObject CharacterUI;
+
+    [System.Serializable]
+    public struct SelectInfo
+    {
+        public TextMeshProUGUI Name;
+        public TextMeshProUGUI Type;
+        public Image Icon;
+
+        public GameObject DetailsPanel;
+    }
+    public SelectInfo SelectHUD;
 
     List<Character> PortraitedChracters = new List<Character>();
 
@@ -41,5 +53,14 @@ public class HUDController : MonoBehaviour
     public void ActivateWindow (GameObject Window)
     {
         Window.SetActive(true);
+    }
+
+    public void DisplaySelectionUI(ISelectable Selection)
+    {
+
+    }
+    public void ClearSelectionUI()
+    {
+
     }
 }

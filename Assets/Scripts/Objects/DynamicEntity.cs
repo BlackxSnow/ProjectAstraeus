@@ -66,4 +66,6 @@ public class DynamicEntity : Entity, ISelectable
         float _BoundsSize = Mathf.Max(colliderComponent.bounds.size.x, colliderComponent.bounds.size.z);
         SelectObjProjector.orthographicSize = _BoundsSize + 0.25f;
     }
+
+    public virtual GameObject[] InstantiateStatDisplay() { return null; }
 }

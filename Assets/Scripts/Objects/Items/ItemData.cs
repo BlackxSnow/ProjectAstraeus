@@ -43,6 +43,7 @@ public class ItemData : ScriptableObject
         }
     }
 
+    public string ItemName;
     public ItemStats Stats;
 
     //Modular Parts

@@ -4,8 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Linq;
+using System.Timers;
 
-public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
 {
     Image Icon;
 
@@ -31,6 +32,8 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     Vector3 ModifiedMousePosition;
     Vector3 MouseOffset;
 
+    Utility.Timer HoverTimer;
+    bool AllowToolTip = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -42,6 +45,9 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         ESystem = EventSystem.current;
 
         RefResolution = ParentCanvasScaler.referenceResolution;
+
+        Utility.Timer.ElapsedDelegate del = ToolTipEvent;
+        HoverTimer = new Utility.Timer(1, del);
     }
 
     void Update()
@@ -53,10 +59,13 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
             RTransform.anchoredPosition = ModifiedMousePosition - MouseOffset;
         }
+        CheckHover();
     }
 
     public void OnPointerDown(PointerEventData data)
     {
+        AllowToolTip = false;
+        if (ToolTipObject) Destroy(ToolTipObject);
         Darken(true);
         Dragging = true;
         SetFollowCursor();
@@ -117,4 +126,62 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         MouseOffset = new Vector3(ModifiedMousePosition.x - RTransform.anchoredPosition.x, ModifiedMousePosition.y - RTransform.anchoredPosition.y, 0);
         FollowingCursor = true;
     }
+
+    //ToolTips
+    GameObject ToolTipObject;
+    bool MouseOver = false;
+    public void OnPointerEnter(PointerEventData data)
+    {
+        MouseOver = true;
+    }
+    public void OnPointerExit(PointerEventData data)
+    {
+        MouseOver = false;
+    }
+
+    Vector3 LastMousePosition;
+    Vector3 SpawnPosition;
+    bool HasMouseMoved(float Threshold = 5.0f)
+    {
+        if(Vector3.Distance(Input.mousePosition, LastMousePosition) < Threshold)
+        {
+            LastMousePosition = Input.mousePosition;
+            return false;
+        } else
+        {
+            LastMousePosition = Input.mousePosition;
+            return true;
+        }
+    }
+
+    bool IsMouseBeyondDistance(float Threshold = 10.0f)
+    {
+        if (Vector3.Distance(Input.mousePosition, SpawnPosition) > Threshold)
+            return true;
+        else
+            return false;
+    }
+
+    void ToolTipEvent()
+    {
+        AllowToolTip = false;
+        SpawnPosition = Input.mousePosition;
+        ToolTipObject = UIController.InstantiateToolTip(RefItem);
+    }
+
+    void CheckHover()
+    {
+        if (ToolTipObject && IsMouseBeyondDistance())
+        {
+            Destroy(ToolTipObject);
+            AllowToolTip = true;
+        }
+
+        if (MouseOver && AllowToolTip && !HasMouseMoved() && !HoverTimer.Enabled && !ToolTipObject)
+        {
+            HoverTimer.Start();
+        } else if((!MouseOver || HasMouseMoved()) && HoverTimer.Enabled)
+            HoverTimer.Stop();
+    }
+
 }

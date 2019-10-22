@@ -8,11 +8,15 @@ using static ItemModule.AdditionalModule;
 
 public class UIController : MonoBehaviour
 {
+    public static GameObject CanvasObject;
+
     public static GameObject KeyValuePanelObjectPrefab;
     public static GameObject KeyValueListObjectPrefab;
     public static GameObject TextObjectPrefab;
     public static GameObject ValueSliderPrefab;
     public static GameObject ModuleDisplayPrefab;
+    public static GameObject ItemToolTipPrefab;
+    public static GameObject ToolTipPrefab;
 
     private void Awake()
     {
@@ -21,6 +25,9 @@ public class UIController : MonoBehaviour
         TextObjectPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/TextObject");
         ValueSliderPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/ValueSlider");
         ModuleDisplayPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/ModuleDisplayPanel");
+        ItemToolTipPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/ItemToolTip");
+
+        CanvasObject = FindObjectOfType<Canvas>().gameObject;
     }
 
     public struct KVPData<T>
@@ -166,5 +173,18 @@ public class UIController : MonoBehaviour
         Script.Name.text = Module.ModuleName;
 
         return DisplayPanel;
+    }
+    public static GameObject InstantiateToolTip(Item item)
+    {
+        GameObject ToolTip;
+        ToolTip = Instantiate(ItemToolTipPrefab, CanvasObject.transform);
+        ToolTip.GetComponent<RectTransform>().position = Input.mousePosition;
+
+        ItemTooltip Script = ToolTip.GetComponent<ItemTooltip>();
+        ItemData Data = item.Data;
+
+        Script.SetInfo(Data.ItemName, string.Format("{0}", Data.Type));
+
+        return ToolTip;
     }
 }

@@ -30,4 +30,6 @@ public interface ISelectable
     }
 
     void SelectControl(); //Method to check and apply circled/selected
+
+    GameObject[] InstantiateStatDisplay(); //Method for all selectables to generate stat UI objects for the HUD
 }

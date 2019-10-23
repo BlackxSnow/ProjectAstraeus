@@ -13,10 +13,25 @@ public class Entity : MonoBehaviour, IOwnable
         Vehicle,
         Structure
     }
+    [Flags]
+    public enum EntityFlagsEnum
+    {
+        HasInventory = 1 << 0,
+        CanEquip = 1 << 1
+    }
+
+    public struct EntityComponentsStruct
+    {
+        public Inventory @Inventory;
+        public Equipment @Equipment;
+    }
+
     public int FactionID { get; set; }
 
     public string Name;
     public EntityTypes EntityType;
+    public EntityFlagsEnum EntityFlags;
+    public EntityComponentsStruct EntityComponents;
 
     public Animator animator;
     protected Renderer rendererComponent;
@@ -26,11 +41,19 @@ public class Entity : MonoBehaviour, IOwnable
         return EntityType;
     }
 
+    public virtual void GetEntityComponents()
+    {
+        EntityComponents.Inventory = GetComponent<Inventory>();
+        if (EntityComponents.Inventory) EntityFlags |= EntityFlagsEnum.HasInventory;
+    }
+
     // Start is called before the first frame update
     protected virtual void Start()
     {
+        GetEntityComponents();
+        
         animator = GetComponent<Animator>();
-        Name = name;
+        if (Name == "") Name = name;
         FactionID = 0;//Mathf.RoundToInt(Random.value * (FactionManager.Factions.Count - 1));
         rendererComponent = gameObject.GetComponentInChildren<Renderer>();
         if (rendererComponent)

@@ -1,24 +1,22 @@
-﻿using System.Collections;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
+using TMPro;
 
 public class InventoryUI : Window
 {
-    Inventory TargetInventory;
-    public Inventory OpenInventory;
+    public Inventory CurrentInventory;
 
     public GameObject InventoryGrid;
     public int GridSize = 25;
 
     GridLayoutGroup LayoutComponent;
-    GameObject GridPanel;
+    public GameObject GridPanel;
     RectTransform GridRTransform;
 
-    GameObject ItemPanel;
-    Text InventoryName;
+    public GameObject ItemPanel;
+    public TextMeshProUGUI InventoryName;
 
     public GameObject ItemIcon;
 
@@ -27,44 +25,38 @@ public class InventoryUI : Window
 
     List<Item> RenderedItems = new List<Item>();
 
-    // Start is called before the first frame update
-    void Start()
+    //Manually called Initiatisation
+    bool Initialised = false;
+    void Init()
     {
-        GridPanel = transform.GetChild(0).gameObject;
+        Initialised = true;
+
         LayoutComponent = GridPanel.GetComponent<GridLayoutGroup>();
         GridRTransform = this.gameObject.GetComponent<RectTransform>();
-
-        ItemPanel = transform.GetChild(1).gameObject;
-        InventoryName = transform.GetChild(2).GetComponent<Text>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        BuildAndRenderCheck();
+        RenderCheck();
     }
 
-    private void BuildAndRenderCheck()
+    public void OpenInventory(Inventory TargetInventory)
     {
-        if (Selection.SelectedObjs.Count == 1)
-        {
-            Inventory _Inventory = (Selection.SelectedObjs[0] as MonoBehaviour).gameObject.GetComponent<Inventory>();
-            if (_Inventory)
-            {
-                TargetInventory = _Inventory;
-                if (OpenInventory != TargetInventory)
-                {
-                    BuildGrid();
-                    InventoryName.text = TargetInventory.gameObject.name;
-                }
-            }
-        }
-        if (OpenInventory && (OpenInventory.InventoryList.Except(RenderedItems).Any() || RenderedItems.Except(OpenInventory.InventoryList).Any()))
+        if (!Initialised) Init();
+        BuildGrid(TargetInventory);
+        InventoryName.text = TargetInventory.Owner.Name;
+    }
+
+    private void RenderCheck()
+    {
+        //Check if either list is out of sync
+        if (CurrentInventory && (CurrentInventory.InventoryList.Except(RenderedItems).Any() || RenderedItems.Except(CurrentInventory.InventoryList).Any()))
             RenderItems();
     }
 
     //Build the inventory grid to size specification
-    private void BuildGrid()
+    private void BuildGrid(Inventory TargetInventory)
     {
         if (TargetInventory)
         {
@@ -82,7 +74,7 @@ public class InventoryUI : Window
             }
             GridRTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, TargetInventory.InventorySize.x * GridSize + 50);
             GridRTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, TargetInventory.InventorySize.y * GridSize + 70);
-            OpenInventory = TargetInventory;
+            CurrentInventory = TargetInventory;
         }
     }
 
@@ -94,11 +86,11 @@ public class InventoryUI : Window
         ActiveItems.Clear();
         RenderedItems.Clear();
 
-        for (int y = 0; y < TargetInventory.InventorySize.y; y++)
+        for (int y = 0; y < CurrentInventory.InventorySize.y; y++)
         {
-            for (int x = 0; x < TargetInventory.InventorySize.x; x++)
+            for (int x = 0; x < CurrentInventory.InventorySize.x; x++)
             {
-                Item TargetItem = TargetInventory.InventoryArray[x, y];
+                Item TargetItem = CurrentInventory.InventoryArray[x, y];
                 if (TargetItem && !RenderedItems.Contains(TargetItem))
                 {
                     RenderedItems.Add(TargetItem);
@@ -107,7 +99,7 @@ public class InventoryUI : Window
 
                     ItemIcon _II = _.GetComponent<ItemIcon>();
                     _II.UIContainer = this;
-                    _II.Container = TargetInventory;
+                    _II.Container = CurrentInventory;
                     _II.RefItem = TargetItem;
 
                     RectTransform _RT = _.GetComponent<RectTransform>();
@@ -117,6 +109,5 @@ public class InventoryUI : Window
                 }
             }
         }
-        //Debug.Log(string.Format("Finished Rendering... Active: {0}, Rendered: {1}, Target: {2}", ActiveItems.Count, RenderedItems.Count, TargetInventory.InventoryList.Count));
     }
 }

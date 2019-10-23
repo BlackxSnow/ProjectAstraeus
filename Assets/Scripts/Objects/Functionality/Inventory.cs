@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
+    public Entity Owner;
     public List<Item> InventoryList = new List<Item>();
     public Item[,] InventoryArray;
     public Vector2Int InventorySize;
 
     private void Start()
     {
+        Owner = GetComponent<Entity>();
         InventoryArray = new Item[(int)InventorySize.x, (int)InventorySize.y];
     }
 

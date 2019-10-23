@@ -22,8 +22,6 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
 
     Vector2 RefResolution;
 
-    EventSystem ESystem;
-
     public Item RefItem;
 
     bool Dragging;
@@ -42,7 +40,6 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
         ParentCanvasObj = transform.parent.parent.parent.gameObject;
         ParentCanvasScaler = ParentCanvasObj.GetComponent<CanvasScaler>();
         ParentGraphicRaycast = ParentCanvasObj.GetComponent<GraphicRaycaster>();
-        ESystem = EventSystem.current;
 
         RefResolution = ParentCanvasScaler.referenceResolution;
 
@@ -98,11 +95,11 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
             Vector2Int DropInventoryLocation = new Vector2Int(Mathf.RoundToInt(DropOffset.x / TargetScript.GridSize), Mathf.RoundToInt(DropOffset.y / TargetScript.GridSize));
 
             //Attempt to move item to new location
-            if (TargetScript.OpenInventory.ItemCheck(RefItem, DropInventoryLocation))
+            if (TargetScript.CurrentInventory.ItemCheck(RefItem, DropInventoryLocation))
             {
                 Container.RemoveItem(RefItem, false);
-                TargetScript.OpenInventory.AddItem(RefItem, DropInventoryLocation);
-                RefItem.SetFollow(TargetScript.OpenInventory.gameObject);
+                TargetScript.CurrentInventory.AddItem(RefItem, DropInventoryLocation);
+                RefItem.SetFollow(TargetScript.CurrentInventory.gameObject);
                 TargetScript.RenderItems();
             }
             UIContainer.RenderItems();
@@ -180,7 +177,7 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
         if (MouseOver && AllowToolTip && !HasMouseMoved() && !HoverTimer.Enabled && !ToolTipObject)
         {
             HoverTimer.Start();
-        } else if((!MouseOver || HasMouseMoved()) && HoverTimer.Enabled)
+        } else if((!MouseOver || HasMouseMoved() || !AllowToolTip) && HoverTimer.Enabled)
             HoverTimer.Stop();
     }
 

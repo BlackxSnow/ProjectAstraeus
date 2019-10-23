@@ -13,11 +13,20 @@ public class HUDController : MonoBehaviour
     [System.Serializable]
     public struct SelectInfo
     {
+        public GameObject InfoPanel;
         public TextMeshProUGUI Name;
         public TextMeshProUGUI Type;
         public Image Icon;
-
         public GameObject DetailsPanel;
+
+        [System.Serializable]
+        public struct ButtonsStruct
+        {
+            public Button Inventory;
+        }
+        public ButtonsStruct Buttons;
+
+        
     }
     public SelectInfo SelectHUD;
 
@@ -58,8 +67,8 @@ public class HUDController : MonoBehaviour
     List<GameObject> SelectionUI;
     public void DisplaySelectionUI(ISelectable Selection)
     {
-        Entity SelectedEntity = Selection as Entity;
-        SelectHUD.Name.text = SelectedEntity.name;
+        DynamicEntity SelectedEntity = Selection as DynamicEntity;
+        SelectHUD.Name.text = SelectedEntity.Name;
         SelectHUD.Type.text = string.Format("{0}", SelectedEntity.GetEntityType());
 
         if(Selection is Item)
@@ -71,18 +80,36 @@ public class HUDController : MonoBehaviour
             SelectionUI = Selection.InstantiateStatDisplay();
         }
         DisplaySelectionButtons(Selection);
+        SelectHUD.InfoPanel.SetActive(true);
     }
+
+    void ResetButton(Button TargetButton)
+    {
+        TargetButton.onClick.RemoveAllListeners();
+        TargetButton.gameObject.SetActive(false);
+    }
+
     void DisplaySelectionButtons(ISelectable Selection)
     {
+        DynamicEntity SelectionEntity = Selection as DynamicEntity;
 
+        ResetButton(SelectHUD.Buttons.Inventory);
+
+        if (SelectionEntity.EntityFlags.HasFlag(Entity.EntityFlagsEnum.HasInventory))
+        {
+            SelectHUD.Buttons.Inventory.onClick.AddListener(delegate { UIController.OpenInventory(SelectionEntity.EntityComponents.Inventory); });
+            SelectHUD.Buttons.Inventory.gameObject.SetActive(true);
+        }
     }
     public void ClearSelectionUI()
     {
+        SelectHUD.InfoPanel.SetActive(false);
         if (SelectionUI == null) return;
         foreach (GameObject UIObject in SelectionUI)
         {
             Destroy(UIObject);
         }
         SelectionUI = null;
+        
     }
 }

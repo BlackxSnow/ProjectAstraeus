@@ -16,7 +16,11 @@ public class UIController : MonoBehaviour
     public static GameObject ValueSliderPrefab;
     public static GameObject ModuleDisplayPrefab;
     public static GameObject ItemToolTipPrefab;
-    public static GameObject ToolTipPrefab;
+    //public static GameObject ToolTipPrefab;
+
+    //Window Prefabs
+    public static GameObject InventoryPrefab;
+    public static GameObject EquipmentPrefab;
 
     private void Awake()
     {
@@ -26,6 +30,9 @@ public class UIController : MonoBehaviour
         ValueSliderPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/ValueSlider");
         ModuleDisplayPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/ModuleDisplayPanel");
         ItemToolTipPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/ItemToolTip");
+
+        InventoryPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/InventoryUI");
+        EquipmentPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/EquipmentUI");
 
         CanvasObject = FindObjectOfType<Canvas>().gameObject;
     }
@@ -58,6 +65,25 @@ public class UIController : MonoBehaviour
             this.RefModule = RefModule;
             this.RefItem = RefItem;
         }
+    }
+
+    public static GameObject OpenInventory(Inventory TargetInventory)
+    {
+        GameObject InventoryObject = Instantiate(InventoryPrefab, CanvasObject.transform);
+        InventoryUI Inventory = InventoryObject.GetComponent<InventoryUI>();
+
+        Inventory.OpenInventory(TargetInventory);
+        return InventoryObject;
+    }
+
+    public static GameObject OpenWindow(Entity TargetEntity)
+    {
+        GameObject EquipmentObject = Instantiate(EquipmentPrefab, CanvasObject.transform);
+        EquipmentUI Script = EquipmentObject.GetComponent<EquipmentUI>();
+
+        Script.Init(TargetEntity);
+
+        return EquipmentObject;
     }
 
     public static GameObject InstantiateText<T>(T Value, Transform Parent)

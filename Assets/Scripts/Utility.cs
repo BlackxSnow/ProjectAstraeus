@@ -63,20 +63,22 @@ public class Utility : MonoBehaviour
         return FlippedFloat;
     }
 
-    public static Vector3 ScreenToCanvasSpace(Vector3 ScreenInput, Vector2 RefResolution)
+    public static Vector3 ScreenToCanvasSpace(Vector3 ScreenInput, RectTransform Canvas)
     {
+        Vector3 CanvasSize = Canvas.rect.size;
         Vector3 ModifiedMousePosition = new Vector3(
-            (ScreenInput.x / Screen.width) * RefResolution.x,
-            (ScreenInput.y / Screen.height) * -RefResolution.y,
+            (ScreenInput.x / Screen.width) * CanvasSize.x,
+            (ScreenInput.y / Screen.height) * -CanvasSize.y,
             ScreenInput.z
         );
         return ModifiedMousePosition;
     }
-    public static Vector2 ScreenToCanvasSpace(Vector2 ScreenInput, Vector2 RefResolution)
+    public static Vector2 ScreenToCanvasSpace(Vector2 ScreenInput, RectTransform Canvas)
     {
+        Vector3 CanvasSize = Canvas.rect.size;
         Vector3 ModifiedPosition = new Vector3(
-            (ScreenInput.x / Screen.width) * RefResolution.x,
-            (ScreenInput.y / Screen.height) * -RefResolution.y
+            (ScreenInput.x / Screen.width) * CanvasSize.x,
+            (ScreenInput.y / Screen.height) * -CanvasSize.y
         );
         return ModifiedPosition;
     }

@@ -4,15 +4,25 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Linq;
-using System.Timers;
+using TMPro;
 
 public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
 {
-    Image Icon;
-
-    public Inventory Container;
-    public InventoryUI UIContainer;
-    public Vector2Int Location;
+    public Image Icon;
+    public TextMeshProUGUI ItemSlotName;
+    public struct InventoryInfoStruct
+    {
+        public Inventory Container;
+        public InventoryUI UIContainer;
+        public Vector2Int Location;
+    }
+    public struct EquipmentInfoStruct
+    {
+        public Equipment Container;
+        public EquipmentSlot UIContainer;
+    }
+    public InventoryInfoStruct InventoryInfo;
+    public EquipmentInfoStruct EquipmentInfo;
 
     RectTransform RTransform;
 
@@ -33,7 +43,6 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
     // Start is called before the first frame update
     void Start()
     {
-        Icon = transform.GetChild(0).GetComponent<Image>();
         RTransform = GetComponent<RectTransform>();
         ParentCanvasObj = UIController.CanvasObject;
         CanvasRect = ParentCanvasObj.GetComponent<RectTransform>();
@@ -53,6 +62,30 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
             RTransform.anchoredPosition = ModifiedMousePosition - MouseOffset;
         }
         CheckHover();
+
+        if (RefItem && ItemSlotName.text != string.Format("{0}", RefItem.Data.Core.Slot))
+        {
+            ItemSlotName.text = RefItem.Data.Core.Slot.ToString();
+        }
+    }
+
+    void RemoveItem(Item TargetItem)
+    {
+        if (InventoryInfo.Container)
+        {
+            InventoryInfo.Container.RemoveItem(TargetItem, false);
+            InventoryInfo.UIContainer.RenderItems();
+        }
+        else if (EquipmentInfo.Container)
+        {
+            EquipmentInfo.Container.UnequipItem(TargetItem, EquipmentInfo.UIContainer);
+            EquipmentInfo.UIContainer.RenderItem();
+        }
+    }
+
+    public void SetSizeToGrid()
+    {
+        RTransform.sizeDelta = RefItem.Data.Stats.Size * InventoryUI.GridSize;
     }
 
     public void OnPointerDown(PointerEventData data)
@@ -62,6 +95,7 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
         Darken(true);
         Dragging = true;
         SetFollowCursor();
+        SetSizeToGrid();
     }
 
     public void OnPointerUp(PointerEventData data)
@@ -71,6 +105,35 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
         List<RaycastResult> Results = new List<RaycastResult>();
         ParentGraphicRaycast.Raycast(data, Results);
 
+        InventoryCheck(Results);
+        EquipmentCheck(Results);
+        
+        //InventoryInfo.UIContainer.RenderItems();
+        Dragging = false;
+        Darken(false);
+    }
+
+    void EquipmentCheck(List<RaycastResult> Results)
+    {
+        RaycastResult TargetResult = Results.Find(R => R.gameObject.GetComponent<EquipmentSlot>() != null);
+        if (!TargetResult.gameObject) return;
+        EquipmentSlot TargetSlot = TargetResult.gameObject.GetComponent<EquipmentSlot>();
+
+        if (Results.Count > 0 && TargetSlot)
+        {
+            Equipment TargetEquipment = TargetSlot.ParentUI.RefEquipment;
+            bool Equipped = TargetEquipment.EquipItem(RefItem, TargetSlot);
+
+            if (Equipped)
+            {
+                RemoveItem(RefItem);
+                RefItem.SetFollow(TargetEquipment.gameObject);
+            }
+        }
+    }
+
+    void InventoryCheck(List<RaycastResult> Results)
+    {
         if (Results.Count > 0 && Results.Any(R => R.gameObject.name.Contains("InventoryGrid")))
         {
             RaycastResult GridResult = Results.Find(R => R.gameObject.name.Contains("InventoryGrid"));
@@ -88,20 +151,17 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
             Vector2 RelativeDropPosition = new Vector2(Input.mousePosition.x - CornersArray[1].x, Input.mousePosition.y - CornersArray[1].y);
             Vector2 DropScreenSpace = Utility.ScreenToCanvasSpace(RelativeDropPosition, CanvasRect);
             Vector2 DropOffset = new Vector2(DropScreenSpace.x - MouseOffset.x, DropScreenSpace.y + MouseOffset.y);
-            Vector2Int DropInventoryLocation = new Vector2Int(Mathf.RoundToInt(DropOffset.x / TargetScript.GridSize), Mathf.RoundToInt(DropOffset.y / TargetScript.GridSize));
+            Vector2Int DropInventoryLocation = new Vector2Int(Mathf.RoundToInt(DropOffset.x / InventoryUI.GridSize), Mathf.RoundToInt(DropOffset.y / InventoryUI.GridSize));
 
             //Attempt to move item to new location
             if (TargetScript.CurrentInventory.ItemCheck(RefItem, DropInventoryLocation))
             {
-                Container.RemoveItem(RefItem, false);
+                RemoveItem(RefItem);
                 TargetScript.CurrentInventory.AddItem(RefItem, DropInventoryLocation);
                 RefItem.SetFollow(TargetScript.CurrentInventory.gameObject);
                 TargetScript.RenderItems();
             }
         }
-        UIContainer.RenderItems();
-        Dragging = false;
-        Darken(false);
     }
 
     private void Darken(bool Dark)

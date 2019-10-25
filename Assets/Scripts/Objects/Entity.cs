@@ -44,7 +44,9 @@ public class Entity : MonoBehaviour, IOwnable
     public virtual void GetEntityComponents()
     {
         EntityComponents.Inventory = GetComponent<Inventory>();
+        EntityComponents.Equipment = GetComponent<Equipment>();
         if (EntityComponents.Inventory) EntityFlags |= EntityFlagsEnum.HasInventory;
+        if (EntityComponents.Equipment) EntityFlags |= EntityFlagsEnum.CanEquip;
     }
 
     // Start is called before the first frame update

@@ -17,15 +17,17 @@ public class ItemModule : ScriptableObject
         public ItemTypes.ItemFlags Flags;
         public ItemTypes.StatFlags StatFlags;
         public AdditionalModule.ModuleList AvailableModules;
+        public Equipment.Slots Slot;
 
         public CoreModule() { }
-        public CoreModule (Vector2Int Size, float Mass, Resources Cost, ItemTypes.ItemFlags Flags, AdditionalModule.ModuleList AvailableModules)
+        public CoreModule (Vector2Int Size, float Mass, Resources Cost, ItemTypes.ItemFlags Flags, AdditionalModule.ModuleList AvailableModules, Equipment.Slots Slot)
         {
             this.Size = Size;
             this.Mass = Mass;
             this.Cost = Cost;
             this.Flags = Flags;
             this.AvailableModules = AvailableModules;
+            this.Slot = Slot;
 
             foreach(ItemTypes.ItemFlags Flag in Utility.GetFlags(Flags))
             {

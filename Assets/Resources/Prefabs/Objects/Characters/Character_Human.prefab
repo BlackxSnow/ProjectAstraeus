@@ -514,6 +514,7 @@ GameObject:
   - component: {fileID: 7340759306711534495}
   - component: {fileID: 3299594036263477098}
   - component: {fileID: 8496146017666990299}
+  - component: {fileID: 4108206609020809199}
   m_Layer: 0
   m_Name: Character_Human
   m_TagString: Untagged
@@ -605,6 +606,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: 
+  EntityType: 0
+  EntityFlags: 0
   animator: {fileID: 0}
   SelectObj: {fileID: 1572354535519592, guid: f9fcb5772e492334f860f10e13015ddd, type: 3}
 --- !u!114 &3299594036263477098
@@ -634,8 +637,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36d8df69b477d7c47a54f73e47c6c75f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Owner: {fileID: 0}
   InventoryList: []
   InventorySize: {x: 10, y: 20}
+--- !u!114 &4108206609020809199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4954345473847913779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87e85d0537dcbca4e91a69af9c54620d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Equipped:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &5260441072930385076
 GameObject:
   m_ObjectHideFlags: 0
@@ -754,6 +777,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0

@@ -34,6 +34,14 @@ public class KeyValueGroup : ScriptableObject
         Dirty = true;
     }
 
+    public void ForceRecalculate()
+    {
+        UniformSize = Recalculate();
+        foreach(KeyValuePanel Member in GroupMembers)
+        {
+            Member.SetSize(UniformSize);
+        }
+    }
     float Recalculate()
     {
         float MinSize = 100;

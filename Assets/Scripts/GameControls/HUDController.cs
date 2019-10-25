@@ -23,6 +23,7 @@ public class HUDController : MonoBehaviour
         public struct ButtonsStruct
         {
             public Button Inventory;
+            public Button Equipment;
         }
         public ButtonsStruct Buttons;
 
@@ -64,23 +65,24 @@ public class HUDController : MonoBehaviour
         Window.SetActive(true);
     }
 
-    List<GameObject> SelectionUI;
+    List<GameObject> SelectionUIKVPs;
     public void DisplaySelectionUI(ISelectable Selection)
     {
         DynamicEntity SelectedEntity = Selection as DynamicEntity;
+        SelectHUD.InfoPanel.SetActive(true);
         SelectHUD.Name.text = SelectedEntity.Name;
         SelectHUD.Type.text = string.Format("{0}", SelectedEntity.GetEntityType());
 
         if(Selection is Item)
         {
-            SelectionUI = (Selection as Item).Data.InstantiateStatKVPs(false, out List<GameObject> KVPLists, SelectHUD.DetailsPanel.transform);
-            Utility.CombineLists(SelectionUI, KVPLists);
+            SelectionUIKVPs = (Selection as Item).Data.InstantiateStatKVPs(false, out List<GameObject> KVPLists, SelectHUD.DetailsPanel.transform);
+            Utility.CombineLists(SelectionUIKVPs, KVPLists);
         } else
         {
-            SelectionUI = Selection.InstantiateStatDisplay();
+            SelectionUIKVPs = Selection.InstantiateStatDisplay();
         }
         DisplaySelectionButtons(Selection);
-        SelectHUD.InfoPanel.SetActive(true);
+        
     }
 
     void ResetButton(Button TargetButton)
@@ -94,22 +96,28 @@ public class HUDController : MonoBehaviour
         DynamicEntity SelectionEntity = Selection as DynamicEntity;
 
         ResetButton(SelectHUD.Buttons.Inventory);
+        ResetButton(SelectHUD.Buttons.Equipment);
 
         if (SelectionEntity.EntityFlags.HasFlag(Entity.EntityFlagsEnum.HasInventory))
         {
             SelectHUD.Buttons.Inventory.onClick.AddListener(delegate { UIController.OpenInventory(SelectionEntity.EntityComponents.Inventory); });
             SelectHUD.Buttons.Inventory.gameObject.SetActive(true);
         }
+        if (SelectionEntity.EntityFlags.HasFlag(Entity.EntityFlagsEnum.CanEquip))
+        {
+            SelectHUD.Buttons.Equipment.onClick.AddListener(delegate { UIController.OpenEquipmentWindow(SelectionEntity); });
+            SelectHUD.Buttons.Equipment.gameObject.SetActive(true);
+        }
     }
     public void ClearSelectionUI()
     {
         SelectHUD.InfoPanel.SetActive(false);
-        if (SelectionUI == null) return;
-        foreach (GameObject UIObject in SelectionUI)
+        if (SelectionUIKVPs == null) return;
+        foreach (GameObject UIObject in SelectionUIKVPs)
         {
             Destroy(UIObject);
         }
-        SelectionUI = null;
+        SelectionUIKVPs = null;
         
     }
 }

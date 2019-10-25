@@ -29,7 +29,8 @@ public class Window : MonoBehaviour, IDraggable, IResizable, IDragHandler, IEndD
 
     public void OnPointerDown(PointerEventData Data)
     {
-        if(!WindowRect) WindowRect = WindowRect = gameObject.GetComponent<RectTransform>();
+        BringToFront();
+        if(!WindowRect) WindowRect = gameObject.GetComponent<RectTransform>();
         Dragging = false;
         Resizing = false;
 
@@ -86,6 +87,26 @@ public class Window : MonoBehaviour, IDraggable, IResizable, IDragHandler, IEndD
     public void OnEndDrag(PointerEventData Data)
     {
         Dragging = false;
+    }
+
+    public void BringToFront()
+    {
+        transform.SetAsLastSibling();
+    }
+    public void TogglePin()
+    {
+        if(transform.parent == UIController.UnpinnedPanel)
+        {
+            transform.SetParent(UIController.PinnedPanel);
+        } else
+        {
+            transform.SetParent(UIController.UnpinnedPanel);
+        }
+    }
+
+    public void Close()
+    {
+        Destroy(this.gameObject);
     }
 
     void Update()

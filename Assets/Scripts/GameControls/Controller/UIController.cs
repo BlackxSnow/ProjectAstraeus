@@ -9,6 +9,8 @@ using static ItemModule.AdditionalModule;
 public class UIController : MonoBehaviour
 {
     public static GameObject CanvasObject;
+    public static Transform PinnedPanel;
+    public static Transform UnpinnedPanel;
 
     public static GameObject KeyValuePanelObjectPrefab;
     public static GameObject KeyValueListObjectPrefab;
@@ -32,9 +34,11 @@ public class UIController : MonoBehaviour
         ItemToolTipPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/ItemToolTip");
 
         InventoryPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/InventoryUI");
-        EquipmentPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/EquipmentUI");
+        EquipmentPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Equipment/EquipmentUI");
 
         CanvasObject = FindObjectOfType<Canvas>().gameObject;
+        UnpinnedPanel = CanvasObject.transform.GetChild(0);
+        PinnedPanel = CanvasObject.transform.GetChild(1);
     }
 
     public struct KVPData<T>
@@ -69,19 +73,21 @@ public class UIController : MonoBehaviour
 
     public static GameObject OpenInventory(Inventory TargetInventory)
     {
-        GameObject InventoryObject = Instantiate(InventoryPrefab, CanvasObject.transform);
+        GameObject InventoryObject = Instantiate(InventoryPrefab, UnpinnedPanel);
         InventoryUI Inventory = InventoryObject.GetComponent<InventoryUI>();
 
         Inventory.OpenInventory(TargetInventory);
+        Inventory.BringToFront();
         return InventoryObject;
     }
 
-    public static GameObject OpenWindow(Entity TargetEntity)
+    public static GameObject OpenEquipmentWindow(Entity TargetEntity)
     {
-        GameObject EquipmentObject = Instantiate(EquipmentPrefab, CanvasObject.transform);
+        GameObject EquipmentObject = Instantiate(EquipmentPrefab, UnpinnedPanel);
         EquipmentUI Script = EquipmentObject.GetComponent<EquipmentUI>();
 
         Script.Init(TargetEntity);
+        Script.BringToFront();
 
         return EquipmentObject;
     }
@@ -221,6 +227,7 @@ public class UIController : MonoBehaviour
         KeyValueGroup Group = new KeyValueGroup();
         
         Data.InstantiateStatKVPs(false, out List<GameObject> _, Script.StatsPanel.transform, Group);
+        Group.ForceRecalculate();
 
         return ToolTip;
     }

@@ -93,6 +93,20 @@ public class Utility : MonoBehaviour
         Vector3 Result = new Vector3(BaseVector.x + AddVector.x, BaseVector.y + AddVector.y, BaseVector.z);
         return Result;
     }
+    public static Equipment.VectorResults RearrangeVector(Vector2 InputVector, out Vector2 ResultVector)
+    {
+        ResultVector = new Vector2();
+        ResultVector.x = Mathf.Max(InputVector.x, InputVector.y);
+        ResultVector.y = Mathf.Min(InputVector.x, InputVector.y);
+
+        if (ResultVector != InputVector)
+        {
+            return Equipment.VectorResults.y;
+        } else
+        {
+            return Equipment.VectorResults.x;
+        }
+    }
 
     public static IEnumerable<Enum> GetFlags(Enum input)
     {

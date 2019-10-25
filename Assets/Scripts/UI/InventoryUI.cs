@@ -9,7 +9,7 @@ public class InventoryUI : Window
     public Inventory CurrentInventory;
 
     public GameObject InventoryGrid;
-    public int GridSize = 25;
+    public static int GridSize = 25;
 
     GridLayoutGroup LayoutComponent;
     public GameObject GridPanel;
@@ -98,8 +98,8 @@ public class InventoryUI : Window
                     ActiveItems.Add(_);
 
                     ItemIcon _II = _.GetComponent<ItemIcon>();
-                    _II.UIContainer = this;
-                    _II.Container = CurrentInventory;
+                    _II.InventoryInfo.UIContainer = this;
+                    _II.InventoryInfo.Container = CurrentInventory;
                     _II.RefItem = TargetItem;
 
                     RectTransform _RT = _.GetComponent<RectTransform>();

@@ -17,13 +17,15 @@ public class Entity : MonoBehaviour, IOwnable
     public enum EntityFlagsEnum
     {
         HasInventory = 1 << 0,
-        CanEquip = 1 << 1
+        CanEquip = 1 << 1,
+        HasStats = 1 << 2,
     }
 
     public struct EntityComponentsStruct
     {
         public Inventory @Inventory;
         public Equipment @Equipment;
+        public StatsAndSkills @Stats;
     }
 
     public int FactionID { get; set; }
@@ -45,8 +47,10 @@ public class Entity : MonoBehaviour, IOwnable
     {
         EntityComponents.Inventory = GetComponent<Inventory>();
         EntityComponents.Equipment = GetComponent<Equipment>();
+        EntityComponents.Stats = GetComponent<StatsAndSkills>();
         if (EntityComponents.Inventory) EntityFlags |= EntityFlagsEnum.HasInventory;
         if (EntityComponents.Equipment) EntityFlags |= EntityFlagsEnum.CanEquip;
+        if (EntityComponents.Stats) EntityFlags |= EntityFlagsEnum.HasStats;
     }
 
     // Start is called before the first frame update

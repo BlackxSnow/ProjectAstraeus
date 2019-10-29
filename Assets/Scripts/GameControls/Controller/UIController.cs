@@ -17,12 +17,14 @@ public class UIController : MonoBehaviour
     public static GameObject TextObjectPrefab;
     public static GameObject ValueSliderPrefab;
     public static GameObject ModuleDisplayPrefab;
+    public static GameObject PanelPrefab;
     public static GameObject ItemToolTipPrefab;
     //public static GameObject ToolTipPrefab;
 
     //Window Prefabs
     public static GameObject InventoryPrefab;
     public static GameObject EquipmentPrefab;
+    public static GameObject StatsPrefab;
 
     private void Awake()
     {
@@ -31,14 +33,24 @@ public class UIController : MonoBehaviour
         TextObjectPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/TextObject");
         ValueSliderPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/ValueSlider");
         ModuleDisplayPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/ModuleDisplayPanel");
+        PanelPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/LayoutPanel");
         ItemToolTipPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/ItemToolTip");
 
         InventoryPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/InventoryUI");
         EquipmentPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Equipment/EquipmentUI");
+        StatsPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Stats/StatsUI");
 
         CanvasObject = FindObjectOfType<Canvas>().gameObject;
         UnpinnedPanel = CanvasObject.transform.GetChild(0);
         PinnedPanel = CanvasObject.transform.GetChild(1);
+    }
+
+    public enum LayoutTypes
+    {
+        None,
+        Horizontal,
+        Vertical,
+        Grid
     }
 
     public struct KVPData<T>
@@ -54,8 +66,9 @@ public class UIController : MonoBehaviour
         public KeyValuePanel.GetValueDelegate ValueDelegate;
         public ItemModule.AdditionalModule RefModule;
         public ItemData RefItem;
+        public StatsAndSkills RefStats;
 
-        public KVPData(string Key, T Value, Transform Parent, int Rounding = 0, Gradient gradient = null, float Min = 0, float Max = 0, KeyValueGroup Group = null, KeyValuePanel.GetValueDelegate ValueDelegate = null, ItemModule.AdditionalModule RefModule = null, ItemData RefItem = null)
+        public KVPData(string Key, T Value, Transform Parent, int Rounding = 0, Gradient gradient = null, float Min = 0, float Max = 0, KeyValueGroup Group = null, KeyValuePanel.GetValueDelegate ValueDelegate = null, ItemModule.AdditionalModule RefModule = null, ItemData RefItem = null, StatsAndSkills RefStats = null)
         {
             this.Key = Key;
             this.Value = Value;
@@ -68,6 +81,7 @@ public class UIController : MonoBehaviour
             this.ValueDelegate = ValueDelegate;
             this.RefModule = RefModule;
             this.RefItem = RefItem;
+            this.RefStats = RefStats;
         }
     }
 
@@ -92,10 +106,28 @@ public class UIController : MonoBehaviour
         return EquipmentObject;
     }
 
-    public static GameObject InstantiateText<T>(T Value, Transform Parent)
+    public static GameObject OpenStatsWindow(StatsAndSkills TargetStats)
+    {
+        GameObject StatsObject = Instantiate(StatsPrefab, UnpinnedPanel);
+        StatsUI Script = StatsObject.GetComponent<StatsUI>();
+
+        Script.Init(TargetStats);
+        Script.BringToFront();
+
+        return StatsObject;
+    }
+
+    public static GameObject InstantiateText<T>(T Value, Transform Parent, KeyValueGroup Group = null)
     {
         GameObject TextInstance = Instantiate(TextObjectPrefab, Parent);
         TextInstance.GetComponent<TextMeshProUGUI>().text = string.Format("{0}", Value);
+        TextKVGroup Script = TextInstance.GetComponent<TextKVGroup>();
+        
+        if (Group)
+        {
+            Script.Group = Group;
+            Group.AddMember(Script);
+        }
 
         return TextInstance;
     }
@@ -103,9 +135,9 @@ public class UIController : MonoBehaviour
     //Instantiates a prefab panel with two texts designed to show a key and value
     public static GameObject InstantiateKVP<T>(KVPData<T> Data)
     {
-        return InstantiateKVP(Data.Key, Data.Value, Data.Parent, Data.Rounding, Data.gradient, Data.Min, Data.Max, Data.Group, Data.ValueDelegate, Data.RefModule, Data.RefItem);
+        return InstantiateKVP(Data.Key, Data.Value, Data.Parent, Data.Rounding, Data.gradient, Data.Min, Data.Max, Data.Group, Data.ValueDelegate, Data.RefModule, Data.RefItem, Data.RefStats);
     }
-    public static GameObject InstantiateKVP<T>(string Key, T Value, Transform Parent, int Rounding = 0, Gradient gradient = null, float Min = 0, float Max = 0, KeyValueGroup Group = null, KeyValuePanel.GetValueDelegate ValueDelegate = null, ItemModule.AdditionalModule RefModule = null, ItemData RefItem = null)
+    public static GameObject InstantiateKVP<T>(string Key, T Value, Transform Parent, int Rounding = 0, Gradient gradient = null, float Min = 0, float Max = 0, KeyValueGroup Group = null, KeyValuePanel.GetValueDelegate ValueDelegate = null, ItemModule.AdditionalModule RefModule = null, ItemData RefItem = null, StatsAndSkills RefStats = null, Enum ValueEnum = null, float PreferredHeight = 0, float KeyRatio = 50, bool LeftAligned = false)
     {
         GameObject Panel;
         TextMeshProUGUI KeyText;
@@ -122,6 +154,17 @@ public class UIController : MonoBehaviour
             KVPScript.Group = Group;
             Group.AddMember(KVPScript);
         }
+        if (PreferredHeight != 0)
+        {
+            Panel.GetComponent<LayoutElement>().preferredHeight = PreferredHeight;
+        }
+        if (LeftAligned)
+        {
+            KeyText.alignment = TextAlignmentOptions.Left;
+            ValueText.alignment = TextAlignmentOptions.Left;
+        }
+        KeyText.GetComponent<RectTransform>().anchorMax = new Vector2(KeyRatio - .05f, 1f);
+        ValueText.GetComponent<RectTransform>().anchorMin = new Vector2(KeyRatio + .05f, 0f);
 
         dynamic Result = Value;
         Color color;
@@ -147,15 +190,19 @@ public class UIController : MonoBehaviour
         KeyText.text = string.Format("{0}", Key);
         ValueText.text = string.Format("{0}", Result);
 
-        if (ValueDelegate != null) KVPScript.GetValue = ValueDelegate;
-        else
+        if (ValueDelegate != null)
+        {
+            KVPScript.GetValue = ValueDelegate;
+        } else
         {
             KVPScript.DoNotUpdate = true;
         }
-        if (ValueDelegate != null && !RefItem && !RefModule) throw new ArgumentException("KVP with ValueDelegate require either a RefItem or RefModule");
+        if (ValueDelegate != null && !RefItem && !RefModule && !RefStats) throw new ArgumentException("KVP with ValueDelegate requires one of: RefItem, RefModule, or RefStats");
 
+        KVPScript.GetValueEnum = ValueEnum;
         KVPScript.Refs.RefItem = RefItem;
         KVPScript.Refs.RefModule = RefModule;
+        KVPScript.Refs.RefStats = RefStats;
 
         return Panel;
     }
@@ -213,6 +260,36 @@ public class UIController : MonoBehaviour
         Script.Name.text = Module.ModuleName;
 
         return DisplayPanel;
+    }
+
+    public static GameObject InstantiateLayoutPanel(Transform Parent, LayoutTypes Layout = LayoutTypes.None, bool ExpandHorizontal = true, bool ExpandVertical = true, float spacing = 0, string PanelName = "")
+    {
+        GameObject PanelInstance = Instantiate(PanelPrefab, Parent);
+        switch (Layout)
+        {
+            case LayoutTypes.None:
+                break;
+            case LayoutTypes.Horizontal:
+                HorizontalLayoutGroup HLayout = PanelInstance.AddComponent<HorizontalLayoutGroup>();
+                HLayout.childForceExpandWidth = ExpandHorizontal;
+                HLayout.childForceExpandHeight = ExpandVertical;
+                HLayout.spacing = spacing;
+                break;
+            case LayoutTypes.Vertical:
+                VerticalLayoutGroup VLayout = PanelInstance.AddComponent<VerticalLayoutGroup>();
+                VLayout.childForceExpandWidth = ExpandHorizontal;
+                VLayout.childForceExpandHeight = ExpandVertical;
+                VLayout.spacing = spacing;
+                break;
+            case LayoutTypes.Grid:
+                PanelInstance.AddComponent<GridLayoutGroup>();
+                break;
+        }
+        if (PanelName != "")
+        {
+            PanelInstance.name = PanelName;
+        }
+        return PanelInstance;
     }
     public static GameObject InstantiateToolTip(Item item)
     {

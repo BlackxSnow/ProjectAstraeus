@@ -400,6 +400,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Group: {fileID: 0}
+  GroupTargetSize: 0
+  DoNotUpdate: 0
 --- !u!114 &2841800026274669990
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -418,5 +420,5 @@ MonoBehaviour:
   m_PreferredWidth: -1
   m_PreferredHeight: 25
   m_FlexibleWidth: -1
-  m_FlexibleHeight: 75
+  m_FlexibleHeight: 1
   m_LayoutPriority: 1

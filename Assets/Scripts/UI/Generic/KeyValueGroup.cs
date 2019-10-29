@@ -4,13 +4,27 @@ using UnityEngine;
 
 public class KeyValueGroup : ScriptableObject
 {
-    List<KeyValuePanel> GroupMembers = new List<KeyValuePanel>();
+    public struct FontSizes
+    {
+        public float Min;
+        public float Max;
+
+        public FontSizes(float Min, float Max)
+        {
+            this.Min = Min;
+            this.Max = Max;
+        }
+    }
+
+    public FontSizes Font = new FontSizes(8, 72);
+
+    List<IGroupableUI> GroupMembers = new List<IGroupableUI>();
     public float UniformSize;
 
     public bool Dirty;
     bool Running;
 
-    public void AddMember(KeyValuePanel Member)
+    public void AddMember(IGroupableUI Member)
     {
         GroupMembers.Add(Member);
     }
@@ -37,7 +51,7 @@ public class KeyValueGroup : ScriptableObject
     public void ForceRecalculate()
     {
         UniformSize = Recalculate();
-        foreach(KeyValuePanel Member in GroupMembers)
+        foreach(IGroupableUI Member in GroupMembers)
         {
             Member.SetSize(UniformSize);
         }
@@ -47,13 +61,14 @@ public class KeyValueGroup : ScriptableObject
         float MinSize = 100;
         float[] SizeArray = new float[GroupMembers.Count];
         int index = 0;
-        foreach(KeyValuePanel KVP in GroupMembers)
+        foreach(IGroupableUI KVP in GroupMembers)
         {
             SizeArray[index] = KVP.CalculateSize();
             index++;
         }
         MinSize = Mathf.Min(SizeArray);
-        foreach (KeyValuePanel KVP in GroupMembers)
+        MinSize = Mathf.Clamp(MinSize, Font.Min, Font.Max);
+        foreach (IGroupableUI KVP in GroupMembers)
         {
             KVP.SetSize(MinSize);
         }
@@ -61,8 +76,10 @@ public class KeyValueGroup : ScriptableObject
         return MinSize;
     }
 
-    public KeyValueGroup()
+    public KeyValueGroup(float MinFont = 8, float MaxFont = 72)
     {
+        Font.Min = MinFont;
+        Font.Max = MaxFont;
         Running = true;
         Controller.Control.StartCoroutineWrapper(LoopRoutine());
     }

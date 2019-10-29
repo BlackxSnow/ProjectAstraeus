@@ -24,6 +24,7 @@ public class HUDController : MonoBehaviour
         {
             public Button Inventory;
             public Button Equipment;
+            public Button Stats;
         }
         public ButtonsStruct Buttons;
 
@@ -97,6 +98,7 @@ public class HUDController : MonoBehaviour
 
         ResetButton(SelectHUD.Buttons.Inventory);
         ResetButton(SelectHUD.Buttons.Equipment);
+        ResetButton(SelectHUD.Buttons.Stats);
 
         if (SelectionEntity.EntityFlags.HasFlag(Entity.EntityFlagsEnum.HasInventory))
         {
@@ -107,6 +109,11 @@ public class HUDController : MonoBehaviour
         {
             SelectHUD.Buttons.Equipment.onClick.AddListener(delegate { UIController.OpenEquipmentWindow(SelectionEntity); });
             SelectHUD.Buttons.Equipment.gameObject.SetActive(true);
+        }
+        if (SelectionEntity.EntityFlags.HasFlag(Entity.EntityFlagsEnum.HasStats))
+        {
+            SelectHUD.Buttons.Stats.onClick.AddListener(delegate { UIController.OpenStatsWindow(SelectionEntity.EntityComponents.Stats); });
+            SelectHUD.Buttons.Stats.gameObject.SetActive(true);
         }
     }
     public void ClearSelectionUI()

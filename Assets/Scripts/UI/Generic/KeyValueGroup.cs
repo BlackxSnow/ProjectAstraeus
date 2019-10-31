@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
 
 public class KeyValueGroup : ScriptableObject
 {
@@ -63,10 +66,15 @@ public class KeyValueGroup : ScriptableObject
         int index = 0;
         foreach(IGroupableUI KVP in GroupMembers)
         {
+            if (!(KVP as MonoBehaviour))
+            {
+                throw new NullReferenceException("IGroupableUI has been destroyed or otherwise no longer exists.");
+            }
             SizeArray[index] = KVP.CalculateSize();
             index++;
         }
-        MinSize = Mathf.Min(SizeArray);
+        int MinSizeIndex = Array.FindIndex(SizeArray, S => S == Mathf.Min(SizeArray));
+        MinSize = SizeArray[MinSizeIndex];
         MinSize = Mathf.Clamp(MinSize, Font.Min, Font.Max);
         foreach (IGroupableUI KVP in GroupMembers)
         {

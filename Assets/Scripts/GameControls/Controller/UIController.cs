@@ -137,7 +137,7 @@ public class UIController : MonoBehaviour
     {
         return InstantiateKVP(Data.Key, Data.Value, Data.Parent, Data.Rounding, Data.gradient, Data.Min, Data.Max, Data.Group, Data.ValueDelegate, Data.RefModule, Data.RefItem, Data.RefStats);
     }
-    public static GameObject InstantiateKVP<T>(string Key, T Value, Transform Parent, int Rounding = 0, Gradient gradient = null, float Min = 0, float Max = 0, KeyValueGroup Group = null, KeyValuePanel.GetValueDelegate ValueDelegate = null, ItemModule.AdditionalModule RefModule = null, ItemData RefItem = null, StatsAndSkills RefStats = null, Enum ValueEnum = null, float PreferredHeight = 0, float KeyRatio = 50, bool LeftAligned = false)
+    public static GameObject InstantiateKVP<T>(string Key, T Value, Transform Parent, int Rounding = 0, Gradient gradient = null, float Min = 0, float Max = 0, KeyValueGroup Group = null, KeyValuePanel.GetValueDelegate ValueDelegate = null, ItemModule.AdditionalModule RefModule = null, ItemData RefItem = null, StatsAndSkills RefStats = null, Enum ValueEnum = null, float PreferredHeight = 0, float KeyRatio = .5f, bool LeftAligned = false)
     {
         GameObject Panel;
         TextMeshProUGUI KeyText;

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class StatsAndSkills : MonoBehaviour
 {
-    public struct StatSkill
+    public class StatSkill
     {
         public enum SkillTypes
         {
@@ -31,7 +31,16 @@ public class StatsAndSkills : MonoBehaviour
         public string[] XPGainActivities { get; }
         public KeyValuePair<string, string>[] AffectedActivities { get; }
 
-
+        public void AddXP(float Amount)
+        {
+            Experience += Amount;
+            if (Experience >= LevelThresholds[Level + 1])
+            {
+                Level++;
+                Experience -= LevelThresholds[Level];
+                Debug.Log(string.Format("Leveled up! Next threshold is Level {0} at {1} XP", Level + 1, LevelThresholds[Level + 1]));
+            }
+        }
         public StatSkill(SkillTypes SkillType, string Description, string[] XPGainActivities, KeyValuePair<string,string>[] AffectedActivities, bool Enabled = true)
         {
             this.SkillType = SkillType;
@@ -44,7 +53,7 @@ public class StatsAndSkills : MonoBehaviour
             LevelThresholds = new float[100];
             for (int i = 0; i < LevelThresholds.Length; i++)
             {
-                LevelThresholds[i] = Mathf.Pow(i, 2f);
+                LevelThresholds[i] = Mathf.Pow(i * 5, 2f);
             }
         }
     }
@@ -62,7 +71,22 @@ public class StatsAndSkills : MonoBehaviour
         throw new ArgumentException(string.Format("Input enum '{0}' is of unhandled type", StatSkillEnum));
             
     }
+    public void AddXP(Enum StatSkillEnum, float XP)
+    {
+        if (StatSkillEnum is SkillsEnum Skill)
+        {
+            Skills[Skill].AddXP(XP);
+            return;
+        }
+        else if (StatSkillEnum is StatsEnum Stat)
+        {
+            Stats[Stat].AddXP(XP);
+            return;
+        }
 
+        throw new ArgumentException(string.Format("Input enum '{0}' is of unhandled type", StatSkillEnum));
+
+    }
 
     //Skill & stat definitions
     public enum StatsEnum
@@ -181,7 +205,7 @@ public class StatsAndSkills : MonoBehaviour
         { SkillsEnum.SubmachineGuns,    new KeyValuePair<string, string>[]{ new KeyValuePair<string, string>("Submachinegun damage","High"), new KeyValuePair<string, string>("Submachinegun reload speed","High"), new KeyValuePair<string, string>("Submachinegun accuracy","High"), new KeyValuePair<string, string>("Handgun related stats", "Low") }},
         { SkillsEnum.HeavyWeapons,      new KeyValuePair<string, string>[]{ new KeyValuePair<string, string>("Heavy weapon damage","High"), new KeyValuePair<string, string>("Heavy weapon reload speed","High"), new KeyValuePair<string, string>("Heavy weapon accuracy","High"), new KeyValuePair<string, string>("Explosives related stats", "Low") }},
         { SkillsEnum.ExplosiveWeaponry, new KeyValuePair<string, string>[]{ new KeyValuePair<string, string>("Explosives damage","High"), new KeyValuePair<string, string>("Explosives reload speed","High"), new KeyValuePair<string, string>("Explosives accuracy","High"), new KeyValuePair<string, string>("Heavy weapon related stats", "Low") }},
-        { SkillsEnum.Bows,              new KeyValuePair<string, string>[]{ new KeyValuePair<string, string>("Bow damage","High"), new KeyValuePair<string, string>("Bow attack speed","High"), new KeyValuePair<string, string>("Bow accuracy","High"), new KeyValuePair<string, string>("Submachinegun related stats", "Low") }},
+        { SkillsEnum.Bows,              new KeyValuePair<string, string>[]{ new KeyValuePair<string, string>("Bow damage","High"), new KeyValuePair<string, string>("Bow attack speed","High"), new KeyValuePair<string, string>("Bow accuracy","High") }},
 
         { SkillsEnum.Athletics,         new KeyValuePair<string, string>[]{ new KeyValuePair<string, string>("Running speed","High"), new KeyValuePair<string, string>("Swimming speed","High") }},
         { SkillsEnum.Acrobatics,        new KeyValuePair<string, string>[]{ new KeyValuePair<string, string>("Climbing speed","High"), new KeyValuePair<string, string>("Climbing success","High") }},

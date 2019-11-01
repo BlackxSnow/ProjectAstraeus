@@ -14,6 +14,8 @@ public class ItemData : ScriptableObject
         {
             { StatFlags.Damage, 0f },
             { StatFlags.AttackSpeed, 0f },
+            { StatFlags.Accuracy, 0f },
+            { StatFlags.Block, 0f },
             { StatFlags.ArmourPiercing, 0f },
             { StatFlags.Range, 0f },
             { StatFlags.Armour, 0f },

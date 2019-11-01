@@ -19,6 +19,16 @@ public class Entity : MonoBehaviour, IOwnable
         HasInventory = 1 << 0,
         CanEquip = 1 << 1,
         HasStats = 1 << 2,
+        CanMove = 1 << 3
+    }
+
+    public struct BaseStatsStruct
+    {
+        public float MoveSpeed;
+        public BaseStatsStruct(float MoveSpeed)
+        {
+            this.MoveSpeed = MoveSpeed;
+        }
     }
 
     public struct EntityComponentsStruct
@@ -26,6 +36,7 @@ public class Entity : MonoBehaviour, IOwnable
         public Inventory @Inventory;
         public Equipment @Equipment;
         public StatsAndSkills @Stats;
+        public Movement @Movement;
     }
 
     public int FactionID { get; set; }
@@ -34,6 +45,7 @@ public class Entity : MonoBehaviour, IOwnable
     public EntityTypes EntityType;
     public EntityFlagsEnum EntityFlags;
     public EntityComponentsStruct EntityComponents;
+    public BaseStatsStruct BaseStats = new BaseStatsStruct(3.5f);
 
     public Animator animator;
     protected Renderer rendererComponent;
@@ -51,6 +63,7 @@ public class Entity : MonoBehaviour, IOwnable
         if (EntityComponents.Inventory) EntityFlags |= EntityFlagsEnum.HasInventory;
         if (EntityComponents.Equipment) EntityFlags |= EntityFlagsEnum.CanEquip;
         if (EntityComponents.Stats) EntityFlags |= EntityFlagsEnum.HasStats;
+        if (EntityComponents.Movement) EntityFlags |= EntityFlagsEnum.CanMove;
     }
 
     // Start is called before the first frame update

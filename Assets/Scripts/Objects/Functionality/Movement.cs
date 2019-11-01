@@ -37,6 +37,28 @@ public class Movement : MonoBehaviour
         Tex.SetPixel(0, 0, Color.green);
         Tex.Apply();
     }
+    bool HasRun = false;
+    private void Update()
+    {
+        if (entity.EntityFlags.HasFlag(Entity.EntityFlagsEnum.HasStats) && !HasRun)
+        {
+            StartCoroutine(SetMoveSpeed());
+            HasRun = true;
+        }
+    }
+
+    IEnumerator SetMoveSpeed()
+    {
+        while (true)
+        {
+            if (entity.animator.GetBool("Moving"))
+            {
+                entity.EntityComponents.Stats.AddXP(StatsAndSkills.SkillsEnum.Athletics, 2500);
+            }
+            Agent.speed = entity.BaseStats.MoveSpeed * (1f + (entity.EntityComponents.Stats.GetSkillInfo(StatsAndSkills.SkillsEnum.Athletics).Level / 100f * 2.0f));
+            yield return new WaitForSeconds(0.25f);
+        }
+    }
 
     public void SetDestination(Vector3 Aim, FlockController flockController)
     {

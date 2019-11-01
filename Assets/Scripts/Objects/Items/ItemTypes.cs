@@ -3,10 +3,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static ItemModule.AdditionalModule;
+using static StatsAndSkills;
 
 public class ItemTypes : MonoBehaviour
 {
     public static GameObject ItemBasePrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/Objects/Generic/ItemBase");
+
+    public struct BonusInfoStruct
+    {
+        public StatsEnum PrimaryStat;
+        public StatsEnum SecondaryStat;
+        public BonusStruct[] Bonuses;
+
+        public BonusInfoStruct(StatsEnum PrimaryStat, StatsEnum SecondaryStat, BonusStruct[] Bonuses)
+        {
+            this.PrimaryStat = PrimaryStat;
+            this.SecondaryStat = SecondaryStat;
+            this.Bonuses = Bonuses;
+        }
+    }
+
+    public struct BonusStruct
+    {
+        public StatFlags Stat; //The relevant item stat to modify
+        public SkillsEnum Skill; //The skill to modify the stat with
+        public float Coefficient; //How much to multiply the skill value with
+
+        public BonusStruct(StatFlags Stat, SkillsEnum Skill, float Coefficient)
+        {
+            this.Stat = Stat;
+            this.Skill = Skill;
+            this.Coefficient = Coefficient;
+        }
+    }
 
     public enum Types
     {
@@ -50,17 +79,19 @@ public class ItemTypes : MonoBehaviour
     {
         Damage = 1 << 0,
         AttackSpeed = 1 << 1,
-        ArmourPiercing = 1 << 2,
-        Range = 1 << 3,
+        Accuracy = 1 << 2,
+        Block = 1 << 3,
+        ArmourPiercing = 1 << 4,
+        Range = 1 << 5,
 
-        Armour = 1 << 4,
-        Power = 1 << 5,
-        PowerUse = 1 << 6,
-        Shield = 1 << 7,
+        Armour = 1 << 6,
+        Power = 1 << 7,
+        PowerUse = 1 << 8,
+        Shield = 1 << 9,
 
-        Size = 1 << 8,
-        Mass = 1 << 9,
-        Cost = 1 << 10
+        Size = 1 << 10,
+        Mass = 1 << 11,
+        Cost = 1 << 12
     }
 
     [Flags]
@@ -94,5 +125,156 @@ public class ItemTypes : MonoBehaviour
         { Types.MeleeBlunt,    new ItemModule.CoreModule(   new Vector2Int(4, 2),   1.0f,   new Resources(1,0,0),   (ItemFlags.Melee  | ItemFlags.Weapon),    (ModuleList.WeaponPlaceHolderModule                            ), Equipment.Slots.Weapon  ) },
         { Types.RangedBow,     new ItemModule.CoreModule(   new Vector2Int(4, 5),   0.5f,   new Resources(1,0,0),   (ItemFlags.Ranged | ItemFlags.Weapon),    (ModuleList.WeaponPlaceHolderModule                            ), Equipment.Slots.Weapon  ) },
         { Types.RangedFirearm, new ItemModule.CoreModule(   new Vector2Int(5, 4),   1.0f,   new Resources(1,0,0),   (ItemFlags.Ranged | ItemFlags.Weapon),    (ModuleList.WeaponPlaceHolderModule                            ), Equipment.Slots.Weapon  ) }
+    };
+    
+    public static Dictionary<SubTypes, BonusInfoStruct> EquipmentBonusInfo = new Dictionary<SubTypes, BonusInfoStruct>()
+    {
+        //Melee
+        { SubTypes.Sword, new BonusInfoStruct(StatsEnum.Dexterity, StatsEnum.Strength,
+        new BonusStruct[]
+        {
+            new BonusStruct(StatFlags.Damage, SkillsEnum.Swords, 0.5f),
+            new BonusStruct(StatFlags.AttackSpeed, SkillsEnum.Swords, 0.5f),
+            new BonusStruct(StatFlags.Accuracy, SkillsEnum.Swords, 2.0f),
+            new BonusStruct(StatFlags.Block, SkillsEnum.Swords, 2.0f),
+            new BonusStruct(StatFlags.Damage, SkillsEnum.Daggers, 0.05f),
+            new BonusStruct(StatFlags.AttackSpeed, SkillsEnum.Daggers, 0.05f),
+            new BonusStruct(StatFlags.Accuracy, SkillsEnum.Daggers, 0.2f),
+            new BonusStruct(StatFlags.Block, SkillsEnum.Daggers, 0.2f)
+        })},
+        { SubTypes.Polearm, new BonusInfoStruct(StatsEnum.Dexterity, StatsEnum.Strength,
+        new BonusStruct[]
+        {
+            new BonusStruct(StatFlags.Damage, SkillsEnum.Polearms, 0.5f),
+            new BonusStruct(StatFlags.AttackSpeed, SkillsEnum.Polearms, 0.5f),
+            new BonusStruct(StatFlags.Accuracy, SkillsEnum.Polearms, 2.0f),
+            new BonusStruct(StatFlags.Block, SkillsEnum.Polearms, 2.0f),
+            new BonusStruct(StatFlags.Damage, SkillsEnum.Quarterstaffs, 0.05f),
+            new BonusStruct(StatFlags.AttackSpeed, SkillsEnum.Quarterstaffs, 0.05f),
+            new BonusStruct(StatFlags.Accuracy, SkillsEnum.Quarterstaffs, 0.2f),
+            new BonusStruct(StatFlags.Block, SkillsEnum.Quarterstaffs, 0.2f)
+        })},
+        { SubTypes.Quarterstaff, new BonusInfoStruct(StatsEnum.Dexterity, StatsEnum.Strength,
+        new BonusStruct[]
+        {
+            new BonusStruct(StatFlags.Damage, SkillsEnum.Quarterstaffs, 0.5f),
+            new BonusStruct(StatFlags.AttackSpeed, SkillsEnum.Quarterstaffs, 0.5f),
+            new BonusStruct(StatFlags.Accuracy, SkillsEnum.Quarterstaffs, 2.0f),
+            new BonusStruct(StatFlags.Block, SkillsEnum.Quarterstaffs, 2.0f),
+            new BonusStruct(StatFlags.Damage, SkillsEnum.Polearms, 0.05f),
+            new BonusStruct(StatFlags.AttackSpeed, SkillsEnum.Polearms, 0.05f),
+            new BonusStruct(StatFlags.Accuracy, SkillsEnum.Polearms, 0.2f),
+            new BonusStruct(StatFlags.Block, SkillsEnum.Polearms, 0.2f)
+        })},
+        { SubTypes.Dagger, new BonusInfoStruct(StatsEnum.Dexterity, StatsEnum.Dexterity,
+        new BonusStruct[]
+        {
+            new BonusStruct(StatFlags.Damage, SkillsEnum.Daggers, 0.5f),
+            new BonusStruct(StatFlags.AttackSpeed, SkillsEnum.Daggers, 0.5f),
+            new BonusStruct(StatFlags.Accuracy, SkillsEnum.Daggers, 2.0f),
+            new BonusStruct(StatFlags.Block, SkillsEnum.Daggers, 2.0f),
+            new BonusStruct(StatFlags.Damage, SkillsEnum.Swords, 0.05f),
+            new BonusStruct(StatFlags.AttackSpeed, SkillsEnum.Swords, 0.05f),
+            new BonusStruct(StatFlags.Accuracy, SkillsEnum.Swords, 0.2f),
+            new BonusStruct(StatFlags.Block, SkillsEnum.Swords, 0.2f)
+        })},
+        { SubTypes.Hammer, new BonusInfoStruct(StatsEnum.Dexterity, StatsEnum.Strength,
+        new BonusStruct[]
+        {
+            new BonusStruct(StatFlags.Damage, SkillsEnum.Hammers, 0.5f),
+            new BonusStruct(StatFlags.AttackSpeed, SkillsEnum.Hammers, 0.5f),
+            new BonusStruct(StatFlags.Accuracy, SkillsEnum.Hammers, 2.0f),
+            new BonusStruct(StatFlags.Block, SkillsEnum.Hammers, 2.0f)
+        })},
+
+        //Ranged
+        { SubTypes.Handgun, new BonusInfoStruct(StatsEnum.Perception, StatsEnum.Dexterity,
+        new BonusStruct[]
+        {
+            new BonusStruct(StatFlags.Damage, SkillsEnum.Handguns, 0.5f),
+            new BonusStruct(StatFlags.Range, SkillsEnum.Handguns, 0.5f),
+            new BonusStruct(StatFlags.Accuracy, SkillsEnum.Handguns, 2.0f),
+            new BonusStruct(StatFlags.Damage, SkillsEnum.SubmachineGuns, 0.05f),
+            new BonusStruct(StatFlags.Range, SkillsEnum.SubmachineGuns, 0.05f),
+            new BonusStruct(StatFlags.Accuracy, SkillsEnum.SubmachineGuns, 0.2f),
+        })},
+        { SubTypes.PrecisionRifle, new BonusInfoStruct(StatsEnum.Perception, StatsEnum.Endurance,
+        new BonusStruct[]
+        {
+            new BonusStruct(StatFlags.Damage, SkillsEnum.PrecisionRifles, 0.5f),
+            new BonusStruct(StatFlags.Range, SkillsEnum.PrecisionRifles, 0.5f),
+            new BonusStruct(StatFlags.Accuracy, SkillsEnum.PrecisionRifles, 2.0f),
+            new BonusStruct(StatFlags.Damage, SkillsEnum.AssaultRifles, 0.05f),
+            new BonusStruct(StatFlags.Range, SkillsEnum.AssaultRifles, 0.05f),
+            new BonusStruct(StatFlags.Accuracy, SkillsEnum.AssaultRifles, 0.2f),
+        })},
+        { SubTypes.AssaultRifle, new BonusInfoStruct(StatsEnum.Perception, StatsEnum.Dexterity,
+        new BonusStruct[]
+        {
+            new BonusStruct(StatFlags.Damage, SkillsEnum.AssaultRifles, 0.5f),
+            new BonusStruct(StatFlags.Range, SkillsEnum.AssaultRifles, 0.5f),
+            new BonusStruct(StatFlags.Accuracy, SkillsEnum.AssaultRifles, 2.0f),
+            new BonusStruct(StatFlags.Damage, SkillsEnum.PrecisionRifles, 0.05f),
+            new BonusStruct(StatFlags.Range, SkillsEnum.PrecisionRifles, 0.05f),
+            new BonusStruct(StatFlags.Accuracy, SkillsEnum.PrecisionRifles, 0.2f),
+        })},
+        { SubTypes.SubmachineGun, new BonusInfoStruct(StatsEnum.Perception, StatsEnum.Dexterity,
+        new BonusStruct[]
+        {
+            new BonusStruct(StatFlags.Damage, SkillsEnum.SubmachineGuns, 0.5f),
+            new BonusStruct(StatFlags.Range, SkillsEnum.SubmachineGuns, 0.5f),
+            new BonusStruct(StatFlags.Accuracy, SkillsEnum.SubmachineGuns, 2.0f),
+            new BonusStruct(StatFlags.Damage, SkillsEnum.Handguns, 0.05f),
+            new BonusStruct(StatFlags.Range, SkillsEnum.Handguns, 0.05f),
+            new BonusStruct(StatFlags.Accuracy, SkillsEnum.Handguns, 0.2f),
+        })},
+        { SubTypes.HeavyWeapon, new BonusInfoStruct(StatsEnum.Strength, StatsEnum.Perception,
+        new BonusStruct[]
+        {
+            new BonusStruct(StatFlags.Damage, SkillsEnum.HeavyWeapons, 0.5f),
+            new BonusStruct(StatFlags.Range, SkillsEnum.HeavyWeapons, 0.5f),
+            new BonusStruct(StatFlags.Accuracy, SkillsEnum.HeavyWeapons, 2.0f),
+            new BonusStruct(StatFlags.Damage, SkillsEnum.ExplosiveWeaponry, 0.05f),
+            new BonusStruct(StatFlags.Range, SkillsEnum.ExplosiveWeaponry, 0.05f),
+            new BonusStruct(StatFlags.Accuracy, SkillsEnum.ExplosiveWeaponry, 0.2f),
+        })},
+        { SubTypes.ExplosiveWeapon, new BonusInfoStruct(StatsEnum.Perception, StatsEnum.Strength,
+        new BonusStruct[]
+        {
+            new BonusStruct(StatFlags.Damage, SkillsEnum.ExplosiveWeaponry, 0.5f),
+            new BonusStruct(StatFlags.Range, SkillsEnum.ExplosiveWeaponry, 0.5f),
+            new BonusStruct(StatFlags.Accuracy, SkillsEnum.ExplosiveWeaponry, 2.0f),
+            new BonusStruct(StatFlags.Damage, SkillsEnum.HeavyWeapons, 0.05f),
+            new BonusStruct(StatFlags.Range, SkillsEnum.HeavyWeapons, 0.05f),
+            new BonusStruct(StatFlags.Accuracy, SkillsEnum.HeavyWeapons, 0.2f),
+        })},
+        { SubTypes.Bow, new BonusInfoStruct(StatsEnum.Dexterity, StatsEnum.Perception,
+        new BonusStruct[]
+        {
+            new BonusStruct(StatFlags.Damage, SkillsEnum.Bows, 1.0f),
+            new BonusStruct(StatFlags.AttackSpeed, SkillsEnum.Bows, 2.0f),
+            new BonusStruct(StatFlags.Range, SkillsEnum.Bows, 2.0f),
+            new BonusStruct(StatFlags.Accuracy, SkillsEnum.Bows, 4.0f),
+        })},
+
+        //Armours
+        { SubTypes.LightArmour, new BonusInfoStruct(StatsEnum.Dexterity, StatsEnum.Dexterity,
+        new BonusStruct[]
+        {
+            new BonusStruct(StatFlags.Armour, SkillsEnum.LightArmour, 0.1f),
+            new BonusStruct(StatFlags.Mass, SkillsEnum.LightArmour, -0.2f),
+        })},
+        { SubTypes.MediumArmour, new BonusInfoStruct(StatsEnum.Dexterity, StatsEnum.Strength,
+        new BonusStruct[]
+        {
+            new BonusStruct(StatFlags.Armour, SkillsEnum.MediumArmour, 0.1f),
+            new BonusStruct(StatFlags.Mass, SkillsEnum.MediumArmour, -0.2f),
+        })},
+        { SubTypes.HeavyArmour, new BonusInfoStruct(StatsEnum.Strength, StatsEnum.Strength,
+        new BonusStruct[]
+        {
+            new BonusStruct(StatFlags.Armour, SkillsEnum.HeavyArmour, 0.1f),
+            new BonusStruct(StatFlags.Mass, SkillsEnum.HeavyArmour, -0.2f),
+        })}
     };
 }

@@ -24,6 +24,27 @@ public class ItemTypes : MonoBehaviour
         RangedFirearm
     }
 
+    public enum SubTypes
+    {
+        Sword,
+        Polearm,
+        Quarterstaff,
+        Dagger,
+        Hammer,
+
+        Handgun,
+        PrecisionRifle,
+        AssaultRifle,
+        SubmachineGun,
+        HeavyWeapon,
+        ExplosiveWeapon,
+        Bow,
+
+        LightArmour,
+        MediumArmour,
+        HeavyArmour
+    }
+
     [Flags]
     public enum StatFlags
     {
@@ -31,10 +52,12 @@ public class ItemTypes : MonoBehaviour
         AttackSpeed = 1 << 1,
         ArmourPiercing = 1 << 2,
         Range = 1 << 3,
+
         Armour = 1 << 4,
         Power = 1 << 5,
         PowerUse = 1 << 6,
         Shield = 1 << 7,
+
         Size = 1 << 8,
         Mass = 1 << 9,
         Cost = 1 << 10

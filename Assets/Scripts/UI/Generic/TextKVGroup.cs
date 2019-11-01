@@ -9,12 +9,13 @@ public class TextKVGroup : MonoBehaviour, IGroupableUI
     public TextMeshProUGUI TextComponent;
     public KeyValueGroup Group;
     public RectTransform RTransform { get; set; }
-
     public KeyValueGroup.FontSizes Font = new KeyValueGroup.FontSizes(8, 72);
+    VerticalLayoutGroup VLayout;
 
     protected virtual void Awake()
     {
         RTransform = GetComponent<RectTransform>();
+        VLayout = GetComponentInParent<VerticalLayoutGroup>();
     }
 
     public virtual Bounds GetBounds()
@@ -26,7 +27,8 @@ public class TextKVGroup : MonoBehaviour, IGroupableUI
     {
         TextComponent.fontSize = TargetSize;
         float VerticalSize = (TargetSize / 90) * 100;
-        RTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, VerticalSize);
+        if (!TextComponent || TextComponent.enableWordWrapping == false)
+            RTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, VerticalSize);
         TextComponent.ForceMeshUpdate();
     }
 
@@ -43,7 +45,12 @@ public class TextKVGroup : MonoBehaviour, IGroupableUI
         float MinFont = Mathf.Min(SizeArray);
         if (!Group) MinFont = Mathf.Clamp(MinFont, Font.Min, Font.Max);
         float VerticalSize = (MinFont / 90) * 100;
-        RTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, VerticalSize);
+
+        if(!TextComponent || TextComponent.enableWordWrapping == false)
+        {
+            RTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, VerticalSize);
+        }
+
 
         return MinFont;
     }
@@ -56,7 +63,7 @@ public class TextKVGroup : MonoBehaviour, IGroupableUI
         if (!TargetText) return;
         float FontSizePercentage = 90f;
         RectTransform TextRTransform = TargetText.GetComponent<RectTransform>();
-        float ExpandedSize = (transform.parent.GetComponent<RectTransform>().rect.height - GetComponentInParent<VerticalLayoutGroup>().spacing * (transform.parent.childCount - 1)) / transform.parent.childCount ;
+        float ExpandedSize = (transform.parent.GetComponent<RectTransform>().rect.height - (VLayout.spacing * transform.parent.childCount + VLayout.padding.vertical)) / transform.parent.childCount ;
         RTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, ExpandedSize);
 
         TargetText.fontSize = RTransform.rect.height * (FontSizePercentage / 100);

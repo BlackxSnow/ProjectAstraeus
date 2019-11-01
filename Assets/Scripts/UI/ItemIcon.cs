@@ -85,7 +85,7 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
 
     public void SetSizeToGrid()
     {
-        RTransform.sizeDelta = RefItem.Data.Stats.Size * InventoryUI.GridSize;
+        RTransform.sizeDelta = RefItem.Data.Stats.GetStat<Vector2Int>(ItemTypes.StatFlags.Size) * InventoryUI.GridSize;
     }
 
     public void OnPointerDown(PointerEventData data)

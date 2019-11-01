@@ -39,6 +39,7 @@ public class KeyValuePanel : TextKVGroup, IGroupableUI
     {
         if(RTransform.rect.size != LastSize)
         {
+            //Debug.Log(string.Format("KVP '{0}' is calling SetDirty", Key.TextMesh.text));
             if (!Group)
                 SetSize();
             else
@@ -107,9 +108,9 @@ public class KeyValuePanel : TextKVGroup, IGroupableUI
     public static class ModuleGetValue
     {
         public static string Armour(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", Utility.RoundToNDecimals((RefModule as Plating).Armour, 1));
-        public static string Cost_Iron(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", RefModule.Cost.Iron);
-        public static string Cost_Copper(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", RefModule.Cost.Copper);
-        public static string Cost_Alloy(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", RefModule.Cost.Alloy);
+        public static string Cost_Iron(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", RefModule.Cost[Resources.ResourceList.Iron]);
+        public static string Cost_Copper(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", RefModule.Cost[Resources.ResourceList.Copper]);
+        public static string Cost_Alloy(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", RefModule.Cost[Resources.ResourceList.Alloy]);
         public static string MassMod(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", Utility.RoundToNDecimals(RefModule.MassMultiplier, 1));
         public static string Power(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", Utility.RoundToNDecimals((RefModule as Reactor).Power, 1));
         public static string PowerUsage(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", Utility.RoundToNDecimals((RefModule as Shielding).PowerUsage, 1));
@@ -117,23 +118,15 @@ public class KeyValuePanel : TextKVGroup, IGroupableUI
         public static string SizeMod(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", RefModule.SizeMultiplier, 1);
     }
 
-    public static class ItemGetValue
+    public static string GetItemCost(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", RefItem.Stats.GetStat<Resources>(ItemTypes.StatFlags.Cost)[(Resources.ResourceList)ValueEnum]);
+    public static string GetItemStat(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum)
     {
-        public static string Armour(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.Armour, 1));
-        public static string ArmourPiercing(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.ArmourPiercing, 1));
-        public static string AttackSpeed(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.AttackSpeed, 1));
-        public static string Cost_Iron(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.Cost.Iron, 1));
-        public static string Cost_Copper(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.Cost.Copper, 1));
-        public static string Cost_Alloy(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.Cost.Alloy, 1));
-        public static string Damage(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.Damage, 1));
-        public static string Mass(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.Mass, 1));
-        public static string Power(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.Power, 1));
-        public static string PowerUse(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.PowerUse, 1));
-        public static string Range(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.Range, 1));
-        public static string Shield(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.Shield, 1));
-        public static string Size(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum ValueEnum) => string.Format("{0}", RefItem.Stats.Size, 1);
+        if ((ItemTypes.StatFlags)ValueEnum == ItemTypes.StatFlags.Size)
+        {
+            return string.Format("{0}", RefItem.Stats.GetStat<Vector2Int>(ItemTypes.StatFlags.Size));
+        }
+        return string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.GetStat<float>((ItemTypes.StatFlags)ValueEnum), 1));
     }
-
     public static string GetStat(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum StatEnum) => string.Format("{0}", RefStats.Stats[(StatsAndSkills.StatsEnum)StatEnum]);
     public static string GetSkill(ItemModule.AdditionalModule RefModule, ItemData RefItem, StatsAndSkills RefStats, Enum SkillEnum) => string.Format("{0}", RefStats.Skills[(StatsAndSkills.SkillsEnum)SkillEnum]);
 }

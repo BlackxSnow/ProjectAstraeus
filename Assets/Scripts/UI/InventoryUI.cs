@@ -104,7 +104,7 @@ public class InventoryUI : Window
 
                     RectTransform _RT = _.GetComponent<RectTransform>();
                     _RT.anchoredPosition = new Vector3(x * GridSize, -y * GridSize, 0);
-                    _RT.sizeDelta = TargetItem.Data.Stats.Size * GridSize;
+                    _RT.sizeDelta = TargetItem.Data.Stats.GetStat<Vector2Int>(ItemTypes.StatFlags.Size) * GridSize;
 
                 }
             }

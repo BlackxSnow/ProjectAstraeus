@@ -83,13 +83,13 @@ public class ItemModule : ScriptableObject
             KVPListArray = new GameObject[1];
 
             UIController.KVPData<float>[] CostData = new UIController.KVPData<float>[Resources.ResourceCount];
-            CostData[0] = new UIController.KVPData<float>("Iron", Cost.Iron, null, Group: KVPGroup, ValueDelegate: KeyValuePanel.ModuleGetValue.Cost_Iron, RefModule: this);
-            CostData[1] = new UIController.KVPData<float>("Copper", Cost.Copper, null, Group: KVPGroup, ValueDelegate: KeyValuePanel.ModuleGetValue.Cost_Copper, RefModule: this);
-            CostData[2] = new UIController.KVPData<float>("Alloy", Cost.Alloy, null, Group: KVPGroup, ValueDelegate: KeyValuePanel.ModuleGetValue.Cost_Alloy, RefModule: this);
+            CostData[0] = new UIController.KVPData<float>("Iron", Cost[Resources.ResourceList.Iron], null, Group: KVPGroup, ValueDelegate: KeyValuePanel.ModuleGetValue.Cost_Iron, RefModule: this);
+            CostData[1] = new UIController.KVPData<float>("Copper", Cost[Resources.ResourceList.Copper], null, Group: KVPGroup, ValueDelegate: KeyValuePanel.ModuleGetValue.Cost_Copper, RefModule: this);
+            CostData[2] = new UIController.KVPData<float>("Alloy", Cost[Resources.ResourceList.Alloy], null, Group: KVPGroup, ValueDelegate: KeyValuePanel.ModuleGetValue.Cost_Alloy, RefModule: this);
 
             KVPArray[0] = UIController.InstantiateKVP("Size Modifier", SizeMultiplier, Parent, 2, Group: KVPGroup, ValueDelegate: KeyValuePanel.ModuleGetValue.SizeMod, RefModule: this);
             KVPArray[1] = UIController.InstantiateKVP("Mass Modifier", MassMultiplier, Parent, 2, Group: KVPGroup, ValueDelegate: KeyValuePanel.ModuleGetValue.MassMod, RefModule: this);
-            KVPListArray[0] = UIController.InstantiateKVPList("Cost", CostData, Parent);
+            KVPListArray[0] = UIController.InstantiateKVPList("Cost", CostData, Parent, KVPGroup);
             return KVPArray;
         }
         public virtual void CalculateStats() { }
@@ -118,7 +118,7 @@ public class ItemModule : ScriptableObject
                 SizeMultiplier = new Vector2(1 + (Thickness / 10), 1 + (Thickness / 10));
 
                 Armour = Thickness * Material.ArmourModifier;
-                Cost.Iron = (int)Mathf.Round(Thickness);
+                Cost[Resources.ResourceList.Iron] = (int)Mathf.Round(Thickness);
             }
             public Plating(float _Thickness = 1)
             {

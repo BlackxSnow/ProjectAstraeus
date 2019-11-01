@@ -12,30 +12,38 @@ public struct Resources
         Alloy
     }
 
-    public int Iron;
-    public int Copper;
-    public int Alloy;
+    Dictionary<ResourceList, int> ResourceDict;
 
-    public Resources(int _Iron, int _Copper, int _Alloy)
+    public Resources(int Iron, int Copper, int Alloy)
     {
-        Iron = _Iron;
-        Copper = _Copper;
-        Alloy = _Alloy;
+        ResourceDict = new Dictionary<ResourceList, int>()
+        {
+            { ResourceList.Iron, Iron },
+            { ResourceList.Copper, Copper },
+            { ResourceList.Alloy, Alloy }
+        };
+
     }
+
+    public int this[ResourceList Resource]
+    {
+        get
+        {
+            return ResourceDict[Resource];
+        }
+        set
+        {
+            ResourceDict[Resource] = value;
+        }
+    }
+
     public static Resources operator+ (Resources A, Resources B)
     {
         Resources Result = new Resources(0, 0, 0);
-        Result.Iron = A.Iron + B.Iron;
-        Result.Copper = A.Copper + B.Copper;
-        Result.Alloy = A.Alloy + B.Alloy;
+        Result[ResourceList.Iron] = A[ResourceList.Iron] + B[ResourceList.Iron];
+        Result[ResourceList.Copper] = A[ResourceList.Copper] + B[ResourceList.Copper];
+        Result[ResourceList.Alloy] = A[ResourceList.Alloy] + B[ResourceList.Alloy];
 
         return Result;
-    }
-
-    public void SetCosts(int _Iron, int _Copper, int _Alloy)
-    {
-        Iron = _Iron;
-        Copper = _Copper;
-        Alloy = _Alloy;
     }
 }

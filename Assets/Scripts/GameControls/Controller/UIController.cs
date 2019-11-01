@@ -67,8 +67,10 @@ public class UIController : MonoBehaviour
         public ItemModule.AdditionalModule RefModule;
         public ItemData RefItem;
         public StatsAndSkills RefStats;
+        public Enum ValueEnum;
+        public float KeyRatio;
 
-        public KVPData(string Key, T Value, Transform Parent, int Rounding = 0, Gradient gradient = null, float Min = 0, float Max = 0, KeyValueGroup Group = null, KeyValuePanel.GetValueDelegate ValueDelegate = null, ItemModule.AdditionalModule RefModule = null, ItemData RefItem = null, StatsAndSkills RefStats = null)
+        public KVPData(string Key, T Value, Transform Parent, int Rounding = 0, Gradient gradient = null, float Min = 0, float Max = 0, KeyValueGroup Group = null, KeyValuePanel.GetValueDelegate ValueDelegate = null, ItemModule.AdditionalModule RefModule = null, ItemData RefItem = null, StatsAndSkills RefStats = null, Enum ValueEnum = null, float KeyRatio = 0.5f)
         {
             this.Key = Key;
             this.Value = Value;
@@ -82,6 +84,8 @@ public class UIController : MonoBehaviour
             this.RefModule = RefModule;
             this.RefItem = RefItem;
             this.RefStats = RefStats;
+            this.ValueEnum = ValueEnum;
+            this.KeyRatio = KeyRatio;
         }
     }
 
@@ -117,27 +121,27 @@ public class UIController : MonoBehaviour
         return StatsObject;
     }
 
-    public static GameObject InstantiateText<T>(T Value, Transform Parent, KeyValueGroup Group = null)
+    public static GameObject InstantiateText<T>(T Value, Transform Parent, KeyValueGroup Group = null, bool AllowWrapping = false)
     {
-        GameObject TextInstance = Instantiate(TextObjectPrefab, Parent);
-        TextInstance.GetComponent<TextMeshProUGUI>().text = string.Format("{0}", Value);
-        TextKVGroup Script = TextInstance.GetComponent<TextKVGroup>();
-        
+        GameObject TextInstanceObject = Instantiate(TextObjectPrefab, Parent);
+        TextInstanceObject.GetComponent<TextMeshProUGUI>().text = string.Format("{0}", Value);
+        TextKVGroup Script = TextInstanceObject.GetComponent<TextKVGroup>();
+        Script.TextComponent.enableWordWrapping = AllowWrapping;
         if (Group)
         {
             Script.Group = Group;
             Group.AddMember(Script);
         }
 
-        return TextInstance;
+        return TextInstanceObject;
     }
 
     //Instantiates a prefab panel with two texts designed to show a key and value
     public static GameObject InstantiateKVP<T>(KVPData<T> Data)
     {
-        return InstantiateKVP(Data.Key, Data.Value, Data.Parent, Data.Rounding, Data.gradient, Data.Min, Data.Max, Data.Group, Data.ValueDelegate, Data.RefModule, Data.RefItem, Data.RefStats);
+        return InstantiateKVP(Data.Key, Data.Value, Data.Parent, Data.Rounding, Data.gradient, Data.Min, Data.Max, Data.Group, Data.ValueDelegate, Data.RefModule, Data.RefItem, Data.RefStats, Data.ValueEnum, Data.KeyRatio);
     }
-    public static GameObject InstantiateKVP<T>(string Key, T Value, Transform Parent, int Rounding = 0, Gradient gradient = null, float Min = 0, float Max = 0, KeyValueGroup Group = null, KeyValuePanel.GetValueDelegate ValueDelegate = null, ItemModule.AdditionalModule RefModule = null, ItemData RefItem = null, StatsAndSkills RefStats = null, Enum ValueEnum = null, float PreferredHeight = 0, float KeyRatio = .5f, bool LeftAligned = false)
+    public static GameObject InstantiateKVP<T>(string Key, T Value, Transform Parent, int Rounding = 0, Gradient gradient = null, float Min = 0, float Max = 0, KeyValueGroup Group = null, KeyValuePanel.GetValueDelegate ValueDelegate = null, ItemModule.AdditionalModule RefModule = null, ItemData RefItem = null, StatsAndSkills RefStats = null, Enum ValueEnum = null, float KeyRatio = .5f)
     {
         GameObject Panel;
         TextMeshProUGUI KeyText;
@@ -154,15 +158,7 @@ public class UIController : MonoBehaviour
             KVPScript.Group = Group;
             Group.AddMember(KVPScript);
         }
-        if (PreferredHeight != 0)
-        {
-            Panel.GetComponent<LayoutElement>().preferredHeight = PreferredHeight;
-        }
-        if (LeftAligned)
-        {
-            KeyText.alignment = TextAlignmentOptions.Left;
-            ValueText.alignment = TextAlignmentOptions.Left;
-        }
+
         KeyText.GetComponent<RectTransform>().anchorMax = new Vector2(KeyRatio - .05f, 1f);
         ValueText.GetComponent<RectTransform>().anchorMin = new Vector2(KeyRatio + .05f, 0f);
 
@@ -208,13 +204,11 @@ public class UIController : MonoBehaviour
     }
 
     //Instantiates a prefab for a list of Key Value Panels
-    public static GameObject InstantiateKVPList<T>(string ListName, KVPData<T>[] KeyValuePanels, Transform Parent)
+    public static GameObject InstantiateKVPList<T>(string ListName, KVPData<T>[] KeyValuePanels, Transform Parent, KeyValueGroup Group = null)
     {
         GameObject ListPanel = Instantiate(KeyValueListObjectPrefab, Parent);
-        Transform ListContent = ListPanel.transform.GetChild(1);
-        TextMeshProUGUI ListNameText = ListPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-
-        ListNameText.text = ListName;
+        GameObject ListNameObject = InstantiateText(ListName, ListPanel.transform, Group: Group);
+        ListNameObject.transform.SetAsFirstSibling();
 
         KeyValueList ListScript = ListPanel.GetComponent<KeyValueList>();
         ListScript.KVPs = new Transform[KeyValuePanels.Length];
@@ -222,7 +216,7 @@ public class UIController : MonoBehaviour
         //Iterate over KVPs and instantiate
         for (int i = 0; i < KeyValuePanels.Length; i++)
         {
-            KeyValuePanels[i].Parent = ListContent;
+            KeyValuePanels[i].Parent = ListScript.ContentPanel.transform;
             ListScript.KVPs[i] = InstantiateKVP(KeyValuePanels[i]).transform;
         }
 

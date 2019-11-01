@@ -61,6 +61,7 @@ public class KeyValueGroup : ScriptableObject
     }
     float Recalculate()
     {
+        Debug.Log("Recalculating");
         float MinSize = 100;
         float[] SizeArray = new float[GroupMembers.Count];
         int index = 0;

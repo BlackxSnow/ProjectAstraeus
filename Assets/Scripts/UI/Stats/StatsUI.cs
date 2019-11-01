@@ -29,7 +29,7 @@ public class StatsUI : Window
 
     public void Init(StatsAndSkills TargetStats)
     {
-        InfoPanelGroup = new KeyValueGroup(8, 72);
+        InfoPanelGroup = new KeyValueGroup(8, 16);
         SkillsGroup = new KeyValueGroup(8, 72);
         RefStats = TargetStats;
 
@@ -71,12 +71,12 @@ public class StatsUI : Window
     {
         foreach (KeyValuePair<StatsEnum, StatSkill> Stat in RefStats.Stats)
         {
-            GameObject KVP = UIController.InstantiateKVP(Stat.Key.ToString(), Stat.Value.Level, StatsPanel, Group: SkillsGroup, ValueDelegate: KeyValuePanel.GetStat, RefStats: RefStats, ValueEnum: Stat.Key, PreferredHeight: 10, KeyRatio: .8f, LeftAligned: true);
+            GameObject KVP = UIController.InstantiateKVP(Stat.Key.ToString(), Stat.Value.Level, StatsPanel, Group: SkillsGroup, ValueDelegate: KeyValuePanel.GetStat, RefStats: RefStats, ValueEnum: Stat.Key, KeyRatio: .8f);
             KVP.AddComponent<SkillHover>().ParentStatsWindow = this;
         }
         foreach (KeyValuePair<SkillsEnum, StatSkill> Skill in RefStats.Skills)
         {
-            GameObject KVP = UIController.InstantiateKVP(Skill.Key.ToString(), Skill.Value.Level, SkillPanels[(int)Skill.Value.SkillType - 1], Group: SkillsGroup, ValueDelegate: KeyValuePanel.GetSkill, RefStats: RefStats, ValueEnum: Skill.Key, PreferredHeight: 10, KeyRatio: .8f, LeftAligned: true);
+            GameObject KVP = UIController.InstantiateKVP(Skill.Key.ToString(), Skill.Value.Level, SkillPanels[(int)Skill.Value.SkillType - 1], Group: SkillsGroup, ValueDelegate: KeyValuePanel.GetSkill, RefStats: RefStats, ValueEnum: Skill.Key, KeyRatio: .8f);
             KVP.AddComponent<SkillHover>().ParentStatsWindow = this;
         }
     }
@@ -119,7 +119,7 @@ public class StatsUI : Window
             TextMeshProUGUI TitleTextMesh = TitleText.GetComponent<TextMeshProUGUI>();
             TitleTextMesh.fontStyle = FontStyles.Bold;
             TitleTextMesh.color = Color.red;
-            InfoPanelObjects.Add(UIController.InstantiateText(Skill.Description, InfoPanels.Description.transform, InfoPanelGroup));
+            InfoPanelObjects.Add(UIController.InstantiateText(Skill.Description, InfoPanels.Description.transform, InfoPanelGroup, true));
         }
         InfoPanelGroup.ForceRecalculate();
 

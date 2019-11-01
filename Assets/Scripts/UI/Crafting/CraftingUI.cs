@@ -175,6 +175,7 @@ public class CraftingUI : Window
     {
         if (!CurrentModule) return;
         ClearKVPs(true, false);
+        ModuleStatKVPInfo.Group.ClearGroup();
         ClearValueSliders();
         CurrentItem.Modules.Add(CurrentModule);
         CurrentItem.SetStats();

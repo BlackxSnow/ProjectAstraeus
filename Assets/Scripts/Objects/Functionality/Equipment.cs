@@ -41,7 +41,7 @@ public class Equipment : MonoBehaviour
             Debug.Log(string.Format("Slot is already occupied by '{0}'", Equipped[(int)Slot]));
             return false;
         }
-        VectorResults SizeComparison = CompareVectorSizes(UISlot.MaxSize, RefItem.Data.Stats.GetStat<Vector2Int>(ItemTypes.StatFlags.Size));
+        VectorResults SizeComparison = CompareVectorSizes(UISlot.MaxSize, RefItem.Data.Stats.GetStat<Vector2Int>(ItemTypes.StatFlagsEnum.Size));
         if (SizeComparison == VectorResults.None)
         {
             Debug.Log(string.Format("Item does not fit"));

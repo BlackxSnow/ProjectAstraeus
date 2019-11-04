@@ -151,16 +151,16 @@ public class CraftingUI : Window
     {
         switch (ModuleDropdown.SelectedModule)
         {
-            case ModuleList.Plating:
-                CurrentModule = new Plating();
+            case ModuleListEnum.Plating:
+                CurrentModule = new Modules.Plating();
                 break;
-            case ModuleList.Reactor:
-                CurrentModule = new Reactor();
+            case ModuleListEnum.Reactor:
+                CurrentModule = new Modules.Reactor();
                 break;
-            case ModuleList.Shielding:
-                CurrentModule = new Shielding();
+            case ModuleListEnum.Shielding:
+                CurrentModule = new Modules.Shield();
                 break;
-            case ModuleList.WeaponPlaceHolderModule:
+            case ModuleListEnum.WeaponPlaceHolderModule:
                 CurrentModule = new WeaponPlaceHolderModule();
                 break;
             default:
@@ -207,22 +207,9 @@ public class CraftingUI : Window
     void InitialiseModificationUI()
     {
         ClearValueSliders();
-        switch (CurrentModule)
+        foreach (ModifiableStatsEnum Stat in Utility.GetFlags(CurrentModule.ModifiableStats))
         {
-            case Plating plating:
-                ModificationUI.Add(UIController.InstantiateValueSlider("Thickness", ModifiableStats.Thickness, UI_ModificationUIPanel.transform, 0, 10));
-                break;
-            case Reactor reactor:
-                ModificationUI.Add(UIController.InstantiateValueSlider("Power Output", ModifiableStats.Power, UI_ModificationUIPanel.transform, 0, 10));
-                break;
-            case Shielding shielding:
-                ModificationUI.Add(UIController.InstantiateValueSlider("Shield", ModifiableStats.Shield, UI_ModificationUIPanel.transform, 0, 10));
-                break;
-            case WeaponPlaceHolderModule weaponPlaceHolderModule:
-
-                break;
-            default:
-                throw new ArgumentException(string.Format("Selected module {0} is unhandled by CraftingUI.InitialiseModuleStatDisplay", ModuleDropdown.SelectedModule));
+            ModificationUI.Add(UIController.InstantiateValueSlider(Stat.ToString(), (ItemTypes.StatFlagsEnum)Stat, UI_ModificationUIPanel.transform, 0, 10));
         }
     }
 

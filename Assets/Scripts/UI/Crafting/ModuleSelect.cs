@@ -10,14 +10,14 @@ public class ModuleSelect : MonoBehaviour
 {
     public TMP_Dropdown DropdownComponent;
     [HideInInspector]
-    public ModuleList SelectedModule;
+    public ModuleListEnum SelectedModule;
 
-    public static Dictionary<string, ModuleList> ModuleDict = new Dictionary<string, ModuleList>()
+    public static Dictionary<string, ModuleListEnum> ModuleDict = new Dictionary<string, ModuleListEnum>()
     {
-        { "Plating", ModuleList.Plating },
-        { "Reactor", ModuleList.Reactor },
-        { "Shielding", ModuleList.Shielding },
-        { "WeaponPlaceHolderModule", ModuleList.WeaponPlaceHolderModule }
+        { "Plating", ModuleListEnum.Plating },
+        { "Reactor", ModuleListEnum.Reactor },
+        { "Shielding", ModuleListEnum.Shielding },
+        { "WeaponPlaceHolderModule", ModuleListEnum.WeaponPlaceHolderModule }
     };
 
     private void Start()
@@ -38,10 +38,10 @@ public class ModuleSelect : MonoBehaviour
 
         if (!CraftingUI.CurrentItem) return;
 
-        foreach (ModuleList Flag in Utility.GetFlags(CraftingUI.CurrentItem.Core.AvailableModules))
+        foreach (ModuleListEnum Flag in Utility.GetFlags(CraftingUI.CurrentItem.Core.AvailableModules))
         {
             Options.Add(string.Format("{0}", Flag));
-            Enum.GetName(typeof(ModuleList), Flag);
+            Enum.GetName(typeof(ModuleListEnum), Flag);
         }
         DropdownComponent.AddOptions(Options);
         SetSelected();

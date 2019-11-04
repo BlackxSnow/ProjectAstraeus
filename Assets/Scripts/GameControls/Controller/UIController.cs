@@ -223,9 +223,9 @@ public class UIController : MonoBehaviour
         return ListPanel;
     }
 
-    public static GameObject InstantiateValueSlider(string Name, ModifiableStats StatEnum, Transform Parent, float Min = 0, float Max = 10)
+    public static GameObject InstantiateValueSlider(string Name, ItemTypes.StatFlagsEnum StatEnum, Transform Parent, float Min = 0, float Max = 10)
     {
-        if (StatEnum == ModifiableStats.Material) throw new ArgumentException(string.Format("ValueSlider cannot be instantiated with non float target: 'Material'") );
+        if (StatEnum == ItemTypes.StatFlagsEnum.Material) throw new ArgumentException(string.Format("ValueSlider cannot be instantiated with non float target: 'Material'") );
         GameObject ValueSlider;
 
         ValueSlider = Instantiate(ValueSliderPrefab, Parent);

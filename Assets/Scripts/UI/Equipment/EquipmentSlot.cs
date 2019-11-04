@@ -80,7 +80,7 @@ public class EquipmentSlot : MonoBehaviour
             ItemIconScript.RefItem = EquippedItem;
 
             RectTransform ItemIconRectTransform = ItemIconInstance.GetComponent<RectTransform>();
-            SetSize(EquippedItem.Data.Stats.GetStat<Vector2Int>(ItemTypes.StatFlags.Size), ItemIconRectTransform, ContainerRectTransform);
+            SetSize(EquippedItem.Data.Stats.GetStat<Vector2Int>(ItemTypes.StatFlagsEnum.Size), ItemIconRectTransform, ContainerRectTransform);
             //if (HorizontalAxis == Equipment.VectorResults.y)
             //{
             //    ItemIconRectTransform.Rotate(Vector3.forward, -90);

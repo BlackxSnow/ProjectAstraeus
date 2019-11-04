@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static ItemTypes;
+using static ItemModule.AdditionalModule;
 
 //Class containing serializable data for items
 [System.Serializable]
@@ -10,42 +11,67 @@ public class ItemData : ScriptableObject
 {
     public class ItemStats
     {
-        private Dictionary<StatFlags, object> Stats = new Dictionary<StatFlags, object>()
+        public Dictionary<StatFlagsEnum, object> Stats = new Dictionary<StatFlagsEnum, object>()
         {
-            { StatFlags.Damage, 0f },
-            { StatFlags.AttackSpeed, 0f },
-            { StatFlags.Accuracy, 0f },
-            { StatFlags.Block, 0f },
-            { StatFlags.ArmourPiercing, 0f },
-            { StatFlags.Range, 0f },
-            { StatFlags.Armour, 0f },
-            { StatFlags.Power, 0f },
-            { StatFlags.PowerUse, 0f },
-            { StatFlags.Shield, 0f },
-            { StatFlags.Size, new Vector2Int(1,1) },
-            { StatFlags.Mass, 0f },
-            { StatFlags.Cost, new Resources(0,0,0) }
+            { StatFlagsEnum.Damage, 0f },
+            { StatFlagsEnum.AttackSpeed, 0f },
+            { StatFlagsEnum.Accuracy, 0f },
+            { StatFlagsEnum.Block, 0f },
+            { StatFlagsEnum.ArmourPiercing, 0f },
+            { StatFlagsEnum.Range, 0f },
+            { StatFlagsEnum.Armour, 0f },
+            { StatFlagsEnum.Power, 0f },
+            { StatFlagsEnum.PowerUse, 0f },
+            { StatFlagsEnum.Shield, 0f },
+            { StatFlagsEnum.Size, new Vector2Int(1,1) },
+            { StatFlagsEnum.Mass, 0f },
+            { StatFlagsEnum.Cost, new Resources(0,0,0) }
         };
 
-        public T GetStat<T>(StatFlags Stat) where T : struct
+        public object this[StatFlagsEnum Stat]
         {
-            if(!Stats[Stat].GetType().IsAssignableFrom(typeof(T)))
+            get
+            {
+                return Stats[Stat];
+            }
+            set
+            {
+                if (Stats[Stat].GetType() != value.GetType())
+                {
+                    throw new ArgumentException(string.Format("Type {0} was requested, member type was {1}", value.GetType(), Stats[Stat].GetType()));
+                }
+                Stats[Stat] = value;
+            }
+        }
+
+        public T GetStat<T>(StatFlagsEnum Stat) where T : struct
+        {
+            if (!Stats[Stat].GetType().IsAssignableFrom(typeof(T)))
             {
                 throw new ArgumentException(string.Format("Type {0} was requested, member type was {1}", typeof(T), Stats[Stat].GetType()));
             }
             return (T)Stats[Stat];
         }
 
-        public void SetStat<T>(StatFlags Stat, T Value)
+        public enum OperationEnum
         {
-            if(Value.GetType() != Stats[Stat].GetType())
+            None,
+            Add,
+            Subtract,
+            Multiply,
+            Divide
+        }
+
+        public void SetStat<T>(StatFlagsEnum Stat, T Value, OperationEnum Operation = OperationEnum.None)
+        {
+            if (Value.GetType() != Stats[Stat].GetType())
             {
                 throw new ArgumentException(string.Format("Type {0} was passed to member of type {1}", Value.GetType(), Stats[Stat].GetType()));
             }
             Stats[Stat] = Value;
         }
 
-        public void AddStat(StatFlags Stat, float Value)
+        public void AddStat(StatFlagsEnum Stat, float Value)
         {
             if (Value.GetType() != Stats[Stat].GetType())
             {
@@ -56,7 +82,7 @@ public class ItemData : ScriptableObject
                 Stats[Stat] = stat + Value;
             }
         }
-        public void SubtractStat(StatFlags Stat, float Value)
+        public void SubtractStat(StatFlagsEnum Stat, float Value)
         {
             if (Value.GetType() != Stats[Stat].GetType())
             {
@@ -98,29 +124,23 @@ public class ItemData : ScriptableObject
 
         foreach (ItemModule.AdditionalModule Module in Modules)
         {
-            SizeMod += Module.SizeMultiplier;
-            MassMod += Module.MassMultiplier;
-            ResourceMod += Module.Cost;
-            
-            //Refactor by changing module stat storage to be a Dict<StatFlags, object> where object is the value. Iterate over the dict and add to the appropriate ItemStats.Stats[]
-            switch (Module)
+            SizeMod += Module.GetStat<Vector2>(StatFlagsEnum.SizeMod);
+            MassMod += Module.GetStat<float>(StatFlagsEnum.MassMod);
+            ResourceMod += Module.GetStat<Resources>(StatFlagsEnum.Cost);
+
+            foreach (StatFlagsEnum StatFlag in Utility.GetFlags(Module.StatFlags))
             {
-                case ItemModule.AdditionalModule.Plating _plating:
-                    Stats.AddStat(StatFlags.Armour, _plating.Armour);
-                    break;
-                case ItemModule.AdditionalModule.Reactor _Reactor:
-                    Stats.AddStat(StatFlags.Power, _Reactor.Power);
-                    break;
-                case ItemModule.AdditionalModule.Shielding _Shielding:
-                    Stats.AddStat(StatFlags.Shield, _Shielding.Shield);
-                    break;
-                default:
-                    break;
+                if (!Stats.Stats.TryGetValue(StatFlag, out object Value) || StatFlag == StatFlagsEnum.Cost)
+                {
+                    continue;
+                }
+
+                Stats.SetStat(StatFlag, (float)Value, ItemStats.OperationEnum.Add);
             }
         }
-        Stats.SetStat(StatFlags.Size, new Vector2Int(Mathf.RoundToInt(Core.Size.x * SizeMod.x), Mathf.RoundToInt(Core.Size.y * SizeMod.y)));
-        Stats.SetStat(StatFlags.Mass, Core.Mass * MassMod);
-        Stats.SetStat(StatFlags.Cost, Core.Cost + ResourceMod);
+        Stats.SetStat(StatFlagsEnum.Size, new Vector2Int(Mathf.RoundToInt(Core.Size.x * SizeMod.x), Mathf.RoundToInt(Core.Size.y * SizeMod.y)));
+        Stats.SetStat(StatFlagsEnum.Mass, Core.Mass * MassMod); //Is this multiplying by too much with > 1 module?
+        Stats.SetStat(StatFlagsEnum.Cost, Core.Cost + ResourceMod);
     }
 
     public List<GameObject> InstantiateStatKVPs(bool Cost, out List<GameObject> KVPLists, Transform Parent, KeyValueGroup Group = null)
@@ -130,23 +150,23 @@ public class ItemData : ScriptableObject
 
         KVPs.Add(UIController.InstantiateKVP("Item Type", Type, Parent, Group: Group));
 
-        if (Core.StatFlags.HasFlag(StatFlags.Armour))         KVPs.Add(UIController.InstantiateKVP(string.Format("{0}", StatFlags.Armour), Stats.GetStat<float>(StatFlags.Armour), Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.GetItemStat, ValueEnum: StatFlags.Armour, RefItem: this));
-        if (Core.StatFlags.HasFlag(StatFlags.Shield))         KVPs.Add(UIController.InstantiateKVP(string.Format("{0}", StatFlags.Shield), Stats.GetStat<float>(StatFlags.Shield), Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.GetItemStat, ValueEnum: StatFlags.Shield, RefItem: this));
-        if (Core.StatFlags.HasFlag(StatFlags.Power))          KVPs.Add(UIController.InstantiateKVP(string.Format("{0}", StatFlags.Power), Stats.GetStat<float>(StatFlags.Power), Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.GetItemStat, ValueEnum: StatFlags.Power, RefItem: this));
-        if (Core.StatFlags.HasFlag(StatFlags.PowerUse))       KVPs.Add(UIController.InstantiateKVP(string.Format("{0}", StatFlags.PowerUse), Stats.GetStat<float>(StatFlags.PowerUse), Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.GetItemStat, ValueEnum: StatFlags.PowerUse, RefItem: this));
-        if (Core.StatFlags.HasFlag(StatFlags.Damage))         KVPs.Add(UIController.InstantiateKVP(string.Format("{0}", StatFlags.Damage), Stats.GetStat<float>(StatFlags.Damage), Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.GetItemStat, ValueEnum: StatFlags.Damage, RefItem: this));
-        if (Core.StatFlags.HasFlag(StatFlags.ArmourPiercing)) KVPs.Add(UIController.InstantiateKVP(string.Format("{0}", StatFlags.ArmourPiercing), Stats.GetStat<float>(StatFlags.ArmourPiercing), Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.GetItemStat, ValueEnum: StatFlags.ArmourPiercing, RefItem: this));
-        if (Core.StatFlags.HasFlag(StatFlags.AttackSpeed))    KVPs.Add(UIController.InstantiateKVP(string.Format("{0}", StatFlags.AttackSpeed), Stats.GetStat<float>(StatFlags.AttackSpeed), Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.GetItemStat, ValueEnum: StatFlags.AttackSpeed, RefItem: this));
-        if (Core.StatFlags.HasFlag(StatFlags.Range))          KVPs.Add(UIController.InstantiateKVP(string.Format("{0}", StatFlags.Range), Stats.GetStat<float>(StatFlags.Range), Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.GetItemStat, ValueEnum: StatFlags.Range, RefItem: this));
+        if (Core.StatFlags.HasFlag(StatFlagsEnum.Armour))         KVPs.Add(UIController.InstantiateKVP(string.Format("{0}", StatFlagsEnum.Armour), Stats.GetStat<float>(StatFlagsEnum.Armour), Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.GetItemStat, ValueEnum: StatFlagsEnum.Armour, RefItem: this));
+        if (Core.StatFlags.HasFlag(StatFlagsEnum.Shield))         KVPs.Add(UIController.InstantiateKVP(string.Format("{0}", StatFlagsEnum.Shield), Stats.GetStat<float>(StatFlagsEnum.Shield), Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.GetItemStat, ValueEnum: StatFlagsEnum.Shield, RefItem: this));
+        if (Core.StatFlags.HasFlag(StatFlagsEnum.Power))          KVPs.Add(UIController.InstantiateKVP(string.Format("{0}", StatFlagsEnum.Power), Stats.GetStat<float>(StatFlagsEnum.Power), Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.GetItemStat, ValueEnum: StatFlagsEnum.Power, RefItem: this));
+        if (Core.StatFlags.HasFlag(StatFlagsEnum.PowerUse))       KVPs.Add(UIController.InstantiateKVP(string.Format("{0}", StatFlagsEnum.PowerUse), Stats.GetStat<float>(StatFlagsEnum.PowerUse), Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.GetItemStat, ValueEnum: StatFlagsEnum.PowerUse, RefItem: this));
+        if (Core.StatFlags.HasFlag(StatFlagsEnum.Damage))         KVPs.Add(UIController.InstantiateKVP(string.Format("{0}", StatFlagsEnum.Damage), Stats.GetStat<float>(StatFlagsEnum.Damage), Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.GetItemStat, ValueEnum: StatFlagsEnum.Damage, RefItem: this));
+        if (Core.StatFlags.HasFlag(StatFlagsEnum.ArmourPiercing)) KVPs.Add(UIController.InstantiateKVP(string.Format("{0}", StatFlagsEnum.ArmourPiercing), Stats.GetStat<float>(StatFlagsEnum.ArmourPiercing), Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.GetItemStat, ValueEnum: StatFlagsEnum.ArmourPiercing, RefItem: this));
+        if (Core.StatFlags.HasFlag(StatFlagsEnum.AttackSpeed))    KVPs.Add(UIController.InstantiateKVP(string.Format("{0}", StatFlagsEnum.AttackSpeed), Stats.GetStat<float>(StatFlagsEnum.AttackSpeed), Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.GetItemStat, ValueEnum: StatFlagsEnum.AttackSpeed, RefItem: this));
+        if (Core.StatFlags.HasFlag(StatFlagsEnum.Range))          KVPs.Add(UIController.InstantiateKVP(string.Format("{0}", StatFlagsEnum.Range), Stats.GetStat<float>(StatFlagsEnum.Range), Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.GetItemStat, ValueEnum: StatFlagsEnum.Range, RefItem: this));
 
-        KVPs.Add(UIController.InstantiateKVP("Size", Stats.GetStat<Vector2Int>(StatFlags.Size), Parent, Group: Group, ValueDelegate: KeyValuePanel.GetItemStat, ValueEnum: StatFlags.Size, RefItem: this));
-        KVPs.Add(UIController.InstantiateKVP("Mass", Stats.GetStat<float>(StatFlags.Mass), Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.GetItemStat, ValueEnum: StatFlags.Mass, RefItem: this));
+        KVPs.Add(UIController.InstantiateKVP("Size", Stats.GetStat<Vector2Int>(StatFlagsEnum.Size), Parent, Group: Group, ValueDelegate: KeyValuePanel.GetItemStat, ValueEnum: StatFlagsEnum.Size, RefItem: this));
+        KVPs.Add(UIController.InstantiateKVP("Mass", Stats.GetStat<float>(StatFlagsEnum.Mass), Parent, 1, Group: Group, ValueDelegate: KeyValuePanel.GetItemStat, ValueEnum: StatFlagsEnum.Mass, RefItem: this));
         if (Cost)
         {
             UIController.KVPData<float>[] CostData = new UIController.KVPData<float>[Resources.ResourceCount];
-            CostData[0] = new UIController.KVPData<float>("Iron", Stats.GetStat<Resources>(StatFlags.Cost)[Resources.ResourceList.Iron], null, Group: Group, ValueDelegate: KeyValuePanel.GetItemCost, ValueEnum: Resources.ResourceList.Iron, RefItem: this);
-            CostData[1] = new UIController.KVPData<float>("Copper", Stats.GetStat<Resources>(StatFlags.Cost)[Resources.ResourceList.Copper], null, Group: Group, ValueDelegate: KeyValuePanel.GetItemCost, ValueEnum: Resources.ResourceList.Copper, RefItem: this);
-            CostData[2] = new UIController.KVPData<float>("Alloy", Stats.GetStat<Resources>(StatFlags.Cost)[Resources.ResourceList.Alloy], null, Group: Group, ValueDelegate: KeyValuePanel.GetItemCost, ValueEnum: Resources.ResourceList.Alloy, RefItem: this);
+            CostData[0] = new UIController.KVPData<float>("Iron", Stats.GetStat<Resources>(StatFlagsEnum.Cost)[Resources.ResourceList.Iron], null, Group: Group, ValueDelegate: KeyValuePanel.GetItemStat, ValueEnum: Resources.ResourceList.Iron, RefItem: this);
+            CostData[1] = new UIController.KVPData<float>("Copper", Stats.GetStat<Resources>(StatFlagsEnum.Cost)[Resources.ResourceList.Copper], null, Group: Group, ValueDelegate: KeyValuePanel.GetItemStat, ValueEnum: Resources.ResourceList.Copper, RefItem: this);
+            CostData[2] = new UIController.KVPData<float>("Alloy", Stats.GetStat<Resources>(StatFlagsEnum.Cost)[Resources.ResourceList.Alloy], null, Group: Group, ValueDelegate: KeyValuePanel.GetItemStat, ValueEnum: Resources.ResourceList.Alloy, RefItem: this);
             KVPLists.Add(UIController.InstantiateKVPList("Cost", CostData, Parent, Group));
         }
 

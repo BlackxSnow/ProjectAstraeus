@@ -22,14 +22,14 @@ public class Equipment : MonoBehaviour
         Weapon,
         None
     }
-    public Item[] Equipped = new Item[6];
+    public EquippableItem[] Equipped = new EquippableItem[6];
 
-    public bool EquipItem(Item RefItem, EquipmentSlot UISlot)
+    public bool EquipItem(EquippableItem RefItem, EquipmentSlot UISlot)
     {
         Slots Slot = UISlot.Slot;
-        if (RefItem.Data.Core.Slot != Slot || Slot == Slots.None)
+        if (RefItem.Core.Slot != Slot || Slot == Slots.None)
         {
-            throw new ArgumentException(string.Format("Item's slot and parameter slot differ or slot is none (item slot: '{0}', slot parameter: '{1}'", RefItem.Data.Core.Slot, Slot));
+            throw new ArgumentException(string.Format("Item's slot and parameter slot differ or slot is none (item slot: '{0}', slot parameter: '{1}'", RefItem.Core.Slot, Slot));
         }
         if (Equipped[(int)Slot] == RefItem)
         {
@@ -41,7 +41,7 @@ public class Equipment : MonoBehaviour
             Debug.Log(string.Format("Slot is already occupied by '{0}'", Equipped[(int)Slot]));
             return false;
         }
-        VectorResults SizeComparison = CompareVectorSizes(UISlot.MaxSize, RefItem.Data.Stats.GetStat<Vector2Int>(ItemTypes.StatFlagsEnum.Size));
+        VectorResults SizeComparison = CompareVectorSizes(UISlot.MaxSize, RefItem.Stats.GetStat<Vector2Int>(ItemTypes.StatsEnum.Size));
         if (SizeComparison == VectorResults.None)
         {
             Debug.Log(string.Format("Item does not fit"));
@@ -53,7 +53,7 @@ public class Equipment : MonoBehaviour
         return true;
     }
 
-    public void UnequipItem(Item RefItem, EquipmentSlot UISlot)
+    public void UnequipItem(EquippableItem RefItem, EquipmentSlot UISlot)
     {
         if (Equipped[(int)UISlot.Slot] != RefItem)
         {

@@ -35,6 +35,18 @@ public class EntityManager : MonoBehaviour
         }
     }
 
+    public static bool UnregisterItem(Item item)
+    {
+        if (Items.Contains(item))
+        {
+            Items.Remove(item);
+            return true;
+        } else
+        {
+            return false;
+        }
+    }
+
     public static bool RegisterSelectable(ISelectable Selectable)
     {
         if(Selectables.Contains(Selectable))

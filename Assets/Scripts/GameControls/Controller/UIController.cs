@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using static ItemModule.AdditionalModule;
+using Modules;
 
 public class UIController : MonoBehaviour
 {
@@ -19,6 +19,7 @@ public class UIController : MonoBehaviour
     public static GameObject ModuleDisplayPrefab;
     public static GameObject PanelPrefab;
     public static GameObject ItemToolTipPrefab;
+    public static GameObject DropdownPrefab;
     //public static GameObject ToolTipPrefab;
 
     //Window Prefabs
@@ -35,6 +36,7 @@ public class UIController : MonoBehaviour
         ModuleDisplayPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/ModuleDisplayPanel");
         PanelPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/LayoutPanel");
         ItemToolTipPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/ItemToolTip");
+        DropdownPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/Dropdown");
 
         InventoryPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/InventoryUI");
         EquipmentPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Equipment/EquipmentUI");
@@ -53,10 +55,10 @@ public class UIController : MonoBehaviour
         Grid
     }
 
-    public struct KVPData<T>
+    public class KVPData
     {
         public string Key;
-        public T Value;
+        public dynamic Value;
         public Transform Parent;
         public int Rounding;
         public Gradient gradient;
@@ -64,27 +66,18 @@ public class UIController : MonoBehaviour
         public float Max;
         public KeyValueGroup Group;
         public KeyValuePanel.GetValueDelegate ValueDelegate;
-        public ItemModule.AdditionalModule RefModule;
-        public ItemData RefItem;
+        public AdditionalModule RefModule;
+        public Item RefItem;
         public StatsAndSkills RefStats;
         public Enum ValueEnum;
         public float KeyRatio;
 
-        public KVPData(string Key, T Value, Transform Parent, int Rounding = 0, Gradient gradient = null, float Min = 0, float Max = 0, KeyValueGroup Group = null, KeyValuePanel.GetValueDelegate ValueDelegate = null, ItemModule.AdditionalModule RefModule = null, ItemData RefItem = null, StatsAndSkills RefStats = null, Enum ValueEnum = null, float KeyRatio = 0.5f)
+        public KVPData(string Key, dynamic Value, Transform Parent, int Rounding = 0, float KeyRatio = 0.5f)
         {
             this.Key = Key;
             this.Value = Value;
             this.Parent = Parent;
             this.Rounding = Rounding;
-            this.gradient = gradient;
-            this.Min = Min;
-            this.Max = Max;
-            this.Group = Group;
-            this.ValueDelegate = ValueDelegate;
-            this.RefModule = RefModule;
-            this.RefItem = RefItem;
-            this.RefStats = RefStats;
-            this.ValueEnum = ValueEnum;
             this.KeyRatio = KeyRatio;
         }
     }
@@ -137,74 +130,79 @@ public class UIController : MonoBehaviour
     }
 
     //Instantiates a prefab panel with two texts designed to show a key and value
-    public static GameObject InstantiateKVP<T>(KVPData<T> Data)
+    public static List<GameObject> InstantiateKVP(List<KVPData> KVPDatas)
     {
-        return InstantiateKVP(Data.Key, Data.Value, Data.Parent, Data.Rounding, Data.gradient, Data.Min, Data.Max, Data.Group, Data.ValueDelegate, Data.RefModule, Data.RefItem, Data.RefStats, Data.ValueEnum, Data.KeyRatio);
+        List<GameObject> KVPs = new List<GameObject>();
+        foreach (KVPData Data in KVPDatas)
+        {
+            KVPs.Add(InstantiateKVP(Data));
+        }
+        return KVPs;
     }
-    public static GameObject InstantiateKVP<T>(string Key, T Value, Transform Parent, int Rounding = 0, Gradient gradient = null, float Min = 0, float Max = 0, KeyValueGroup Group = null, KeyValuePanel.GetValueDelegate ValueDelegate = null, ItemModule.AdditionalModule RefModule = null, ItemData RefItem = null, StatsAndSkills RefStats = null, Enum ValueEnum = null, float KeyRatio = .5f)
+    public static GameObject InstantiateKVP(KVPData Data)//string Key, T Value, Transform Parent, int Rounding = 0, Gradient gradient = null, float Min = 0, float Max = 0, KeyValueGroup Group = null, KeyValuePanel.GetValueDelegate ValueDelegate = null, AdditionalModule RefModule = null, Item RefItem = null, StatsAndSkills RefStats = null, Enum ValueEnum = null, float KeyRatio = .5f)
     {
         GameObject Panel;
         TextMeshProUGUI KeyText;
         TextMeshProUGUI ValueText;
         KeyValuePanel KVPScript;
 
-        Panel = Instantiate(KeyValuePanelObjectPrefab, Parent);
+        Panel = Instantiate(KeyValuePanelObjectPrefab, Data.Parent);
         KVPScript = Panel.GetComponent<KeyValuePanel>();
         KeyText = KVPScript.Key.TextMesh;
         ValueText = KVPScript.Value.TextMesh;
 
-        if (Group)
+        if (Data.Group)
         {
-            KVPScript.Group = Group;
-            Group.AddMember(KVPScript);
+            KVPScript.Group = Data.Group;
+            Data.Group.AddMember(KVPScript);
         }
 
-        KeyText.GetComponent<RectTransform>().anchorMax = new Vector2(KeyRatio - .05f, 1f);
-        ValueText.GetComponent<RectTransform>().anchorMin = new Vector2(KeyRatio + .05f, 0f);
+        KeyText.GetComponent<RectTransform>().anchorMax = new Vector2(Data.KeyRatio - .05f, 1f);
+        ValueText.GetComponent<RectTransform>().anchorMin = new Vector2(Data.KeyRatio + .05f, 0f);
 
-        dynamic Result = Value;
+        dynamic Result = Data.Value;
         Color color;
 
-        if (gradient != null)
+        if (Data.gradient != null)
         {
-            if (Min != Max)
+            if (Data.Min != Data.Max)
             {
-                color = gradient.Evaluate(Utility.FindValueMinMax(Min, Max, Value));
+                color = Data.gradient.Evaluate(Utility.FindValueMinMax(Data.Min, Data.Max, Data.Value));
             }
             else
             {
-                color = gradient.Evaluate(1.0f);
+                color = Data.gradient.Evaluate(1.0f);
             }
             ValueText.color = color;
         }
 
-        if (Value is float || Value is double)
+        if (Data.Value is float || Data.Value is double)
         {
-            Result = Utility.RoundToNDecimals(Value, Rounding);
+            Result = Utility.RoundToNDecimals(Data.Value, Data.Rounding);
         }
 
-        KeyText.text = string.Format("{0}", Key);
+        KeyText.text = string.Format("{0}", Data.Key);
         ValueText.text = string.Format("{0}", Result);
 
-        if (ValueDelegate != null)
+        if (Data.ValueDelegate != null)
         {
-            KVPScript.GetValue = ValueDelegate;
+            KVPScript.GetValue = Data.ValueDelegate;
         } else
         {
             KVPScript.DoNotUpdate = true;
         }
-        if (ValueDelegate != null && !RefItem && !RefModule && !RefStats) throw new ArgumentException("KVP with ValueDelegate requires one of: RefItem, RefModule, or RefStats");
+        if (Data.ValueDelegate != null && !Data.RefItem && !Data.RefModule && !Data.RefStats) throw new ArgumentException("KVP with ValueDelegate requires one of: RefItem, RefModule, or RefStats");
 
-        KVPScript.GetValueEnum = ValueEnum;
-        KVPScript.Refs.RefItem = RefItem;
-        KVPScript.Refs.RefModule = RefModule;
-        KVPScript.Refs.RefStats = RefStats;
+        KVPScript.GetValueEnum = Data.ValueEnum;
+        KVPScript.Refs.RefItem = Data.RefItem;
+        KVPScript.Refs.RefModule = Data.RefModule;
+        KVPScript.Refs.RefStats = Data.RefStats;
 
         return Panel;
     }
 
     //Instantiates a prefab for a list of Key Value Panels
-    public static GameObject InstantiateKVPList<T>(string ListName, KVPData<T>[] KeyValuePanels, Transform Parent, KeyValueGroup Group = null)
+    public static GameObject InstantiateKVPList(string ListName, KVPData[] KeyValuePanels, Transform Parent, KeyValueGroup Group = null)
     {
         GameObject ListPanel = Instantiate(KeyValueListObjectPrefab, Parent);
         GameObject ListNameObject = InstantiateText(ListName, ListPanel.transform, Group: Group);
@@ -223,19 +221,19 @@ public class UIController : MonoBehaviour
         return ListPanel;
     }
 
-    public static GameObject InstantiateValueSlider(string Name, ItemTypes.StatFlagsEnum StatEnum, Transform Parent, float Min = 0, float Max = 10)
+    public static GameObject InstantiateValueSlider(string Name, ItemTypes.StatsEnum StatEnum, Transform Parent, float Min = 0, float Max = 10)
     {
-        if (StatEnum == ItemTypes.StatFlagsEnum.Material) throw new ArgumentException(string.Format("ValueSlider cannot be instantiated with non float target: 'Material'") );
+        if (StatEnum == ItemTypes.StatsEnum.Material) throw new ArgumentException(string.Format("ValueSlider cannot be instantiated with non float target: 'Material'") );
         GameObject ValueSlider;
 
         ValueSlider = Instantiate(ValueSliderPrefab, Parent);
 
-        ValueModSlider ValueSliderScript = ValueSlider.GetComponent<ValueModSlider>();
+        UI.Crafting.ModuleSlider ValueSliderScript = ValueSlider.GetComponent<UI.Crafting.ModuleSlider>();
         TextMeshProUGUI LabelText = ValueSliderScript.LabelText;
 
         LabelText.text = Name;
         ValueSliderScript.TargetStat = StatEnum;
-        ValueSliderScript.ValueBounds = new ValueModSlider.MinMax(Min, Max);
+        ValueSliderScript.ValueBounds = new UI.Crafting.ModuleSlider.MinMax(Min, Max);
 
         ValueSliderScript.SetSliderValues();
 
@@ -243,14 +241,26 @@ public class UIController : MonoBehaviour
 
     }
 
-    public static GameObject InstantiateModulePanel(ItemModule.AdditionalModule Module, Transform Parent)
+    public static GameObject InstantiateDropdown(string Name, ItemTypes.StatsEnum ModStat, Transform Parent)
+    {
+        GameObject DropdownObject;
+
+        DropdownObject = Instantiate(DropdownPrefab, Parent);
+
+        UI.Crafting.ModuleDropdown DropdownScript = DropdownObject.GetComponent<UI.Crafting.ModuleDropdown>();
+
+
+        throw new NotImplementedException();
+    } 
+
+    public static GameObject InstantiateModulePanel(AdditionalModule Module, Transform Parent)
     {
         GameObject DisplayPanel = Instantiate(ModuleDisplayPrefab, Parent);
         ModuleDisplayPanel Script = DisplayPanel.GetComponent<ModuleDisplayPanel>();
         Script.Module = Module;
 
         KeyValueGroup Group = new KeyValueGroup();
-        Module.InstantiateStatKVPs(Script.StatPanel.transform, Group, out GameObject[] KVPListArray);
+        Module.InstantiateStatKVPs(Script.StatPanel.transform, Group, out _);
         Script.Name.text = Module.ModuleName;
 
         return DisplayPanel;
@@ -292,7 +302,7 @@ public class UIController : MonoBehaviour
         ToolTip.GetComponent<RectTransform>().position = Input.mousePosition;
 
         ItemTooltip Script = ToolTip.GetComponent<ItemTooltip>();
-        ItemData Data = item.Data;
+        Item Data = item;
 
         Script.SetInfo(Data.ItemName, string.Format("{0}", Data.Type));
         KeyValueGroup Group = new KeyValueGroup();

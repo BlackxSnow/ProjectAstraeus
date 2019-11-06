@@ -21,7 +21,7 @@ public class CraftingUI : Window
     [Space(10)]
 
     [HideInInspector]
-    public static ItemData CurrentItem;
+    public static Item CurrentItem;
     public static ItemModule.AdditionalModule CurrentModule;
 
     public struct KVPStruct
@@ -93,8 +93,8 @@ public class CraftingUI : Window
     private static KVPStruct TotalStatKVPInfo;
     private static KVPStruct ModuleStatKVPInfo;
 
-    private List<GameObject> ModuleDisplays = new List<GameObject>();
-    private List<GameObject> ModificationUI = new List<GameObject>();
+    private readonly List<GameObject> ModuleDisplays = new List<GameObject>();
+    private readonly List<GameObject> ModificationUI = new List<GameObject>();
 
     private void Awake()
     {
@@ -140,8 +140,13 @@ public class CraftingUI : Window
 
         ItemTypes.Types Type = ActiveToggle.GetComponent<ItemSelectToggle>().Type;
 
+        if (CurrentItem) CurrentItem.DestroyEntity();
         ClearAll();
-        CurrentItem = new ItemData(Type);
+
+        GameObject ItemInstance = Instantiate(ItemTypes.ItemBasePrefab, new Vector3(0, 0.5f, 0), new Quaternion(0, 0, 0, 0));
+        CurrentItem = ItemInstance.GetComponent<Item>();
+        CurrentItem.InitItem(Type);
+        CurrentItem.Pack();
 
         ModuleDropdown.SetOptions();
         InitialiseTotalStatDisplay();
@@ -195,10 +200,7 @@ public class CraftingUI : Window
     public void CreateItem()
     {
         if (!CurrentItem) return;
-        GameObject ItemInstance = Instantiate(ItemTypes.ItemBasePrefab, new Vector3(5, 0.5f, 5), new Quaternion(0, 0, 0, 0));
-        Item Script = ItemInstance.GetComponent<Item>();
-        Script.Name = string.Format("{0}", CurrentItem.Type);
-        Script.Data = CurrentItem;
+        CurrentItem.Name = string.Format("{0}", CurrentItem.Type);
 
         ClearAll();
         CurrentModule = null;
@@ -207,9 +209,13 @@ public class CraftingUI : Window
     void InitialiseModificationUI()
     {
         ClearValueSliders();
-        foreach (ModifiableStatsEnum Stat in Utility.GetFlags(CurrentModule.ModifiableStats))
+        foreach (KeyValuePair<ItemTypes.StatsEnum, object> ModifiableStat in CurrentModule.ModifiableStats)
         {
-            ModificationUI.Add(UIController.InstantiateValueSlider(Stat.ToString(), (ItemTypes.StatFlagsEnum)Stat, UI_ModificationUIPanel.transform, 0, 10));
+            if (ModifiableStat.Key == ItemTypes.StatsEnum.Material)
+            {
+                ModificationUI.Add(UIController.InstantiateDropdown("Material", ModifiableStat.Key, UI_ModificationUIPanel.transform));
+            }
+            ModificationUI.Add(UIController.InstantiateValueSlider(ModifiableStat.Key.ToString(), ModifiableStat.Key, UI_ModificationUIPanel.transform, 0, 10));
         }
     }
 
@@ -217,9 +223,8 @@ public class CraftingUI : Window
     {
         ClearKVPs(true, false);
 
-        GameObject[] KVPListArray;
         GameObject[] KVPArray;
-        KVPArray = CurrentModule.InstantiateStatKVPs(UI_ModuleStatsPanel.transform, ModuleStatKVPInfo.Group, out KVPListArray);
+        KVPArray = CurrentModule.InstantiateStatKVPs(UI_ModuleStatsPanel.transform, ModuleStatKVPInfo.Group, out GameObject[] KVPListArray);
 
         ModuleStatKVPInfo.AddKVP(KVPArray);
         ModuleStatKVPInfo.AddKVPList(KVPListArray);

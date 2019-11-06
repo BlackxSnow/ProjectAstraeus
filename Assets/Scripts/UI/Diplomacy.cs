@@ -17,8 +17,8 @@ public class Diplomacy : Window
     {
 
         //Creating generic faction information
-        Panels.Add(UIController.InstantiateKVP("Name", FactionManager.Factions[ID].Name, InfoLeft));
-        Panels.Add(UIController.InstantiateKVP("ID", FactionManager.Factions[ID].ID, InfoLeft));
+        Panels.Add(UIController.InstantiateKVP(new UIController.KVPData("Name", FactionManager.Factions[ID].Name, InfoLeft)));
+        Panels.Add(UIController.InstantiateKVP(new UIController.KVPData("ID", FactionManager.Factions[ID].ID, InfoLeft)));
 
         //Creating text for faction relations
         foreach (KeyValuePair<int, Faction> _KVP in FactionManager.Factions)
@@ -26,12 +26,22 @@ public class Diplomacy : Window
             if (_KVP.Key == ID)
             {
                 Gradient gradient = Utility.CreateGradient(Color.green);
-                Panels.Add(UIController.InstantiateKVP(FactionManager.Factions[_KVP.Key].Name, "SELF", RelationsPanel, 0, gradient));
+                UIController.KVPData Data = new UIController.KVPData(FactionManager.Factions[_KVP.Key].Name, "SELF", RelationsPanel)
+                {
+                    gradient = gradient
+                };
+                Panels.Add(UIController.InstantiateKVP(Data));
             }
             else
             {
                 Gradient gradient = Utility.CreateGradient(Color.red, Color.white, Color.green);
-                Panels.Add(UIController.InstantiateKVP(FactionManager.Factions[_KVP.Key].Name, FactionManager.Factions[ID].GetRelations(_KVP.Key), RelationsPanel, 0, gradient, -100, 100));
+                UIController.KVPData Data = new UIController.KVPData(FactionManager.Factions[_KVP.Key].Name, FactionManager.Factions[ID].GetRelations(_KVP.Key), RelationsPanel)
+                {
+                    gradient = gradient,
+                    Min = -100,
+                    Max = 100
+                };
+                Panels.Add(UIController.InstantiateKVP(Data));
             }
         }
     }

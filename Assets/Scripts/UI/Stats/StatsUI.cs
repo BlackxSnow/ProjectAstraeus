@@ -17,7 +17,7 @@ public class StatsUI : Window
         public GameObject Description;
     }
     public InfoPanelStruct InfoPanels;
-    List<GameObject> InfoPanelObjects = new List<GameObject>();
+    readonly List<GameObject> InfoPanelObjects = new List<GameObject>();
     StatsAndSkills RefStats { get; set; }
 
     public Transform StatsPanel;
@@ -71,12 +71,26 @@ public class StatsUI : Window
     {
         foreach (KeyValuePair<StatsEnum, StatSkill> Stat in RefStats.Stats)
         {
-            GameObject KVP = UIController.InstantiateKVP(Stat.Key.ToString(), Stat.Value.Level, StatsPanel, Group: SkillsGroup, ValueDelegate: KeyValuePanel.GetStat, RefStats: RefStats, ValueEnum: Stat.Key, KeyRatio: .8f);
+            UIController.KVPData Data = new UIController.KVPData(Stat.Key.ToString(), Stat.Value.Level, StatsPanel, KeyRatio: 0.8f)
+            {
+                Group = SkillsGroup,
+                ValueDelegate = KeyValuePanel.GetStat,
+                RefStats = RefStats,
+                ValueEnum = Stat.Key
+            };
+            GameObject KVP = UIController.InstantiateKVP(Data);
             KVP.AddComponent<SkillHover>().ParentStatsWindow = this;
         }
         foreach (KeyValuePair<SkillsEnum, StatSkill> Skill in RefStats.Skills)
         {
-            GameObject KVP = UIController.InstantiateKVP(Skill.Key.ToString(), Skill.Value.Level, SkillPanels[(int)Skill.Value.SkillType - 1], Group: SkillsGroup, ValueDelegate: KeyValuePanel.GetSkill, RefStats: RefStats, ValueEnum: Skill.Key, KeyRatio: .8f);
+            UIController.KVPData Data = new UIController.KVPData(Skill.Key.ToString(), Skill.Value.Level, SkillPanels[(int)Skill.Value.SkillType - 1])
+            {
+                Group = SkillsGroup,
+                ValueDelegate = KeyValuePanel.GetSkill,
+                RefStats = RefStats,
+                ValueEnum = Skill.Key
+            };
+            GameObject KVP = UIController.InstantiateKVP(Data);
             KVP.AddComponent<SkillHover>().ParentStatsWindow = this;
         }
     }
@@ -105,7 +119,11 @@ public class StatsUI : Window
             TitleTextMesh.color = Color.red;
             for (int i = 0; i < Skill.AffectedActivities.Length; i++)
             {
-                InfoPanelObjects.Add(UIController.InstantiateKVP(Skill.AffectedActivities[i].Key, Skill.AffectedActivities[i].Value, InfoPanels.AffectedActivities.transform, Group: InfoPanelGroup ,KeyRatio: 0.75f));
+                UIController.KVPData Data = new UIController.KVPData(Skill.AffectedActivities[i].Key, Skill.AffectedActivities[i].Value, InfoPanels.AffectedActivities.transform, KeyRatio: 0.75f)
+                {
+                    Group = InfoPanelGroup
+                };
+                InfoPanelObjects.Add(UIController.InstantiateKVP(Data));
             }
         }
         //Level and XP

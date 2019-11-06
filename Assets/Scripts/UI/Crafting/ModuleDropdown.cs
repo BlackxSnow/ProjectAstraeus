@@ -6,9 +6,9 @@ namespace UI
 {
     namespace Crafting
     {
-        public class ItemSelectToggle : MonoBehaviour
+        public class ModuleDropdown : MonoBehaviour
         {
-            public ItemTypes.Types Type;
-        }
+
+        }  
     }
 }

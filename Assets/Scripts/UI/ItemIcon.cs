@@ -63,9 +63,9 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
         }
         CheckHover();
 
-        if (RefItem && ItemSlotName.text != string.Format("{0}", RefItem.Data.Core.Slot))
+        if (RefItem && ItemSlotName.text != string.Format("{0}", RefItem.Core.Slot))
         {
-            ItemSlotName.text = RefItem.Data.Core.Slot.ToString();
+            ItemSlotName.text = RefItem.Core.Slot.ToString();
         }
     }
 
@@ -78,14 +78,14 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
         }
         else if (EquipmentInfo.Container)
         {
-            EquipmentInfo.Container.UnequipItem(TargetItem, EquipmentInfo.UIContainer);
+            EquipmentInfo.Container.UnequipItem(TargetItem as EquippableItem, EquipmentInfo.UIContainer);
             EquipmentInfo.UIContainer.RenderItem();
         }
     }
 
     public void SetSizeToGrid()
     {
-        RTransform.sizeDelta = RefItem.Data.Stats.GetStat<Vector2Int>(ItemTypes.StatFlagsEnum.Size) * InventoryUI.GridSize;
+        RTransform.sizeDelta = RefItem.Stats.GetStat<Vector2Int>(ItemTypes.StatsEnum.Size) * InventoryUI.GridSize;
     }
 
     public void OnPointerDown(PointerEventData data)
@@ -116,13 +116,13 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
     void EquipmentCheck(List<RaycastResult> Results)
     {
         RaycastResult TargetResult = Results.Find(R => R.gameObject.GetComponent<EquipmentSlot>() != null);
-        if (!TargetResult.gameObject) return;
+        if (!TargetResult.gameObject || !(RefItem is EquippableItem)) return;
         EquipmentSlot TargetSlot = TargetResult.gameObject.GetComponent<EquipmentSlot>();
 
         if (Results.Count > 0 && TargetSlot)
         {
             Equipment TargetEquipment = TargetSlot.ParentUI.RefEquipment;
-            bool Equipped = TargetEquipment.EquipItem(RefItem, TargetSlot);
+            bool Equipped = TargetEquipment.EquipItem(RefItem as EquippableItem, TargetSlot);
 
             if (Equipped)
             {

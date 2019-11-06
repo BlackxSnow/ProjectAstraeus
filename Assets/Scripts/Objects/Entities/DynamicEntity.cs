@@ -16,8 +16,9 @@ public class DynamicEntity : Entity, ISelectable
 
     protected Collider colliderComponent;
 
-    protected override void Start()
+    public override void Init()
     {
+        base.Init();
         ISelectablegameObject = gameObject;
         SelectObjInstance = Instantiate(SelectObj, transform);
         SelectObjProjector = SelectObjInstance.GetComponent<Projector>();
@@ -33,6 +34,11 @@ public class DynamicEntity : Entity, ISelectable
         {
             ViewableOnly = false;
         }
+    }
+
+    protected override void Start()
+    {
+        base.Start();
     }
 
     protected override void Awake()

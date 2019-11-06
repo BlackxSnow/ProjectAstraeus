@@ -41,7 +41,7 @@ public class Utility : MonoBehaviour
 
     public static float RoundToNDecimals<T>(T Value, int Decimals)
     {
-        dynamic ValueF = 0;
+        dynamic ValueF;
         if (Value is float || Value is int || Value is double)
         {
             ValueF = Value;
@@ -95,9 +95,11 @@ public class Utility : MonoBehaviour
     }
     public static Equipment.VectorResults RearrangeVector(Vector2 InputVector, out Vector2 ResultVector)
     {
-        ResultVector = new Vector2();
-        ResultVector.x = Mathf.Max(InputVector.x, InputVector.y);
-        ResultVector.y = Mathf.Min(InputVector.x, InputVector.y);
+        ResultVector = new Vector2
+        {
+            x = Mathf.Max(InputVector.x, InputVector.y),
+            y = Mathf.Min(InputVector.x, InputVector.y)
+        };
 
         if (ResultVector != InputVector)
         {

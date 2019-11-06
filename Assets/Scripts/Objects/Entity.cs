@@ -65,18 +65,27 @@ public class Entity : MonoBehaviour, IOwnable
         if (EntityComponents.Stats) EntityFlags |= EntityFlagsEnum.HasStats;
         if (EntityComponents.Movement) EntityFlags |= EntityFlagsEnum.CanMove;
     }
-
-    // Start is called before the first frame update
-    protected virtual void Start()
+    bool Initialised = false;
+    public virtual void Init()
     {
         GetEntityComponents();
-        
+
         animator = GetComponent<Animator>();
         if (Name == "") Name = name;
         FactionID = 0;//Mathf.RoundToInt(Random.value * (FactionManager.Factions.Count - 1));
         rendererComponent = gameObject.GetComponentInChildren<Renderer>();
         if (rendererComponent)
             rendererComponent.material.color = FactionManager.Factions[FactionID].FactionColour; //Debug; Visually shows faction colour
+        Initialised = true;
+    }
+
+    // Start is called before the first frame update
+    protected virtual void Start()
+    {
+        if (!Initialised)
+        {
+            Init();
+        }
     }
 
     // Update is called once per frame

@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Modules;
+using static Modules.AdditionalModule;
 
 namespace UI
 {
@@ -14,15 +15,8 @@ namespace UI
         {
             public TMP_Dropdown DropdownComponent;
             [HideInInspector]
-            public ModuleListEnum SelectedModule;
-
-            public static Dictionary<string, ModuleListEnum> ModuleDict = new Dictionary<string, ModuleListEnum>()
-    {
-        { "Plating", ModuleListEnum.Plating },
-        { "Reactor", ModuleListEnum.Reactor },
-        { "Shielding", ModuleListEnum.Shielding },
-        { "WeaponPlaceHolderModule", ModuleListEnum.WeaponPlaceHolderModule }
-    };
+            public ModulesEnum SelectedModule;
+            readonly List<ModulesEnum> AddedOptions = new List<ModulesEnum>();
 
             private void Start()
             {
@@ -32,20 +26,22 @@ namespace UI
 
             public void SetSelected()
             {
-                ModuleDict.TryGetValue(DropdownComponent.captionText.text, out SelectedModule);
+                SelectedModule = AddedOptions[DropdownComponent.value];
             }
 
             public void SetOptions()
             {
                 DropdownComponent.ClearOptions();
                 List<string> Options = new List<string>();
+                AddedOptions.Clear();
 
                 if (!CraftingUI.CurrentItem) return;
 
-                foreach (ModuleListEnum Flag in Utility.GetFlags(CraftingUI.CurrentItem.Core.AvailableModules))
+                Debug.Log(CraftingUI.CurrentItem.BaseStats.CompatibleModules.Count);
+                foreach (ModulesEnum Module in CraftingUI.CurrentItem.BaseStats.CompatibleModules)
                 {
-                    Options.Add(string.Format("{0}", Flag));
-                    Enum.GetName(typeof(ModuleListEnum), Flag);
+                    Options.Add(string.Format("{0}", Module));
+                    AddedOptions.Add(Module);
                 }
                 DropdownComponent.AddOptions(Options);
                 SetSelected();

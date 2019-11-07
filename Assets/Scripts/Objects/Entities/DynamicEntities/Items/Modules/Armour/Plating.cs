@@ -6,7 +6,7 @@ using static Materials;
 
 namespace Modules
 {
-    public class Plating : ItemModule.AdditionalModule
+    public class Plating : AdditionalModule
     {
         public override void CalculateStats()
         {
@@ -19,11 +19,11 @@ namespace Modules
             SetStat(StatsEnum.Armour, Thickness * _Material.ArmourModifier);
             SetStat(StatsEnum.Cost, new Resources((int)Mathf.Round(Thickness), 0, 0));
         }
-        public Plating(float _Thickness = 1) : base()
+        public Plating() : base()
         {
             Materials.Material _Material;
             MaterialDict.TryGetValue(MaterialTypes.Iron, out _Material);
-            ModifiableStats.Add(StatsEnum.Thickness, _Thickness);
+            ModifiableStats.Add(StatsEnum.Thickness, 1f);
             ModifiableStats.Add(StatsEnum.Material, _Material);
             Stats.Add(StatsEnum.Armour, 0f);
 

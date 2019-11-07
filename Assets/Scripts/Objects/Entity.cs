@@ -22,13 +22,9 @@ public class Entity : MonoBehaviour, IOwnable
         CanMove = 1 << 3
     }
 
-    public struct BaseStatsStruct
+    public struct BaseEntityStatsStruct
     {
-        public float MoveSpeed;
-        public BaseStatsStruct(float MoveSpeed)
-        {
-            this.MoveSpeed = MoveSpeed;
-        }
+        public float MovementSpeed;
     }
 
     public struct EntityComponentsStruct
@@ -45,7 +41,7 @@ public class Entity : MonoBehaviour, IOwnable
     public EntityTypes EntityType;
     public EntityFlagsEnum EntityFlags;
     public EntityComponentsStruct EntityComponents;
-    public BaseStatsStruct BaseStats = new BaseStatsStruct(3.5f);
+    public BaseEntityStatsStruct BaseEntityStats;
 
     public Animator animator;
     protected Renderer rendererComponent;

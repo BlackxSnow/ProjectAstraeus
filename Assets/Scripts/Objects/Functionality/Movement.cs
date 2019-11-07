@@ -55,7 +55,7 @@ public class Movement : MonoBehaviour
             {
                 entity.EntityComponents.Stats.AddXP(StatsAndSkills.SkillsEnum.Athletics, 2500);
             }
-            Agent.speed = entity.BaseStats.MoveSpeed * (1f + (entity.EntityComponents.Stats.GetSkillInfo(StatsAndSkills.SkillsEnum.Athletics).Level / 100f * 2.0f));
+            Agent.speed = entity.BaseEntityStats.MovementSpeed * (1f + (entity.EntityComponents.Stats.GetSkillInfo(StatsAndSkills.SkillsEnum.Athletics).Level / 100f * 2.0f));
             yield return new WaitForSeconds(0.25f);
         }
     }

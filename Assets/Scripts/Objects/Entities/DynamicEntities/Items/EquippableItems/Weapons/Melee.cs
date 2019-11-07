@@ -5,9 +5,9 @@ using static ItemTypes;
 
 public class Melee : Weapon
 {
-    public override void InitItem(ItemTypes.Types _Type)
+    public override void Init()
     {
-        base.InitItem(_Type);
+        base.Init();
         Stats.AddStat(StatsEnum.Block, 0f);
     }
 

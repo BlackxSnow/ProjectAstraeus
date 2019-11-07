@@ -6,7 +6,7 @@ using static Materials;
 
 namespace Modules
 {
-    public class Shield : ItemModule.AdditionalModule
+    public class Shield : AdditionalModule
     {
 
         public override void CalculateStats()

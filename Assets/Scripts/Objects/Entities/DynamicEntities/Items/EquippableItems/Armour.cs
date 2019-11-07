@@ -1,18 +1,43 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Modules;
+using static Modules.AdditionalModule;
 using static ItemTypes;
+
 
 
 public class Armour : EquippableItem
 {
-    public override void InitItem(ItemTypes.Types _Type)
+
+
+    public override void Init()
     {
-        base.InitItem(_Type);
+        base.Init();
         Stats.AddStat(StatsEnum.Armour, 0f);
         Stats.AddStat(StatsEnum.Shield, 0f);
         Stats.AddStat(StatsEnum.Power, 0f);
         Stats.AddStat(StatsEnum.PowerUse, 0f);
+
+        BaseStats = new BaseItemStats()
+        {
+            Stats = new Dictionary<StatsEnum, object>()
+            {
+                { StatsEnum.Armour, 1f },
+                { StatsEnum.Shield, 0f },
+                { StatsEnum.Power, 0f },
+                { StatsEnum.PowerUse, 0f },
+                { StatsEnum.Size, new Vector2Int(1,1) },
+                { StatsEnum.Mass, 1f },
+                { StatsEnum.Cost, new Resources(1,0,0) }
+            },
+            CompatibleModules = new List<ModulesEnum>()
+            {
+                ModulesEnum.Plating,
+                ModulesEnum.Reactor,
+                ModulesEnum.Shield
+            }
+        };
     }
     public override List<GameObject> InstantiateStatKVPs(bool Cost, out List<GameObject> CombinedKVPLists, Transform Parent, KeyValueGroup Group = null) 
     {

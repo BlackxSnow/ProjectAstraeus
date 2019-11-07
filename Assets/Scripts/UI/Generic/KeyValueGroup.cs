@@ -20,8 +20,7 @@ public class KeyValueGroup : ScriptableObject
     }
 
     public FontSizes Font = new FontSizes(8, 72);
-
-    List<IGroupableUI> GroupMembers = new List<IGroupableUI>();
+    readonly List<IGroupableUI> GroupMembers = new List<IGroupableUI>();
     public float UniformSize;
 
     public bool Dirty;
@@ -85,7 +84,7 @@ public class KeyValueGroup : ScriptableObject
         return MinSize;
     }
 
-    public KeyValueGroup(float MinFont = 8, float MaxFont = 72)
+    public void Init(float MinFont = 8, float MaxFont = 72)
     {
         Font.Min = MinFont;
         Font.Max = MaxFont;

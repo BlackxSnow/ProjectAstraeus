@@ -5,9 +5,9 @@ using static ItemTypes;
 
 public class Ranged : Weapon
 {
-    public override void InitItem(ItemTypes.Types _Type)
+    public override void Init()
     {
-        base.InitItem(_Type);
+        base.Init();
         Stats.AddStat(StatsEnum.Range, 0f);
         Stats.AddStat(StatsEnum.Accuracy, 0f);
     }

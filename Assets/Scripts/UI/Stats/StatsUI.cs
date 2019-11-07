@@ -29,8 +29,9 @@ public class StatsUI : Window
 
     public void Init(StatsAndSkills TargetStats)
     {
-        InfoPanelGroup = new KeyValueGroup(8, 16);
-        SkillsGroup = new KeyValueGroup(8, 72);
+        InfoPanelGroup = ScriptableObject.CreateInstance<KeyValueGroup>();
+        InfoPanelGroup.Init(8, 16);
+        SkillsGroup = ScriptableObject.CreateInstance<KeyValueGroup>();
         RefStats = TargetStats;
 
         CreateSkillPanels();

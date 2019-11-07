@@ -10,7 +10,7 @@ public class DynamicEntity : Entity, ISelectable
     public bool FinalisedSelection { get; set; }
     public GameObject ISelectablegameObject { get; set; }
 
-    public GameObject SelectObj;
+    GameObject SelectObj;
     GameObject SelectObjInstance;
     Projector SelectObjProjector;
 
@@ -19,6 +19,7 @@ public class DynamicEntity : Entity, ISelectable
     public override void Init()
     {
         base.Init();
+        SelectObj = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/SelectionCircle");
         ISelectablegameObject = gameObject;
         SelectObjInstance = Instantiate(SelectObj, transform);
         SelectObjProjector = SelectObjInstance.GetComponent<Projector>();

@@ -8,6 +8,22 @@ using static ItemTypes;
 
 public class Item : DynamicEntity
 {
+    public BaseItemStats BaseStats = new BaseItemStats()
+    {
+        Stats = new Dictionary<StatsEnum, object>()
+        {
+            { StatsEnum.Size, new Vector2Int(1, 1) },
+            { StatsEnum.Mass, 1f },
+            { StatsEnum.Cost, new Resources(1, 0, 0) }
+        },
+        CompatibleModules = new List<AdditionalModule.ModulesEnum>()
+    };
+
+    public class BaseItemStats : ItemStats
+    {
+        public List<AdditionalModule.ModulesEnum> CompatibleModules;
+    }
+
     public class ItemStats
     {
         //Move these dictionary additions to relevant derived classes
@@ -112,9 +128,9 @@ public class Item : DynamicEntity
                 Stats.SetStat(Stat.Key, (float)Value, ItemStats.OperationEnum.Add);
             }
         }
-        Stats.SetStat(StatsEnum.Size, new Vector2Int(Mathf.RoundToInt(Core.Size.x * SizeMod.x), Mathf.RoundToInt(Core.Size.y * SizeMod.y)));
-        Stats.SetStat(StatsEnum.Mass, Core.Mass * MassMod); //Is this multiplying by too much with > 1 module?
-        Stats.SetStat(StatsEnum.Cost, Core.Cost + ResourceMod);
+        Stats.SetStat(StatsEnum.Size, new Vector2Int(Mathf.RoundToInt(BaseStats.GetStat<Vector2Int>(StatsEnum.Size).x * SizeMod.x), Mathf.RoundToInt(BaseStats.GetStat<Vector2Int>(StatsEnum.Size).y * SizeMod.y)));
+        Stats.SetStat(StatsEnum.Mass, BaseStats.GetStat<float>(StatsEnum.Mass) * MassMod); //Is this multiplying by too much with > 1 module?
+        Stats.SetStat(StatsEnum.Cost, BaseStats.GetStat<Resources>(StatsEnum.Cost) + ResourceMod);
     }
 
 
@@ -172,7 +188,6 @@ public class Item : DynamicEntity
     public ItemStats Stats;
 
     //Modular Parts
-    //public CoreModule Core;
     public List<AdditionalModule> Modules = new List<AdditionalModule>();
 
     //Item 'definitions'
@@ -181,12 +196,10 @@ public class Item : DynamicEntity
 
     //----------------------------------------------------
 
-    public virtual void InitItem(ItemTypes.Types _Type)
+    public override void Init()
     {
         base.Init();
         EntityType = EntityTypes.Item;
-        //this.Type = _Type;
-        //TypeCores.TryGetValue(_Type, out Core);
         SetStats();
     }
 

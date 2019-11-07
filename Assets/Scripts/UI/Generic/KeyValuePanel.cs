@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using static ItemModule.AdditionalModule;
+using Modules;
 using static ItemTypes;
 
 public class KeyValuePanel : TextKVGroup, IGroupableUI
@@ -87,13 +87,13 @@ public class KeyValuePanel : TextKVGroup, IGroupableUI
     }
 
     //Relating to Value
-    public delegate string GetValueDelegate(ItemModule.AdditionalModule RefModule, Item RefItem, StatsAndSkills RefStats, Enum ValueEnum);
+    public delegate string GetValueDelegate(AdditionalModule RefModule, Item RefItem, StatsAndSkills RefStats, Enum ValueEnum);
     public GetValueDelegate GetValue;
     public Enum GetValueEnum;
     public bool DoNotUpdate = false;
     public struct RefStruct
     {
-        public ItemModule.AdditionalModule RefModule;
+        public AdditionalModule RefModule;
         public Item RefItem;
         public StatsAndSkills RefStats;
     }
@@ -106,7 +106,7 @@ public class KeyValuePanel : TextKVGroup, IGroupableUI
         Value.TextMesh.text = GetValue(Refs.RefModule, Refs.RefItem, Refs.RefStats, GetValueEnum);
     }
 
-    public static string GetModuleStat(ItemModule.AdditionalModule RefModule, Item RefItem, StatsAndSkills RefStats, Enum ValueEnum)
+    public static string GetModuleStat(AdditionalModule RefModule, Item RefItem, StatsAndSkills RefStats, Enum ValueEnum)
     {
         if (ValueEnum is Resources.ResourceList ResourceEnum)
         {
@@ -122,7 +122,7 @@ public class KeyValuePanel : TextKVGroup, IGroupableUI
         }
         return string.Format("{0}", Utility.RoundToNDecimals(RefModule.GetStat<float>((StatsEnum)ValueEnum), 1));
     }
-    public static string GetItemStat(ItemModule.AdditionalModule RefModule, Item RefItem, StatsAndSkills RefStats, Enum ValueEnum)
+    public static string GetItemStat(AdditionalModule RefModule, Item RefItem, StatsAndSkills RefStats, Enum ValueEnum)
     {
         if (ValueEnum is Resources.ResourceList ResourceEnum)
         {
@@ -132,8 +132,12 @@ public class KeyValuePanel : TextKVGroup, IGroupableUI
         {
             return string.Format("{0}", RefItem.Stats.GetStat<Vector2Int>(StatsEnum.Size));
         }
+        if ((StatsEnum)ValueEnum == StatsEnum.SizeMod)
+        {
+            return string.Format("{0}", RefItem.Stats.GetStat<Vector2>(StatsEnum.SizeMod));
+        }
         return string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.GetStat<float>((StatsEnum)ValueEnum), 1));
     }
-    public static string GetStat(ItemModule.AdditionalModule RefModule, Item RefItem, StatsAndSkills RefStats, Enum StatEnum) => string.Format("{0}", RefStats.Stats[(StatsAndSkills.StatsEnum)StatEnum]);
-    public static string GetSkill(ItemModule.AdditionalModule RefModule, Item RefItem, StatsAndSkills RefStats, Enum SkillEnum) => string.Format("{0}", RefStats.Skills[(StatsAndSkills.SkillsEnum)SkillEnum]);
+    public static string GetStat(AdditionalModule RefModule, Item RefItem, StatsAndSkills RefStats, Enum StatEnum) => string.Format("{0}", RefStats.Stats[(StatsAndSkills.StatsEnum)StatEnum]);
+    public static string GetSkill(AdditionalModule RefModule, Item RefItem, StatsAndSkills RefStats, Enum SkillEnum) => string.Format("{0}", RefStats.Skills[(StatsAndSkills.SkillsEnum)SkillEnum]);
 }

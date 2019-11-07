@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Modules;
 
 namespace UI
 {
@@ -15,7 +16,7 @@ namespace UI
             public TextMeshProUGUI ValueText;
             public Slider ValueSlider;
 
-            public ItemModule.AdditionalModule TargetModule;
+            public AdditionalModule TargetModule;
             public ItemTypes.StatsEnum TargetStat;
 
             public struct MinMax

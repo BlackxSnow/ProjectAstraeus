@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 478082474630458116}
   - component: {fileID: 478082474630458119}
   - component: {fileID: 478082474630458118}
-  - component: {fileID: 478082474630458113}
   - component: {fileID: 478082474630458117}
   - component: {fileID: 9058267407607679364}
   m_Layer: 9
@@ -81,23 +80,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 478082474630458112}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &478082474630458113
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 478082474630458112}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47a8d9cdbacec7d45ad6308919ebca4f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Name: ItemBase
-  EntityType: 0
-  animator: {fileID: 0}
-  SelectObj: {fileID: 1572354535519592, guid: f9fcb5772e492334f860f10e13015ddd, type: 3}
-  Data: {fileID: 0}
 --- !u!136 &478082474630458117
 CapsuleCollider:
   m_ObjectHideFlags: 0

@@ -243,6 +243,7 @@ public class UIController : MonoBehaviour
 
     public static GameObject InstantiateDropdown(string Name, ItemTypes.StatsEnum ModStat, Transform Parent)
     {
+#warning This needs to be finished
         GameObject DropdownObject;
 
         DropdownObject = Instantiate(DropdownPrefab, Parent);
@@ -259,7 +260,8 @@ public class UIController : MonoBehaviour
         ModuleDisplayPanel Script = DisplayPanel.GetComponent<ModuleDisplayPanel>();
         Script.Module = Module;
 
-        KeyValueGroup Group = new KeyValueGroup();
+        KeyValueGroup Group = ScriptableObject.CreateInstance<KeyValueGroup>();
+        Group.Init();
         Module.InstantiateStatKVPs(Script.StatPanel.transform, Group, out _);
         Script.Name.text = Module.ModuleName;
 
@@ -305,8 +307,9 @@ public class UIController : MonoBehaviour
         Item Data = item;
 
         Script.SetInfo(Data.ItemName, string.Format("{0}", Data.Type));
-        KeyValueGroup Group = new KeyValueGroup();
-        
+        KeyValueGroup Group = ScriptableObject.CreateInstance<KeyValueGroup>();
+        Group.Init();
+
         Data.InstantiateStatKVPs(false, out List<GameObject> _, Script.StatsPanel.transform, Group);
         Group.ForceRecalculate();
 

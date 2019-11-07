@@ -6,7 +6,7 @@ using static Materials;
 
 namespace Modules
 {
-    public class Reactor : ItemModule.AdditionalModule
+    public class Reactor : AdditionalModule
     {
         public override void CalculateStats()
         {
@@ -15,9 +15,9 @@ namespace Modules
             SetStat(StatsEnum.MassMod, 1 + (Power / 10));
             SetStat(StatsEnum.SizeMod, new Vector2(1 + (Power / 10), 1 + (Power / 10)));
         }
-        public Reactor(float _Power = 0) : base()
+        public Reactor() : base()
         {
-            ModifiableStats.Add(StatsEnum.Power, _Power);
+            ModifiableStats.Add(StatsEnum.Power, 1f);
             ModuleName = "Reactor";
             Init();
             CalculateStats();

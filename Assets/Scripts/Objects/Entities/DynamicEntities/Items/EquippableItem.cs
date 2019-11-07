@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class EquippableItem : Item
 {
-    public override void InitItem(ItemTypes.Types _Type)
+    public override void Init()
     {
-        base.InitItem(_Type);
+        base.Init();
     }
 
     public override List<GameObject> InstantiateStatKVPs(bool Cost, out List<GameObject> CombinedKVPLists, Transform Parent, KeyValueGroup Group = null)

@@ -1,16 +1,32 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Modules;
 using static ItemTypes;
+using static Modules.AdditionalModule;
 
 public class Weapon : EquippableItem
 {
-    public override void InitItem(ItemTypes.Types _Type)
+
+    public override void Init()
     {
-        base.InitItem(_Type);
+        base.Init();
         Stats.AddStat(StatsEnum.Damage, 0f);
         Stats.AddStat(StatsEnum.ArmourPiercing, 0f);
         Stats.AddStat(StatsEnum.AttackSpeed, 0f);
+
+        BaseStats = new BaseItemStats()
+        {
+            Stats = new Dictionary<StatsEnum, object>()
+            {
+                { StatsEnum.Damage, 1f },
+                { StatsEnum.ArmourPiercing, 1f },
+                { StatsEnum.AttackSpeed, 1f },
+                { StatsEnum.Size, new Vector2Int(1, 1) },
+                { StatsEnum.Mass, 1f },
+                { StatsEnum.Cost, new Resources(1, 0, 0) }
+            },
+        };
     }
 
     public override List<GameObject> InstantiateStatKVPs(bool Cost, out List<GameObject> CombinedKVPLists, Transform Parent, KeyValueGroup Group = null)

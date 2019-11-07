@@ -6,7 +6,7 @@ using static Materials;
 
 namespace Modules
 {
-    public class Barrel : ItemModule.AdditionalModule
+    public class Barrel : AdditionalModule
     {
 
         public override void CalculateStats()

@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Modules;
+using UI.Crafting;
 using UnityEngine;
 using TMPro;
 
 public class ModuleDisplayPanel : MonoBehaviour
 {
-    public ItemModule.AdditionalModule Module;
+    public AdditionalModule Module;
     public GameObject StatPanel;
     public TextMeshProUGUI Name;
 

@@ -8,7 +8,14 @@ namespace Modules
 
     public class AdditionalModule : ItemModule
     {
-        public ItemTypes.Types CompatibleTypes;
+        public AdditionalModule Copy()
+        {
+            AdditionalModule ModuleCopy = (AdditionalModule)MemberwiseClone();
+            ModuleCopy.Stats = new Dictionary<StatsEnum, object>(Stats);
+            ModuleCopy.ModifiableStats = new Dictionary<StatsEnum, object>(ModifiableStats);
+            ModuleCopy.ModuleName = string.Copy(ModuleName);
+            return ModuleCopy;
+        }
 
         public Dictionary<StatsEnum, object> Stats = new Dictionary<StatsEnum, object>()
         {
@@ -19,20 +26,29 @@ namespace Modules
         public Dictionary<StatsEnum, object> ModifiableStats = new Dictionary<StatsEnum, object>();
         public virtual string ModuleName { get; protected set; }
 
-        [Flags] //Is this practical to change?
-        public enum ModuleListEnum
+        public enum ModulesEnum
         {
-            Plating = 1 << 0,
-            Reactor = 1 << 1,
-            Shielding = 1 << 2,
-            WeaponPlaceHolderModule = 1 << 3
+            //Armour
+            [Type(typeof(Plating))]
+            Plating,
+            [Type(typeof(Reactor))]
+            Reactor,
+            [Type(typeof(Shield))]
+            Shield,
+            //Ranged
+            [Type(typeof(Barrel))]
+            Barrel,
+            [Type(typeof(Bolt))]
+            Bolt,
+            [Type(typeof(Calibre))]
+            Calibre
         }
         public enum ModifiableStatsEnum
         {
             Power = StatsEnum.Power,
             Thickness = StatsEnum.Thickness,
-            Shield = StatsEnum.Shield
-            //Material = StatFlagsEnum.Material
+            Shield = StatsEnum.Shield,
+            Material = StatsEnum.Material
         }
 
 
@@ -162,7 +178,7 @@ namespace Modules
                 else continue;
 
                 Data.RefModule = this;
-                Data.ValueDelegate = KeyValuePanel.GetItemStat;
+                Data.ValueDelegate = KeyValuePanel.GetModuleStat;
                 Data.Group = KVPGroup;
                 Data.ValueEnum = Stat.Key;
                 KVPArray[i] = UIController.InstantiateKVP(Data);
@@ -195,11 +211,6 @@ namespace Modules
         public AdditionalModule()
         {
             Init();
-        }
-
-        public class WeaponPlaceHolderModule : AdditionalModule
-        {
-
         }
     }
 }

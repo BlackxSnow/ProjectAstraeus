@@ -41,16 +41,27 @@ public class ItemTypes : MonoBehaviour
     public enum Types
     {
         Resource,
+        [Type(typeof(Head))]
         Head,
+        [Type(typeof(Torso))]
         Torso,
+        [Type(typeof(Legs))]
         Legs,
+        [Type(typeof(Feet))]
         Feet,
+        [Type(typeof(Arms))]
         Arms,
+        //[Type(typeof(Back))]
         Back,
+        //[Type(typeof(Accessory))]
         Accessory,
+        [Type(typeof(Melee))]
         MeleeSharp,
+        [Type(typeof(Melee))]
         MeleeBlunt,
+        [Type(typeof(Ranged))]
         RangedBow,
+        [Type(typeof(Ranged))]
         RangedFirearm
     }
 

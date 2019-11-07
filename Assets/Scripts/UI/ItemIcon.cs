@@ -63,10 +63,10 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
         }
         CheckHover();
 
-        if (RefItem && ItemSlotName.text != string.Format("{0}", RefItem.Core.Slot))
-        {
-            ItemSlotName.text = RefItem.Core.Slot.ToString();
-        }
+        //if (RefItem && ItemSlotName.text != string.Format("{0}", RefItem.Core.Slot))
+        //{
+        //    ItemSlotName.text = RefItem.Core.Slot.ToString();
+        //}
     }
 
     void RemoveItem(Item TargetItem)
@@ -122,13 +122,14 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
         if (Results.Count > 0 && TargetSlot)
         {
             Equipment TargetEquipment = TargetSlot.ParentUI.RefEquipment;
-            bool Equipped = TargetEquipment.EquipItem(RefItem as EquippableItem, TargetSlot);
+#warning Uncomment this
+            //bool Equipped = TargetEquipment.EquipItem(RefItem as EquippableItem, TargetSlot);
 
-            if (Equipped)
-            {
-                RemoveItem(RefItem);
-                RefItem.SetFollow(TargetEquipment.gameObject);
-            }
+            //if (Equipped)
+            //{
+            //    RemoveItem(RefItem);
+            //    RefItem.SetFollow(TargetEquipment.gameObject);
+            //}
         }
     }
 

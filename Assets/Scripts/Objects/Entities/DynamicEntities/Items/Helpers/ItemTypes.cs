@@ -121,29 +121,6 @@ public class ItemTypes : MonoBehaviour
         Ranged = 1 << 3,
         Consumable = 1 << 4
     }
-
-    //public static Dictionary<ItemFlagsEnum, StatsEnum> FlagStats = new Dictionary<ItemFlagsEnum, StatsEnum>()
-    //{
-    //    { ItemFlagsEnum.Armour,     StatsEnum.Size | StatsEnum.Cost | StatsEnum.Mass | StatsEnum.Armour         | StatsEnum.Power       | StatsEnum.Shield | StatsEnum.PowerUse                   },
-    //    { ItemFlagsEnum.Consumable, StatsEnum.Size | StatsEnum.Cost | StatsEnum.Mass                                                                                                              },
-    //    { ItemFlagsEnum.Melee,      StatsEnum.Size | StatsEnum.Cost | StatsEnum.Mass | StatsEnum.ArmourPiercing | StatsEnum.AttackSpeed | StatsEnum.Damage | StatsEnum.PowerUse                   },
-    //    { ItemFlagsEnum.Ranged,     StatsEnum.Size | StatsEnum.Cost | StatsEnum.Mass | StatsEnum.ArmourPiercing | StatsEnum.AttackSpeed | StatsEnum.Damage | StatsEnum.PowerUse | StatsEnum.Range }
-    //};
-
-    //public static Dictionary<Types, CoreModule> TypeCores = new Dictionary<Types, CoreModule>()
-    //{
-    //    { Types.Head,          new CoreModule(   new Vector2Int(3, 5),   0.5f,   new Resources(1,0,0),   (ItemFlagsEnum.Armour                   ),    (ModuleListEnum.Plating | ModuleListEnum.Reactor | ModuleListEnum.Shielding), Equipment.Slots.Head    ) },
-    //    { Types.Torso,         new CoreModule(   new Vector2Int(7,10),   1.0f,   new Resources(2,0,0),   (ItemFlagsEnum.Armour                   ),    (ModuleListEnum.Plating | ModuleListEnum.Reactor | ModuleListEnum.Shielding), Equipment.Slots.Torso   ) },
-    //    { Types.Legs,          new CoreModule(   new Vector2Int(6,15),   1.0f,   new Resources(2,0,0),   (ItemFlagsEnum.Armour                   ),    (ModuleListEnum.Plating | ModuleListEnum.Reactor | ModuleListEnum.Shielding), Equipment.Slots.Legs    ) },
-    //    { Types.Feet,          new CoreModule(   new Vector2Int(3, 5),   0.5f,   new Resources(1,0,0),   (ItemFlagsEnum.Armour                   ),    (ModuleListEnum.Plating | ModuleListEnum.Reactor | ModuleListEnum.Shielding), Equipment.Slots.Feet    ) },
-    //    { Types.Arms,          new CoreModule(   new Vector2Int(2, 5),   0.5f,   new Resources(1,0,0),   (ItemFlagsEnum.Armour                   ),    (ModuleListEnum.Plating | ModuleListEnum.Reactor | ModuleListEnum.Shielding), Equipment.Slots.Arms    ) },
-    //    { Types.Back,          new CoreModule(   new Vector2Int(4,10),   1.0f,   new Resources(2,0,0),   (ItemFlagsEnum.Armour                   ),    (ModuleListEnum.Plating | ModuleListEnum.Reactor | ModuleListEnum.Shielding), Equipment.Slots.Back    ) },
-    //    { Types.Accessory,     new CoreModule(   new Vector2Int(1, 1),   0.1f,   new Resources(1,0,0),   (ItemFlagsEnum.Armour                   ),    (ModuleListEnum.Plating | ModuleListEnum.Reactor | ModuleListEnum.Shielding), Equipment.Slots.None    ) },
-    //    { Types.MeleeSharp,    new CoreModule(   new Vector2Int(4, 2),   0.5f,   new Resources(1,0,0),   (ItemFlagsEnum.Melee  | ItemFlagsEnum.Weapon),    (ModuleListEnum.WeaponPlaceHolderModule                            ), Equipment.Slots.Weapon  ) },
-    //    { Types.MeleeBlunt,    new CoreModule(   new Vector2Int(4, 2),   1.0f,   new Resources(1,0,0),   (ItemFlagsEnum.Melee  | ItemFlagsEnum.Weapon),    (ModuleListEnum.WeaponPlaceHolderModule                            ), Equipment.Slots.Weapon  ) },
-    //    { Types.RangedBow,     new CoreModule(   new Vector2Int(4, 5),   0.5f,   new Resources(1,0,0),   (ItemFlagsEnum.Ranged | ItemFlagsEnum.Weapon),    (ModuleListEnum.WeaponPlaceHolderModule                            ), Equipment.Slots.Weapon  ) },
-    //    { Types.RangedFirearm, new CoreModule(   new Vector2Int(5, 4),   1.0f,   new Resources(1,0,0),   (ItemFlagsEnum.Ranged | ItemFlagsEnum.Weapon),    (ModuleListEnum.WeaponPlaceHolderModule                            ), Equipment.Slots.Weapon  ) }
-    //};
     
     public static Dictionary<SubTypes, BonusInfoStruct> EquipmentBonusInfo = new Dictionary<SubTypes, BonusInfoStruct>()
     {

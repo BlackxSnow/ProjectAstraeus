@@ -29,6 +29,7 @@ public class Arms : Armour
                 ModulesEnum.Shield
             }
         };
+        Slot = Equipment.Slots.Arms;
     }
 
 }

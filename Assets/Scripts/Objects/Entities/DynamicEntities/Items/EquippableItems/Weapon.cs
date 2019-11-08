@@ -27,6 +27,7 @@ public class Weapon : EquippableItem
                 { StatsEnum.Cost, new Resources(1, 0, 0) }
             },
         };
+        Slot = Equipment.Slots.Weapon;
     }
 
     public override List<GameObject> InstantiateStatKVPs(bool Cost, out List<GameObject> CombinedKVPLists, Transform Parent, KeyValueGroup Group = null)

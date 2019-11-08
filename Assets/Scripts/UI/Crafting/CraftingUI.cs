@@ -154,6 +154,7 @@ namespace UI
 
                 GameObject ItemInstance = Instantiate(ItemTypes.ItemBasePrefab, new Vector3(0, 0.5f, 0), new Quaternion(0, 0, 0, 0));
                 CurrentItem = (Item)ItemInstance.AddComponent(ItemType);
+                CurrentItem.Type = TypeEnum;
                 CurrentItem.Init();
                 CurrentItem.Pack();
 
@@ -163,14 +164,8 @@ namespace UI
 
             public void NewModule()
             {
-                //Type EnumType = typeof(AdditionalModule.ModulesEnum);
-                //MemberInfo[] MemberInfos = EnumType.GetMember(ModuleDropdown.SelectedModule.ToString());
-                //MemberInfo EnumValueMemberInfo = MemberInfos.FirstOrDefault(m => m.DeclaringType == EnumType);
-                //object[] ValueAttributes = EnumValueMemberInfo.GetCustomAttributes(typeof(TypeAttribute), true);
-                //Type ModuleType = ((TypeAttribute)ValueAttributes[0]).Type;
-                //CurrentModule = (AdditionalModule)Activator.CreateInstance(ModuleType);
                 Type ModuleType = TypeAttribute.GetStoredData(typeof(AdditionalModule.ModulesEnum), ModuleDropdown.SelectedModule).Type;
-                CurrentModule = (AdditionalModule)Activator.CreateInstance(ModuleType);
+                CurrentModule = (AdditionalModule)ScriptableObject.CreateInstance(ModuleType);
 
                 InitialiseModuleStatDisplay();
                 InitialiseModificationUI();
@@ -201,6 +196,7 @@ namespace UI
             {
                 if (!CurrentItem) return;
                 CurrentItem.Name = string.Format("{0}", CurrentItem.Type);
+                CurrentItem.Unpack();
 
                 ClearAll();
                 CurrentModule = null;
@@ -213,7 +209,8 @@ namespace UI
                 {
                     if (ModifiableStat.Key == ItemTypes.StatsEnum.Material)
                     {
-                        ModificationUI.Add(UIController.InstantiateDropdown("Material", ModifiableStat.Key, UI_ModificationUIPanel.transform));
+                        ModificationUI.Add(UIController.InstantiateDropdown("Material", UI_ModificationUIPanel.transform, Crafting.ModuleDropdown.DropdownOptions.Material));
+                        continue;
                     }
                     ModificationUI.Add(UIController.InstantiateValueSlider(ModifiableStat.Key.ToString(), ModifiableStat.Key, UI_ModificationUIPanel.transform, 0, 10));
                 }

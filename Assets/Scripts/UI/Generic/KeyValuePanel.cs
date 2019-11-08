@@ -102,7 +102,7 @@ public class KeyValuePanel : TextKVGroup, IGroupableUI
     public void UpdateValue()
     {
         if (DoNotUpdate) return;
-
+        if (Refs.RefItem) Debug.Log($"KVP: {GetValueEnum}, parent: {transform.parent}");
         Value.TextMesh.text = GetValue(Refs.RefModule, Refs.RefItem, Refs.RefStats, GetValueEnum);
     }
 
@@ -131,10 +131,6 @@ public class KeyValuePanel : TextKVGroup, IGroupableUI
         if ((StatsEnum)ValueEnum == StatsEnum.Size)
         {
             return string.Format("{0}", RefItem.Stats.GetStat<Vector2Int>(StatsEnum.Size));
-        }
-        if ((StatsEnum)ValueEnum == StatsEnum.SizeMod)
-        {
-            return string.Format("{0}", RefItem.Stats.GetStat<Vector2>(StatsEnum.SizeMod));
         }
         return string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.GetStat<float>((StatsEnum)ValueEnum), 1));
     }

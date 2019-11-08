@@ -30,5 +30,7 @@ public class Head : Armour
                 ModulesEnum.Shield
             }
         };
+        //Stats.Stats = new Dictionary<StatsEnum, object>(BaseStats.Stats);
+        Slot = Equipment.Slots.Head;
     }
 }

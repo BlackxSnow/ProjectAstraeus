@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class EquippableItem : Item
 {
+    public Equipment.Slots Slot;
     public override void Init()
     {
         base.Init();

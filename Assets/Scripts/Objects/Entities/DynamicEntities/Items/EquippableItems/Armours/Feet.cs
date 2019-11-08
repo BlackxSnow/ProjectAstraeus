@@ -29,5 +29,6 @@ public class Feet : Armour
                 ModulesEnum.Shield
             }
         };
+        Slot = Equipment.Slots.Feet;
     }
 }

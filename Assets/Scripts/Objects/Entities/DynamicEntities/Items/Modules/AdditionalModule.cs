@@ -24,6 +24,12 @@ namespace Modules
             { StatsEnum.Cost, new Resources(0,0,0) }
         };
         public Dictionary<StatsEnum, object> ModifiableStats = new Dictionary<StatsEnum, object>();
+
+        public List<Materials.MaterialTypes> CompatibleMaterials = new List<Materials.MaterialTypes>()
+        {
+            Materials.MaterialTypes.Iron,
+            Materials.MaterialTypes.Steel
+        };
         public virtual string ModuleName { get; protected set; }
 
         public enum ModulesEnum

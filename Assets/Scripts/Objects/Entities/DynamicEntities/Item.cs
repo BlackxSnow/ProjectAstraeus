@@ -16,12 +16,13 @@ public class Item : DynamicEntity
             { StatsEnum.Mass, 1f },
             { StatsEnum.Cost, new Resources(1, 0, 0) }
         },
-        CompatibleModules = new List<AdditionalModule.ModulesEnum>()
+        CompatibleModules = new List<AdditionalModule.ModulesEnum>(),
     };
 
     public class BaseItemStats : ItemStats
     {
         public List<AdditionalModule.ModulesEnum> CompatibleModules;
+        public List<Materials.MaterialTypes> CompatibleMaterials;
     }
 
     public class ItemStats
@@ -105,32 +106,9 @@ public class Item : DynamicEntity
         }
     }
 
-    public void SetStats()
+    public virtual void SetStats()
     {
-        Vector2 SizeMod = new Vector2(1, 1);
-        float MassMod = 1;
-        Resources ResourceMod = new Resources(0, 0, 0);
-        Stats = new ItemStats(/*new Vector2Int(1, 1), new Resources(0, 0, 0)*/);
 
-        foreach (AdditionalModule Module in Modules)
-        {
-            SizeMod += Module.GetStat<Vector2>(StatsEnum.SizeMod);
-            MassMod += Module.GetStat<float>(StatsEnum.MassMod);
-            ResourceMod += Module.GetStat<Resources>(StatsEnum.Cost);
-
-            foreach (KeyValuePair<StatsEnum, object> Stat in Module.Stats)
-            {
-                if (!Stats.Stats.TryGetValue(Stat.Key, out object Value) || Stat.Key == StatsEnum.Cost)
-                {
-                    continue;
-                }
-
-                Stats.SetStat(Stat.Key, (float)Value, ItemStats.OperationEnum.Add);
-            }
-        }
-        Stats.SetStat(StatsEnum.Size, new Vector2Int(Mathf.RoundToInt(BaseStats.GetStat<Vector2Int>(StatsEnum.Size).x * SizeMod.x), Mathf.RoundToInt(BaseStats.GetStat<Vector2Int>(StatsEnum.Size).y * SizeMod.y)));
-        Stats.SetStat(StatsEnum.Mass, BaseStats.GetStat<float>(StatsEnum.Mass) * MassMod); //Is this multiplying by too much with > 1 module?
-        Stats.SetStat(StatsEnum.Cost, BaseStats.GetStat<Resources>(StatsEnum.Cost) + ResourceMod);
     }
 
 
@@ -185,7 +163,7 @@ public class Item : DynamicEntity
     }
 
     public string ItemName;
-    public ItemStats Stats;
+    public ItemStats Stats = new ItemStats();
 
     //Modular Parts
     public List<AdditionalModule> Modules = new List<AdditionalModule>();
@@ -200,7 +178,6 @@ public class Item : DynamicEntity
     {
         base.Init();
         EntityType = EntityTypes.Item;
-        SetStats();
     }
 
     protected override void Start()

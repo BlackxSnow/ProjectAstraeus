@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using static ItemTypes;
 
+#warning This class must be split into sub classes before it can be completed
+//Subclasses possibly: Firearm, Bow, (?)Explosive Weapons
 public class Ranged : Weapon
 {
     public override void Init()

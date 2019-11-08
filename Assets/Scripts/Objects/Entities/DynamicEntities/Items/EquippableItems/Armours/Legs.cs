@@ -29,5 +29,6 @@ public class Legs : Armour
                 ModulesEnum.Shield
             }
         };
+        Slot = Equipment.Slots.Legs;
     }
 }

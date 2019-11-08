@@ -41,7 +41,10 @@ public class Entity : MonoBehaviour, IOwnable
     public EntityTypes EntityType;
     public EntityFlagsEnum EntityFlags;
     public EntityComponentsStruct EntityComponents;
-    public BaseEntityStatsStruct BaseEntityStats;
+    public BaseEntityStatsStruct BaseEntityStats = new BaseEntityStatsStruct()
+    {
+        MovementSpeed = 3.5f
+    };
 
     public Animator animator;
     protected Renderer rendererComponent;

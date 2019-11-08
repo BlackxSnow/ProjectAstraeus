@@ -29,5 +29,6 @@ public class Torso : Armour
                 ModulesEnum.Shield
             }
         };
+        Slot = Equipment.Slots.Torso;
     }
 }

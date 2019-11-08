@@ -36,7 +36,7 @@ public class UIController : MonoBehaviour
         ModuleDisplayPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/ModuleDisplayPanel");
         PanelPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/LayoutPanel");
         ItemToolTipPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/ItemToolTip");
-        DropdownPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/Dropdown");
+        DropdownPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Crafting/Dropdown");
 
         InventoryPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/InventoryUI");
         EquipmentPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Equipment/EquipmentUI");
@@ -241,17 +241,18 @@ public class UIController : MonoBehaviour
 
     }
 
-    public static GameObject InstantiateDropdown(string Name, ItemTypes.StatsEnum ModStat, Transform Parent)
+    public static GameObject InstantiateDropdown(string Name, Transform Parent, UI.Crafting.ModuleDropdown.DropdownOptions DropdownType)
     {
-#warning This needs to be finished
         GameObject DropdownObject;
 
         DropdownObject = Instantiate(DropdownPrefab, Parent);
 
         UI.Crafting.ModuleDropdown DropdownScript = DropdownObject.GetComponent<UI.Crafting.ModuleDropdown>();
+        DropdownScript.DropdownType = DropdownType;
+        DropdownScript.TextMeshComponent.text = Name;
+        DropdownScript.Init();
 
-
-        throw new NotImplementedException();
+        return DropdownObject;
     } 
 
     public static GameObject InstantiateModulePanel(AdditionalModule Module, Transform Parent)

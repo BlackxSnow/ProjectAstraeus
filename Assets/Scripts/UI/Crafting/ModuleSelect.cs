@@ -37,7 +37,6 @@ namespace UI
 
                 if (!CraftingUI.CurrentItem) return;
 
-                Debug.Log(CraftingUI.CurrentItem.BaseStats.CompatibleModules.Count);
                 foreach (ModulesEnum Module in CraftingUI.CurrentItem.BaseStats.CompatibleModules)
                 {
                     Options.Add(string.Format("{0}", Module));

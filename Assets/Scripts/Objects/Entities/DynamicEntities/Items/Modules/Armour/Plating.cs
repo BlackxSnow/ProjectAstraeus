@@ -12,9 +12,9 @@ namespace Modules
         {
             float Thickness = GetStat<float>(StatsEnum.Thickness);
             Materials.Material _Material = GetStat<Materials.Material>(StatsEnum.Material);
-            base.CalculateStats();
-            SetStat<float>(StatsEnum.MassMod, (1 + Thickness) * _Material.MassModifier);
-            SetStat(StatsEnum.SizeMod, new Vector2(1 + (Thickness / 10), 1 + (Thickness / 10)));
+            base.CalculateStats(); //This is not switching from Iron??? Check the Dropdown getting the material value
+            SetStat<float>(StatsEnum.MassMod, (1f + Thickness) * _Material.MassModifier);
+            SetStat(StatsEnum.SizeMod, new Vector2(1f + (Thickness / 10f), 1f + (Thickness / 10f)));
 
             SetStat(StatsEnum.Armour, Thickness * _Material.ArmourModifier);
             SetStat(StatsEnum.Cost, new Resources((int)Mathf.Round(Thickness), 0, 0));

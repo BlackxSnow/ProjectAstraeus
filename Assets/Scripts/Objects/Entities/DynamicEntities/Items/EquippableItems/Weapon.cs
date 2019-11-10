@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Modules;
 using static ItemTypes;
-using static Modules.AdditionalModule;
+
 
 public class Weapon : EquippableItem
 {
@@ -26,6 +26,7 @@ public class Weapon : EquippableItem
                 { StatsEnum.Mass, 1f },
                 { StatsEnum.Cost, new Resources(1, 0, 0) }
             },
+
         };
         Slot = Equipment.Slots.Weapon;
     }

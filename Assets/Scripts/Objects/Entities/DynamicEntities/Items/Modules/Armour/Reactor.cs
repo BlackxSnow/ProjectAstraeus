@@ -17,10 +17,21 @@ namespace Modules
         }
         public Reactor() : base()
         {
-            ModifiableStats.Add(StatsEnum.Power, 1f);
+            AddModifiableStats();
+            AddStats();
+
             ModuleName = "Reactor";
             Init();
             CalculateStats();
+        }
+
+        private void AddModifiableStats()
+        {
+            ModifiableStats.Add(StatsEnum.Power, 1f);
+        }
+        private void AddStats()
+        {
+            
         }
     }
 }

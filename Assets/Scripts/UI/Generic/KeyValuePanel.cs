@@ -19,9 +19,9 @@ public class KeyValuePanel : TextKVGroup, IGroupableUI
 
         public ChildData(GameObject gameObject)
         {
-            this.Object = gameObject;
-            this.TextMesh = gameObject.GetComponent<TextMeshProUGUI>();
-            this.RTransform = gameObject.GetComponent<RectTransform>();
+            Object = gameObject;
+            TextMesh = gameObject.GetComponent<TextMeshProUGUI>();
+            RTransform = gameObject.GetComponent<RectTransform>();
         }
     }
     
@@ -131,6 +131,10 @@ public class KeyValuePanel : TextKVGroup, IGroupableUI
         if ((StatsEnum)ValueEnum == StatsEnum.Size)
         {
             return string.Format("{0}", RefItem.Stats.GetStat<Vector2Int>(StatsEnum.Size));
+        }
+        if (ValueEnum is SubTypes)
+        {
+            return ((EquippableItem)RefItem).Subtype.ToString();
         }
         return string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.GetStat<float>((StatsEnum)ValueEnum), 1));
     }

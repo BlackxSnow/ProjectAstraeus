@@ -52,6 +52,29 @@ public class Utility : MonoBehaviour
         return MultipliedValue / Mathf.Pow(10, Decimals);
     }
 
+    public static int GetThreshold(float Value, params float[] Thresholds)
+    {
+        for (int i = 0; i < Thresholds.Length; i++)
+        {
+            if (Value > Thresholds[i] && (Thresholds.Length <= i+1 || Value < Thresholds[i+1]))
+            {
+                return i;
+            }
+        }
+        throw new ArithmeticException($"Unable to find threshold for {Value}");
+    }
+
+    public static bool WithinBounds (float Value, float MinBound, float MaxBound)
+    {
+        if (Mathf.Clamp(Value, MinBound, MaxBound) == Value)
+        {
+            return true;
+        } else
+        {
+            return false;
+        }
+    }
+
     public static Vector3 FlipY(Vector3 vector)
     {
         Vector3 FlippedVector = new Vector3(vector.x, Screen.height - vector.y, vector.z);

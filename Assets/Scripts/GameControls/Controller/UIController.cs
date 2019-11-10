@@ -139,7 +139,7 @@ public class UIController : MonoBehaviour
         }
         return KVPs;
     }
-    public static GameObject InstantiateKVP(KVPData Data)//string Key, T Value, Transform Parent, int Rounding = 0, Gradient gradient = null, float Min = 0, float Max = 0, KeyValueGroup Group = null, KeyValuePanel.GetValueDelegate ValueDelegate = null, AdditionalModule RefModule = null, Item RefItem = null, StatsAndSkills RefStats = null, Enum ValueEnum = null, float KeyRatio = .5f)
+    public static GameObject InstantiateKVP(KVPData Data)
     {
         GameObject Panel;
         TextMeshProUGUI KeyText;

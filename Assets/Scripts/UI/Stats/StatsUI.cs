@@ -32,6 +32,7 @@ public class StatsUI : Window
         InfoPanelGroup = ScriptableObject.CreateInstance<KeyValueGroup>();
         InfoPanelGroup.Init(8, 16);
         SkillsGroup = ScriptableObject.CreateInstance<KeyValueGroup>();
+        SkillsGroup.Init(8, 72);
         RefStats = TargetStats;
 
         CreateSkillPanels();
@@ -84,7 +85,7 @@ public class StatsUI : Window
         }
         foreach (KeyValuePair<SkillsEnum, StatSkill> Skill in RefStats.Skills)
         {
-            UIController.KVPData Data = new UIController.KVPData(Skill.Key.ToString(), Skill.Value.Level, SkillPanels[(int)Skill.Value.SkillType - 1])
+            UIController.KVPData Data = new UIController.KVPData(Skill.Key.ToString(), Skill.Value.Level, SkillPanels[(int)Skill.Value.SkillType - 1], KeyRatio: 0.8f)
             {
                 Group = SkillsGroup,
                 ValueDelegate = KeyValuePanel.GetSkill,

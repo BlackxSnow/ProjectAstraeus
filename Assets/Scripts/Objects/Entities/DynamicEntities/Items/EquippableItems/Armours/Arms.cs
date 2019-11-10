@@ -31,5 +31,23 @@ public class Arms : Armour
         };
         Slot = Equipment.Slots.Arms;
     }
+    public override void FindSubtype()
+    {
+        SubTypes[] ThresholdTypes = new SubTypes[3]
+        {
+            SubTypes.LightArmour,
+            SubTypes.MediumArmour,
+            SubTypes.HeavyArmour
+        };
+        float[] MassThreshold = new float[3]
+        {
+            0f, //Light
+            2.5f, //Medium
+            5f //Heavy
+        };
+        float Mass = Stats.GetStat<float>(StatsEnum.Mass);
+
+        Subtype = ThresholdTypes[Utility.GetThreshold(Mass, MassThreshold)];
+    }
 
 }

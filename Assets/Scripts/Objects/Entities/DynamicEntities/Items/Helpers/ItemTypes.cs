@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Modules;
+using Items;
 using static StatsAndSkills;
 
 public class ItemTypes : MonoBehaviour
@@ -67,6 +68,8 @@ public class ItemTypes : MonoBehaviour
 
     public enum SubTypes
     {
+        Invalid,
+
         Sword,
         Polearm,
         Quarterstaff,
@@ -109,7 +112,8 @@ public class ItemTypes : MonoBehaviour
         MassMod,
         //Modifiable
         Thickness,
-        Material
+        Material,
+        Length
     }
 
     [Flags]

@@ -22,7 +22,6 @@ public struct Resources
             { ResourceList.Copper, Copper },
             { ResourceList.Alloy, Alloy }
         };
-
     }
 
     public int this[ResourceList Resource]
@@ -44,6 +43,26 @@ public struct Resources
         Result[ResourceList.Copper] = A[ResourceList.Copper] + B[ResourceList.Copper];
         Result[ResourceList.Alloy] = A[ResourceList.Alloy] + B[ResourceList.Alloy];
 
+        return Result;
+    }
+
+    public static Resources operator* (Resources A, Resources B)
+    {
+        Resources Result = new Resources(0, 0, 0);
+        foreach (KeyValuePair<ResourceList, int> Res in A.ResourceDict)
+        {
+            Result[Res.Key] = A[Res.Key] * B[Res.Key];
+        };
+        return Result;
+    }
+
+    public static Resources operator *(Resources A, int B)
+    {
+        Resources Result = new Resources(0, 0, 0);
+        foreach (KeyValuePair<ResourceList, int> Res in A.ResourceDict)
+        {
+            Result[Res.Key] = A[Res.Key] * B;
+        };
         return Result;
     }
 }

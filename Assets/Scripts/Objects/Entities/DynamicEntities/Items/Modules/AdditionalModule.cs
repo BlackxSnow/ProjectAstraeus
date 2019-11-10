@@ -41,6 +41,13 @@ namespace Modules
             Reactor,
             [Type(typeof(Shield))]
             Shield,
+            //Melee
+            [Type(typeof(Handle))]
+            Handle,
+            [Type(typeof(Blade))]
+            Blade,
+            [Type(typeof(MaulHead))]
+            Head,
             //Ranged
             [Type(typeof(Barrel))]
             Barrel,
@@ -48,13 +55,6 @@ namespace Modules
             Bolt,
             [Type(typeof(Calibre))]
             Calibre
-        }
-        public enum ModifiableStatsEnum
-        {
-            Power = StatsEnum.Power,
-            Thickness = StatsEnum.Thickness,
-            Shield = StatsEnum.Shield,
-            Material = StatsEnum.Material
         }
 
 

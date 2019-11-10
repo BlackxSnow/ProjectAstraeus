@@ -21,15 +21,21 @@ namespace Modules
         }
         public Plating() : base()
         {
-            Materials.Material _Material;
-            MaterialDict.TryGetValue(MaterialTypes.Iron, out _Material);
-            ModifiableStats.Add(StatsEnum.Thickness, 1f);
-            ModifiableStats.Add(StatsEnum.Material, _Material);
-            Stats.Add(StatsEnum.Armour, 0f);
+            AddModifiableStats();
+            AddStats();
 
             ModuleName = "Plating";
             Init();
             CalculateStats();
+        }
+        private void AddModifiableStats()
+        {
+            ModifiableStats.Add(StatsEnum.Thickness, 1f);
+            ModifiableStats.Add(StatsEnum.Material, MaterialDict[MaterialTypes.Iron]);
+        }
+        private void AddStats()
+        {
+            Stats.Add(StatsEnum.Armour, 0f);
         }
     }
 }

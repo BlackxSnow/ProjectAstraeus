@@ -5,9 +5,14 @@ using UnityEngine;
 public class EquippableItem : Item
 {
     public Equipment.Slots Slot;
+    public ItemTypes.SubTypes Subtype;
     public override void Init()
     {
         base.Init();
+    }
+    public virtual void FindSubtype()
+    {
+
     }
 
     public override List<GameObject> InstantiateStatKVPs(bool Cost, out List<GameObject> CombinedKVPLists, Transform Parent, KeyValueGroup Group = null)
@@ -15,8 +20,11 @@ public class EquippableItem : Item
         List<GameObject> KVPs = new List<GameObject>();
         List<GameObject> KVPLists = new List<GameObject>();
 
-        UIController.KVPData SubTypeData = new UIController.KVPData("Sub Type", SubType, Parent);
+        UIController.KVPData SubTypeData = new UIController.KVPData("Sub Type", Subtype, Parent);
         SubTypeData.Group = Group;
+        SubTypeData.ValueEnum = ItemTypes.SubTypes.Sword;
+        SubTypeData.ValueDelegate = KeyValuePanel.GetItemStat;
+        SubTypeData.RefItem = this;
 
         KVPs.Add(UIController.InstantiateKVP(SubTypeData));
 
@@ -28,3 +36,4 @@ public class EquippableItem : Item
         return CombinedKVPs;
     }
 }
+

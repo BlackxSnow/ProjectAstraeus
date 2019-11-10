@@ -6,6 +6,7 @@ public class Materials
 {
     public enum MaterialTypes
     {
+        Wood,
         Iron,
         Steel
         //Additional materials here
@@ -13,8 +14,30 @@ public class Materials
 
     public static Dictionary<MaterialTypes, Material> MaterialDict = new Dictionary<MaterialTypes, Material>()
     {
-        { MaterialTypes.Iron, new Material(MaterialTypes.Iron, 1,0.25f,0.25f) },
-        { MaterialTypes.Steel, new Material(MaterialTypes.Steel, 1.1f, 0.5f, 0.5f) }
+        { MaterialTypes.Wood, new Material()
+        {
+            Name = MaterialTypes.Wood,
+            MassModifier = 0.5f,
+            DamageModifier = 0.1f,
+            ArmourModifier = 0.1f,
+            BaseCost = new Resources(0, 0, 0)
+        } },
+        { MaterialTypes.Iron, new Material()
+        {
+            Name = MaterialTypes.Iron,
+            MassModifier = 1f,
+            DamageModifier = 0.25f,
+            ArmourModifier = 0.25f,
+            BaseCost = new Resources(1, 0, 0)
+        } },
+        { MaterialTypes.Steel, new Material()
+        {
+            Name = MaterialTypes.Steel,
+            MassModifier = 1.1f,
+            DamageModifier = 0.5f,
+            ArmourModifier = 0.5f,
+            BaseCost = new Resources(0, 0, 1)
+        } }
     };
 
     public class Material
@@ -23,13 +46,14 @@ public class Materials
         public float MassModifier;
         public float DamageModifier;
         public float ArmourModifier;
+        public Resources BaseCost;
 
-        public Material(MaterialTypes Name, float Mass, float Damage, float Armour)
-        {
-            this.Name = Name;
-            MassModifier = Mass;
-            DamageModifier = Damage;
-            ArmourModifier = Armour;
-        }
+        //public Material(MaterialTypes Name, float Mass, float Damage, float Armour)
+        //{
+        //    this.Name = Name;
+        //    MassModifier = Mass;
+        //    DamageModifier = Damage;
+        //    ArmourModifier = Armour;
+        //}
     }
 }

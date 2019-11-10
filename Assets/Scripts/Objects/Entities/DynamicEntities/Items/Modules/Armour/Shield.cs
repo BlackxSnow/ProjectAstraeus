@@ -17,13 +17,23 @@ namespace Modules
             SetStat(StatsEnum.SizeMod, new Vector2(1 + (Shield / 10), 1 + (Shield / 10)));
             SetStat(StatsEnum.PowerUse, Shield / 10);
         }
-        public Shield(float _Shield = 0) : base()
+        public Shield() : base()
         {
-            Stats.Add(StatsEnum.PowerUse, 0f);
-            ModifiableStats.Add(StatsEnum.Shield, _Shield);
+            AddModifiableStats();
+            AddStats();
+
             ModuleName = "Shield";
             Init();
             CalculateStats();
+        }
+
+        private void AddModifiableStats()
+        {
+            ModifiableStats.Add(StatsEnum.Shield, 1f);
+        }
+        private void AddStats()
+        {
+            Stats.Add(StatsEnum.PowerUse, 0f);
         }
     }
 }

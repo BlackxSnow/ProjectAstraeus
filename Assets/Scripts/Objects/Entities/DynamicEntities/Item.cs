@@ -23,6 +23,7 @@ public class Item : DynamicEntity
     {
         public List<AdditionalModule.ModulesEnum> CompatibleModules;
         public List<Materials.MaterialTypes> CompatibleMaterials;
+        public List<AdditionalModule.ModulesEnum> RequiredModules;
     }
 
     public class ItemStats
@@ -170,7 +171,6 @@ public class Item : DynamicEntity
 
     //Item 'definitions'
     public ItemTypes.Types Type;
-    public SubTypes SubType;
 
     //----------------------------------------------------
 

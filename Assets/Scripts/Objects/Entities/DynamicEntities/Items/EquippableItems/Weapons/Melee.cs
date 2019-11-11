@@ -113,7 +113,7 @@ namespace Items
                 {
                     Subtype = SubTypes.Hammer;
                 }
-                if (blade != null) //Handle, blade
+                else if (blade != null) //Handle, blade
                 {
                     float LengthLeniency = 0.1f;
                     float bladeLength = blade.GetStat<float>(StatsEnum.Length);

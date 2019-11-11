@@ -102,7 +102,6 @@ public class KeyValuePanel : TextKVGroup, IGroupableUI
     public void UpdateValue()
     {
         if (DoNotUpdate) return;
-        if (Refs.RefItem) Debug.Log($"KVP: {GetValueEnum}, parent: {transform.parent}");
         Value.TextMesh.text = GetValue(Refs.RefModule, Refs.RefItem, Refs.RefStats, GetValueEnum);
     }
 

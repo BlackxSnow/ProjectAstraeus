@@ -114,12 +114,14 @@ public class UIController : MonoBehaviour
         return StatsObject;
     }
 
-    public static GameObject InstantiateText<T>(T Value, Transform Parent, KeyValueGroup Group = null, bool AllowWrapping = false)
+    public static GameObject InstantiateText<T>(T Value, Transform Parent, KeyValueGroup Group = null, bool AllowWrapping = false, bool InList = false)
     {
         GameObject TextInstanceObject = Instantiate(TextObjectPrefab, Parent);
         TextInstanceObject.GetComponent<TextMeshProUGUI>().text = string.Format("{0}", Value);
         TextKVGroup Script = TextInstanceObject.GetComponent<TextKVGroup>();
         Script.TextComponent.enableWordWrapping = AllowWrapping;
+        Script.InList = InList;
+        Script.Init();
         if (Group)
         {
             Script.Group = Group;
@@ -139,7 +141,7 @@ public class UIController : MonoBehaviour
         }
         return KVPs;
     }
-    public static GameObject InstantiateKVP(KVPData Data)
+    public static GameObject InstantiateKVP(KVPData Data, bool InList = false)
     {
         GameObject Panel;
         TextMeshProUGUI KeyText;
@@ -183,6 +185,8 @@ public class UIController : MonoBehaviour
 
         KeyText.text = string.Format("{0}", Data.Key);
         ValueText.text = string.Format("{0}", Result);
+        KVPScript.InList = InList;
+        KVPScript.Init();
 
         if (Data.ValueDelegate != null)
         {
@@ -205,7 +209,7 @@ public class UIController : MonoBehaviour
     public static GameObject InstantiateKVPList(string ListName, KVPData[] KeyValuePanels, Transform Parent, KeyValueGroup Group = null)
     {
         GameObject ListPanel = Instantiate(KeyValueListObjectPrefab, Parent);
-        GameObject ListNameObject = InstantiateText(ListName, ListPanel.transform, Group: Group);
+        GameObject ListNameObject = InstantiateText(ListName, ListPanel.transform, Group: Group, InList: true);
         ListNameObject.transform.SetAsFirstSibling();
 
         KeyValueList ListScript = ListPanel.GetComponent<KeyValueList>();
@@ -215,7 +219,7 @@ public class UIController : MonoBehaviour
         for (int i = 0; i < KeyValuePanels.Length; i++)
         {
             KeyValuePanels[i].Parent = ListScript.ContentPanel.transform;
-            ListScript.KVPs[i] = InstantiateKVP(KeyValuePanels[i]).transform;
+            ListScript.KVPs[i] = InstantiateKVP(KeyValuePanels[i], true).transform;
         }
 
         return ListPanel;

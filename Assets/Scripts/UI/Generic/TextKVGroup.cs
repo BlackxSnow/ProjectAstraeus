@@ -11,11 +11,30 @@ public class TextKVGroup : MonoBehaviour, IGroupableUI
     public RectTransform RTransform { get; set; }
     public KeyValueGroup.FontSizes Font = new KeyValueGroup.FontSizes(8, 72);
     VerticalLayoutGroup VLayout;
+    public bool InList { get; set; }
 
+    public float SelfFontSize;
     protected virtual void Awake()
     {
+        
+    }
+
+    public virtual void Init()
+    {
         RTransform = GetComponent<RectTransform>();
-        VLayout = GetComponentInParent<VerticalLayoutGroup>();
+        if (InList)
+        {
+            if (this is KeyValuePanel)
+            {
+                VLayout = transform.parent.parent.parent.GetComponent<VerticalLayoutGroup>();
+            } else
+            {
+                VLayout = transform.parent.parent.GetComponent<VerticalLayoutGroup>();
+            }
+        } else
+        {
+            VLayout = GetComponentInParent<VerticalLayoutGroup>();
+        }
     }
 
     public virtual Bounds GetBounds()
@@ -63,7 +82,8 @@ public class TextKVGroup : MonoBehaviour, IGroupableUI
         if (!TargetText) return;
         float FontSizePercentage = 90f;
         RectTransform TextRTransform = TargetText.GetComponent<RectTransform>();
-        float ExpandedSize = (transform.parent.GetComponent<RectTransform>().rect.height - (VLayout.spacing * transform.parent.childCount + VLayout.padding.vertical)) / transform.parent.childCount ;
+
+        float ExpandedSize = (VLayout.transform.GetComponent<RectTransform>().rect.height - (VLayout.spacing * VLayout.transform.childCount + VLayout.padding.vertical)) / GetEffectiveChildCount() ;
         RTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, ExpandedSize);
 
         TargetText.fontSize = RTransform.rect.height * (FontSizePercentage / 100);
@@ -77,5 +97,51 @@ public class TextKVGroup : MonoBehaviour, IGroupableUI
             float VerticalSize = (TargetText.fontSize / 90) * 100;
             if (Resize) RTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, VerticalSize);
         }
+        SelfFontSize = TargetText.fontSize;
+    }
+
+    int LastChildCount;
+    List<KeyValueList> ChildLists;
+    List<TextKVGroup> ChildTexts;
+
+    public int GetEffectiveChildCount()
+    {
+        Transform Target = InList ? transform.parent.parent.parent : transform.parent;
+        int EffectiveCount = 0;
+
+        if (Target.childCount != LastChildCount)
+        {
+            ChildTexts = GetChildrenComponents(Target, out ChildLists);
+            LastChildCount = Target.childCount;
+        }
+        EffectiveCount += ChildTexts.Count;
+        foreach (KeyValueList KVL in ChildLists)
+        {
+            EffectiveCount += KVL.ContentPanel.transform.childCount + 1; //+1 for Title
+
+        }
+        return EffectiveCount;
+    }
+
+    private List<TextKVGroup> GetChildrenComponents(Transform Target, out List<KeyValueList> KeyValueLists)
+    {
+        List<TextKVGroup> TextKVs = new List<TextKVGroup>();
+        KeyValueLists = new List<KeyValueList>();
+
+        for (int i = 0; i < Target.childCount; i++)
+        {
+            Transform Child = Target.GetChild(i);
+            TextKVGroup TextKV = Child.GetComponent<TextKVGroup>();
+            KeyValueList KVList = Child.GetComponent<KeyValueList>();
+            if (TextKV)
+            {
+                TextKVs.Add(TextKV);
+            } else if (KVList)
+            {
+                KeyValueLists.Add(KVList);
+            }
+        }
+
+        return TextKVs;
     }
 }

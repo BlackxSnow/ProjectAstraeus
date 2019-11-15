@@ -31,6 +31,11 @@ public class KeyValueGroup : ScriptableObject
         GroupMembers.Add(Member);
     }
 
+    public void RemoveMember(IGroupableUI Member)
+    {
+        GroupMembers.Remove(Member);
+    }
+
     public void ClearGroup()
     {
         GroupMembers.Clear();
@@ -83,11 +88,22 @@ public class KeyValueGroup : ScriptableObject
         return MinSize;
     }
 
-    public void Init(float MinFont = 8, float MaxFont = 72)
+    public void Init(float MinFont, float MaxFont)
     {
-        Font.Min = MinFont;
-        Font.Max = MaxFont;
-        Running = true;
-        Controller.Control.StartCoroutineWrapper(LoopRoutine());
+        if (!Running)
+        {
+            Font.Min = MinFont;
+            Font.Max = MaxFont;
+            Running = true;
+            Controller.Control.StartCoroutineWrapper(LoopRoutine());
+        }
+    }
+    public void Init()
+    {
+        if(!Running)
+        {
+            Running = true;
+            Controller.Control.StartCoroutineWrapper(LoopRoutine());
+        }
     }
 }

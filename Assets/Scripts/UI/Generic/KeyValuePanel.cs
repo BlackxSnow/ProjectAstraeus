@@ -119,6 +119,10 @@ public class KeyValuePanel : TextKVGroup, IGroupableUI
         {
             return string.Format("{0}", RefModule.GetStat<string>(StatsEnum.Material));
         }
+        else if ((StatsEnum)ValueEnum == StatsEnum.FireMode)
+        {
+            return string.Format("{0}", RefModule.GetStat<Firearm.FireModes>(StatsEnum.FireMode));
+        }
         return string.Format("{0}", Utility.RoundToNDecimals(RefModule.GetStat<float>((StatsEnum)ValueEnum), 1));
     }
     public static string GetItemStat(AdditionalModule RefModule, Item RefItem, StatsAndSkills RefStats, Enum ValueEnum)

@@ -47,13 +47,5 @@ public class Materials
         public float DamageModifier;
         public float ArmourModifier;
         public Resources BaseCost;
-
-        //public Material(MaterialTypes Name, float Mass, float Damage, float Armour)
-        //{
-        //    this.Name = Name;
-        //    MassModifier = Mass;
-        //    DamageModifier = Damage;
-        //    ArmourModifier = Armour;
-        //}
     }
 }

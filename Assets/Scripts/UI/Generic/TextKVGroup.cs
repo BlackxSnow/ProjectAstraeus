@@ -7,7 +7,17 @@ using TMPro;
 public class TextKVGroup : MonoBehaviour, IGroupableUI
 {
     public TextMeshProUGUI TextComponent;
-    public KeyValueGroup Group;
+    private KeyValueGroup group;
+    public KeyValueGroup Group
+    {
+        get { return group; }
+        set
+        {
+            group = value;
+            if(value != null)
+                group.AddMember(this);
+        }
+    }
     public RectTransform RTransform { get; set; }
     public KeyValueGroup.FontSizes Font = new KeyValueGroup.FontSizes(8, 72);
     VerticalLayoutGroup VLayout;
@@ -17,6 +27,11 @@ public class TextKVGroup : MonoBehaviour, IGroupableUI
     protected virtual void Awake()
     {
         
+    }
+
+    void OnDestroy()
+    {
+        Group.RemoveMember(this);
     }
 
     public virtual void Init()

@@ -34,14 +34,14 @@ namespace Modules
 
         private void AddModifiableStats()
         {
-            ModifiableStats.Add(StatsEnum.Length, 0.1f);
-            ModifiableStats.Add(StatsEnum.Thickness, 0.05f);
-            ModifiableStats.Add(StatsEnum.Material, MaterialDict[MaterialTypes.Wood]);
+            ModifiableStats.Add(StatsEnum.Length, new StatInfoObject(0f) { MaxValue = 0.30f });
+            ModifiableStats.Add(StatsEnum.Thickness, new StatInfoObject(0f) { MaxValue = 0.15f });
+            ModifiableStats.Add(StatsEnum.Material, new StatInfoObject(MaterialDict[MaterialTypes.Wood]));
         }
         private void AddStats()
         {
-            Stats.Add(StatsEnum.Range, 0f);
-            Stats.Add(StatsEnum.Damage, 0f);
+            Stats.Add(StatsEnum.Range, new StatInfoObject(0f));
+            Stats.Add(StatsEnum.Damage, new StatInfoObject(0f));
         }
     } 
 }

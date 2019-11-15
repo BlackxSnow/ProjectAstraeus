@@ -34,7 +34,8 @@ namespace UI
             private void Start()
             {
                 TargetModule = CraftingUI.CurrentModule;
-                ChangeValue();
+                ValueSlider.value = TargetModule.GetStat<float>(TargetStat);
+                ValueText.text = string.Format("{0}", Utility.RoundToNDecimals(ValueSlider.value, 2));
             }
 
             public MinMax ValueBounds;
@@ -50,9 +51,9 @@ namespace UI
                 //OnValueChanged update ValueText and the associated value on TargetModule
 
                 TargetModule.SetStat(TargetStat, ValueSlider.value);
-                ValueText.text = string.Format("{0}", Utility.RoundToNDecimals(ValueSlider.value, 1));
+                ValueText.text = string.Format("{0}", Utility.RoundToNDecimals(ValueSlider.value, 2));
 
-                CraftingUI.UpdateKVPs(true, false);
+                CraftingUI.UpdateKVPs(true, true);
             }
         }
     }

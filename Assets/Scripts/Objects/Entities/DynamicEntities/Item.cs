@@ -107,7 +107,7 @@ public class Item : DynamicEntity
         }
     }
 
-    public virtual void SetStats()
+    public virtual void CalculateStats()
     {
 
     }

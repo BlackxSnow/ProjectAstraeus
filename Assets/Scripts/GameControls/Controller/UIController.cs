@@ -125,7 +125,6 @@ public class UIController : MonoBehaviour
         if (Group)
         {
             Script.Group = Group;
-            Group.AddMember(Script);
         }
 
         return TextInstanceObject;
@@ -156,7 +155,6 @@ public class UIController : MonoBehaviour
         if (Data.Group)
         {
             KVPScript.Group = Data.Group;
-            Data.Group.AddMember(KVPScript);
         }
 
         KeyText.GetComponent<RectTransform>().anchorMax = new Vector2(Data.KeyRatio - .05f, 1f);
@@ -245,6 +243,16 @@ public class UIController : MonoBehaviour
 
     }
 
+    public class DropdownData
+    {
+        public string Name;
+        public Transform Parent;
+        public UI.Crafting.ModuleDropdown.DropdownOptions Option;
+    }
+    public static GameObject InstantiateDropdown(DropdownData Data)
+    {
+        return InstantiateDropdown(Data.Name, Data.Parent, Data.Option);
+    }
     public static GameObject InstantiateDropdown(string Name, Transform Parent, UI.Crafting.ModuleDropdown.DropdownOptions DropdownType)
     {
         GameObject DropdownObject;
@@ -259,15 +267,19 @@ public class UIController : MonoBehaviour
         return DropdownObject;
     } 
 
-    public static GameObject InstantiateModulePanel(AdditionalModule Module, Transform Parent)
+    public static GameObject InstantiateModulePanel(AdditionalModule Module, Transform Parent, out GameObject[] KVPs, KeyValueGroup Group = null)
     {
         GameObject DisplayPanel = Instantiate(ModuleDisplayPrefab, Parent);
         ModuleDisplayPanel Script = DisplayPanel.GetComponent<ModuleDisplayPanel>();
         Script.Module = Module;
-
-        KeyValueGroup Group = ScriptableObject.CreateInstance<KeyValueGroup>();
+        if (!Group)
+        {
+            Group = ScriptableObject.CreateInstance<KeyValueGroup>();
+            Group.Font.Max = 18;
+        }
+        
         Group.Init();
-        Module.InstantiateStatKVPs(Script.StatPanel.transform, Group, out _);
+        KVPs = Module.InstantiateModifiableStatKVPs(Script.StatPanel.transform, Group);
         Script.Name.text = Module.ModuleName;
 
         return DisplayPanel;

@@ -8,6 +8,7 @@ using TMPro;
 
 using System.Reflection;
 using System.Linq;
+using static Modules.AdditionalModule;
 
 namespace UI
 {
@@ -30,6 +31,7 @@ namespace UI
             [HideInInspector]
             public static Item CurrentItem;
             public static AdditionalModule CurrentModule;
+            public static CraftingUI ActiveUI;
 
             public struct KVPStruct
             {
@@ -92,28 +94,38 @@ namespace UI
                 }
                 public void Clear()
                 {
+                    foreach(KeyValuePanel KVP in Scripts)
+                    {
+                        Group.RemoveMember(KVP);
+                    };
                     gameObjects.Clear();
                     Scripts.Clear();
-                    Group.ClearGroup();
                 }
             }
 
+            public static KeyValueGroup CraftingUIGroup;
             private static KVPStruct TotalStatKVPInfo;
             private static KVPStruct ModuleStatKVPInfo;
+            private static KVPStruct ModulePanelKVPInfo;
 
-            private readonly List<GameObject> ModuleDisplays = new List<GameObject>();
+            private readonly Dictionary<AdditionalModule, ModuleDisplayPanel> ModuleDisplays = new Dictionary<AdditionalModule, ModuleDisplayPanel>();
             private readonly List<GameObject> ModificationUI = new List<GameObject>();
 
             private void Awake()
             {
+                CraftingUIGroup = ScriptableObject.CreateInstance<KeyValueGroup>();
+                CraftingUIGroup.Font.Max = 18;
+
                 ItemToggles = UI_ItemListPanel.GetComponent<ToggleGroup>();
-                TotalStatKVPInfo = new KVPStruct(ScriptableObject.CreateInstance<KeyValueGroup>());
-                ModuleStatKVPInfo = new KVPStruct(ScriptableObject.CreateInstance<KeyValueGroup>());
+                TotalStatKVPInfo = new KVPStruct(CraftingUIGroup);
+                ModuleStatKVPInfo = new KVPStruct(CraftingUIGroup);
+                ModulePanelKVPInfo = new KVPStruct(CraftingUIGroup);
+                ActiveUI = this;
             }
             public void ClearAll()
             {
                 ClearKVPs(true, true);
-                ClearValueSliders();
+                ClearModificationUI();
                 ClearModuleList();
             }
             public void ClearKVPs(bool Module, bool Total)
@@ -130,16 +142,47 @@ namespace UI
                     TotalStatKVPInfo.Clear();
                 }
             }
-            public void ClearValueSliders()
+            public void ClearModificationUI()
             {
-                foreach (GameObject ValueSlider in ModificationUI) Destroy(ValueSlider);
+                foreach (GameObject ModificationElement in ModificationUI) Destroy(ModificationElement);
                 ModificationUI.Clear();
             }
             public void ClearModuleList()
             {
-                foreach (GameObject ModuleDisplay in ModuleDisplays) Destroy(ModuleDisplay);
+                foreach (KeyValuePair<AdditionalModule, ModuleDisplayPanel> ModuleDisplay in ModuleDisplays) Destroy(ModuleDisplay.Value.gameObject);
                 ModuleDisplays.Clear();
             }
+            public void DeselectModules()
+            {
+                foreach (KeyValuePair<AdditionalModule, ModuleDisplayPanel> ModulePanel in ModuleDisplays)
+                {
+                    ModulePanel.Value.Deselect();
+                }
+                ClearModificationUI();
+                ClearKVPs(true, false);
+                CurrentModule = null;
+            }
+            public void SelectModule(AdditionalModule Module)
+            {
+                DeselectModules();
+
+                ModuleDisplays[Module].Select();
+                CurrentModule = Module;
+
+                InitialiseModuleStatDisplay();
+                InitialiseModificationUI();
+            }
+            public void SelectModule(AdditionalModule Module, ModuleDisplayPanel Panel)
+            {
+                DeselectModules();
+
+                Panel.Select();
+                CurrentModule = Module;
+
+                InitialiseModuleStatDisplay();
+                InitialiseModificationUI();
+            }
+
             public void NewItem()
             {
                 IEnumerator<Toggle> ActiveToggleEnum = ItemToggles.ActiveToggles().GetEnumerator();
@@ -162,32 +205,27 @@ namespace UI
                 InitialiseTotalStatDisplay();
             }
 
-            public void NewModule()
-            {
-                Type ModuleType = TypeAttribute.GetStoredData(typeof(AdditionalModule.ModulesEnum), ModuleDropdown.SelectedModule).Type;
-                CurrentModule = (AdditionalModule)ScriptableObject.CreateInstance(ModuleType);
-
-                InitialiseModuleStatDisplay();
-                InitialiseModificationUI();
-            }
-
             public void AddModule()
             {
-                if (!CurrentModule) return;
-                ClearKVPs(true, false);
-                ModuleStatKVPInfo.Group.ClearGroup();
-                ClearValueSliders();
+                Type ModuleType = TypeAttribute.GetStoredData(typeof(ModulesEnum), ModuleDropdown.SelectedModule).Type;
+                CurrentModule = (AdditionalModule)ScriptableObject.CreateInstance(ModuleType);
+                
                 CurrentItem.Modules.Add(CurrentModule);
-                CurrentItem.SetStats();
-                ModuleDisplays.Add(UIController.InstantiateModulePanel(CurrentModule, UI_ModuleDisplayList.transform));
-                CurrentModule = null;
+                CurrentItem.CalculateStats();
+                ModuleDisplays.Add(CurrentModule, UIController.InstantiateModulePanel(CurrentModule, UI_ModuleDisplayList.transform, out GameObject[] ModuleKVPs, CraftingUIGroup).GetComponent<ModuleDisplayPanel>());
+                SelectModule(CurrentModule);
+                ModulePanelKVPInfo.AddKVP(ModuleKVPs);
                 UpdateKVPs(false, true);
             }
 
-            public static void RemoveModule(AdditionalModule Module)
+            public void RemoveModule(AdditionalModule Module)
             {
+                if (CurrentModule == Module)
+                {
+                    ClearKVPs(true, false);
+                }
                 CurrentItem.Modules.Remove(Module);
-                CurrentItem.SetStats();
+                CurrentItem.CalculateStats();
                 UpdateKVPs(false, true);
             }
 
@@ -202,17 +240,37 @@ namespace UI
                 CurrentModule = null;
                 CurrentItem = null;
             }
+
             void InitialiseModificationUI()
             {
-                ClearValueSliders();
-                foreach (KeyValuePair<ItemTypes.StatsEnum, object> ModifiableStat in CurrentModule.ModifiableStats)
+                List<UIController.DropdownData> dropdownDatas = new List<UIController.DropdownData>();
+                ClearModificationUI();
+                foreach (KeyValuePair<ItemTypes.StatsEnum, StatInfoObject> ModifiableStat in CurrentModule.ModifiableStats)
                 {
-                    if (ModifiableStat.Key == ItemTypes.StatsEnum.Material)
+                    float Min = 0f;
+                    float Max = 10f;
+                    if (ModifiableStat.Value.MinValue != 0 || ModifiableStat.Value.MaxValue != 0)
                     {
-                        ModificationUI.Add(UIController.InstantiateDropdown("Material", UI_ModificationUIPanel.transform, Crafting.ModuleDropdown.DropdownOptions.Material));
-                        continue;
+                        Min = ModifiableStat.Value.MinValue;
+                        Max = ModifiableStat.Value.MaxValue;
                     }
-                    ModificationUI.Add(UIController.InstantiateValueSlider(ModifiableStat.Key.ToString(), ModifiableStat.Key, UI_ModificationUIPanel.transform, 0, 10));
+
+                    switch (ModifiableStat.Key)
+                    {
+                        case ItemTypes.StatsEnum.Material:
+                            dropdownDatas.Add(new UIController.DropdownData() { Name = "Material", Parent = UI_ModificationUIPanel.transform, Option = Crafting.ModuleDropdown.DropdownOptions.Material });
+                            break;
+                        case ItemTypes.StatsEnum.FireMode:
+                            dropdownDatas.Add(new UIController.DropdownData() { Name = "Fire Mode", Parent = UI_ModificationUIPanel.transform, Option = Crafting.ModuleDropdown.DropdownOptions.FireMode });
+                            break;
+                        default:
+                            ModificationUI.Add(UIController.InstantiateValueSlider(ModifiableStat.Key.ToString(), ModifiableStat.Key, UI_ModificationUIPanel.transform, Min, Max));
+                            break;
+                    }
+                }
+                foreach(UIController.DropdownData dropdownData in dropdownDatas)
+                {
+                    ModificationUI.Add(UIController.InstantiateDropdown(dropdownData));
                 }
             }
 
@@ -242,14 +300,19 @@ namespace UI
             {
                 if (Module)
                 {
+                    CurrentModule.CalculateStats();
                     foreach (KeyValuePanel KVP in ModuleStatKVPInfo.Scripts)
                     {
-                        CurrentModule.CalculateStats();
+                        KVP.UpdateValue();
+                    }
+                    foreach (KeyValuePanel KVP in ModulePanelKVPInfo.Scripts)
+                    {
                         KVP.UpdateValue();
                     }
                 }
                 if (Total)
                 {
+                    CurrentItem.CalculateStats();
                     foreach (KeyValuePanel KVP in TotalStatKVPInfo.Scripts)
                     {
                         KVP.UpdateValue();

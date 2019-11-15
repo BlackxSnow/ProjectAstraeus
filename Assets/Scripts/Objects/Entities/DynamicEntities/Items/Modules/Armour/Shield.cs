@@ -29,11 +29,11 @@ namespace Modules
 
         private void AddModifiableStats()
         {
-            ModifiableStats.Add(StatsEnum.Shield, 1f);
+            ModifiableStats.Add(StatsEnum.Shield, new StatInfoObject(1f));
         }
         private void AddStats()
         {
-            Stats.Add(StatsEnum.PowerUse, 0f);
+            Stats.Add(StatsEnum.PowerUse, new StatInfoObject(0f));
         }
     }
 }

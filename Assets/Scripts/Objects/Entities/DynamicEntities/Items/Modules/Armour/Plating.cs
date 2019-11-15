@@ -30,12 +30,12 @@ namespace Modules
         }
         private void AddModifiableStats()
         {
-            ModifiableStats.Add(StatsEnum.Thickness, 1f);
-            ModifiableStats.Add(StatsEnum.Material, MaterialDict[MaterialTypes.Iron]);
+            ModifiableStats.Add(StatsEnum.Thickness, new StatInfoObject(1f));
+            ModifiableStats.Add(StatsEnum.Material, new StatInfoObject(MaterialDict[MaterialTypes.Iron]));
         }
         private void AddStats()
         {
-            Stats.Add(StatsEnum.Armour, 0f);
+            Stats.Add(StatsEnum.Armour, new StatInfoObject(0f));
         }
     }
 }

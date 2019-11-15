@@ -52,18 +52,17 @@ public class ItemTypes : MonoBehaviour
         Feet,
         [Type(typeof(Arms))]
         Arms,
+#warning Unimplemented
         //[Type(typeof(Back))]
         Back,
         //[Type(typeof(Accessory))]
         Accessory,
         [Type(typeof(Melee))]
-        MeleeSharp,
-        [Type(typeof(Melee))]
-        MeleeBlunt,
+        Melee,
         [Type(typeof(Ranged))]
-        RangedBow,
-        [Type(typeof(Ranged))]
-        RangedFirearm
+        Bow,
+        [Type(typeof(Firearm))]
+        Firearm
     }
 
     public enum SubTypes
@@ -113,6 +112,7 @@ public class ItemTypes : MonoBehaviour
         //Modifiable
         Thickness,
         Material,
+        FireMode,
         Length
     }
 

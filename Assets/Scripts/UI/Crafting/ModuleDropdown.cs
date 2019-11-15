@@ -13,7 +13,8 @@ namespace UI
             public enum DropdownOptions
             {
                 Module,
-                Material
+                Material,
+                FireMode
             }
             public TextMeshProUGUI TextMeshComponent;
             public TMP_Dropdown DropdownComponent;
@@ -25,6 +26,16 @@ namespace UI
             public void Init()
             {
                 SetOptions();
+                Enum ModuleEnumValue;
+                if (DropdownType == DropdownOptions.FireMode)
+                {
+                    ModuleEnumValue = CraftingUI.CurrentModule.GetStat<Firearm.FireModes>(ItemTypes.StatsEnum.FireMode);
+                } else
+                {
+                    ModuleEnumValue = CraftingUI.CurrentModule.GetStat<Materials.Material>(ItemTypes.StatsEnum.Material).Name;
+                }
+                Selected = AddedOptions.Find(E => E.Equals(ModuleEnumValue));
+                DropdownComponent.value = Selected != null ? AddedOptions.IndexOf(Selected) : 0;
             }
 
             public void SetSelected()
@@ -47,12 +58,26 @@ namespace UI
                     case DropdownOptions.Material:
                         Options = GetMaterialOptions();
                         break;
+                    case DropdownOptions.FireMode:
+                        Options = GetFireModeOptions();
+                        break;
                     default:
                         break;
                 }
 
                 DropdownComponent.AddOptions(Options);
-                SetSelected();
+                DropdownComponent.value = Selected != null ? AddedOptions.IndexOf(Selected) : 0;
+            }
+
+            private List<string> GetFireModeOptions()
+            {
+                List<string> Options = new List<string>();
+                foreach(Firearm.FireModes FireMode in CraftingUI.CurrentModule.CompatibleFireModes)
+                {
+                    Options.Add(FireMode.ToString());
+                    AddedOptions.Add(FireMode);
+                }
+                return Options;
             }
 
             private List<string> GetMaterialOptions()
@@ -87,7 +112,11 @@ namespace UI
                     case DropdownOptions.Material:
                         Materials.Material material = Materials.MaterialDict[(Materials.MaterialTypes)Selected];
                         CraftingUI.CurrentModule.SetStat(ItemTypes.StatsEnum.Material, material);
-                        CraftingUI.UpdateKVPs(true, false);
+                        CraftingUI.UpdateKVPs(true, true);
+                        break;
+                    case DropdownOptions.FireMode:
+                        CraftingUI.CurrentModule.SetStat(ItemTypes.StatsEnum.FireMode, (Firearm.FireModes)Selected);
+                        CraftingUI.UpdateKVPs(true, true);
                         break;
                     default:
                         break;

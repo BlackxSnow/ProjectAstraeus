@@ -27,7 +27,7 @@ namespace Modules
 
         private void AddModifiableStats()
         {
-            ModifiableStats.Add(StatsEnum.Power, 1f);
+            ModifiableStats.Add(StatsEnum.Power, new StatInfoObject(1f));
         }
         private void AddStats()
         {

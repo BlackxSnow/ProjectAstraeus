@@ -18,7 +18,6 @@ public class TypeAttribute : Attribute
 
     public TypeAttribute(Type _Module)
     {
-        //if (!(typeof(Modules.AdditionalModule).IsAssignableFrom(_Module) )) throw new ArgumentOutOfRangeException(string.Format("Input '{0}' Must be of type 'Modules.AdditionalModule'", _Module));
         Type = _Module;
     }
 }

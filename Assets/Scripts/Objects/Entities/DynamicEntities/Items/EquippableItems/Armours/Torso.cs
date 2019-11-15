@@ -32,8 +32,9 @@ public class Torso : Armour
         Slot = Equipment.Slots.Torso;
     }
 
-    public override void FindSubtype()
+    public override bool FindSubtype()
     {
+        SubTypes OldType = Subtype;
         SubTypes[] ThresholdTypes = new SubTypes[3]
         {
             SubTypes.LightArmour,
@@ -49,5 +50,6 @@ public class Torso : Armour
         float Mass = Stats.GetStat<float>(StatsEnum.Mass);
 
         Subtype = ThresholdTypes[Utility.GetThreshold(Mass, MassThreshold)];
+        if (Subtype != OldType) return true; else return false;
     }
 }

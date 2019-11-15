@@ -23,13 +23,13 @@ namespace Items
                 ModulesEnum.Blade,
                 ModulesEnum.Head
             };
-                BaseStats.RequiredModules = new List<ModulesEnum>()
+            BaseStats.RequiredModules = new List<ModulesEnum>()
             {
                 ModulesEnum.Handle
             };
         }
 
-        public override List<GameObject> InstantiateStatKVPs(bool Cost, out List<GameObject> CombinedKVPLists, Transform Parent, KeyValueGroup Group = null)
+        public override List<GameObject> InstantiateStatKVPs(bool Cost, out List<GameObject> CombinedKVPLists, Transform Parent, KeyValueGroup Group = null) 
         {
             List<GameObject> KVPs = new List<GameObject>();
             List<GameObject> KVPLists = new List<GameObject>();
@@ -55,53 +55,37 @@ namespace Items
             return CombinedKVPs;
         }
 
-        public override void SetStats()
+        public override void CalculateStats()
         {
-            Vector2 SizeMod = new Vector2(1, 1);
-            float MassMod = 1;
-            Resources ResourceMod = new Resources(0, 0, 0);
             Stats.Stats = new Dictionary<StatsEnum, object>(BaseStats.Stats);
 
             Dictionary<StatsEnum, float> StatMods = new Dictionary<StatsEnum, float>()
-        {
-            { StatsEnum.Damage, 1f },
-            { StatsEnum.Block, 1f },
-            { StatsEnum.ArmourPiercing, 1f },
-            { StatsEnum.AttackSpeed, 1f }
-        };
-
-            foreach (AdditionalModule Module in Modules)
             {
-                SizeMod += Module.GetStat<Vector2>(StatsEnum.SizeMod) - new Vector2(1f, 1f);
-                MassMod += Module.GetStat<float>(StatsEnum.MassMod) - 1f;
-                ResourceMod += Module.GetStat<Resources>(StatsEnum.Cost);
+                { StatsEnum.Damage, 1f },
+                { StatsEnum.Block, 1f },
+                { StatsEnum.ArmourPiercing, 1f },
+                { StatsEnum.AttackSpeed, 1f }
+            };
 
-                foreach (KeyValuePair<StatsEnum, object> Stat in Module.Stats)
-                {
-                    if (!Stats.Stats.TryGetValue(Stat.Key, out object Value) || Stat.Key == StatsEnum.Cost)
-                    {
-                        continue;
-                    }
-                    if (StatMods[Stat.Key] == 1f)
-                    {
-                        StatMods[Stat.Key] = 0f;
-                    }
-                    StatMods[Stat.Key] += (float)Stat.Value;
-                }
-            }
-            foreach (KeyValuePair<StatsEnum, float> StatMod in StatMods)
-            {
-                Stats.SetStat(StatMod.Key, StatMod.Value, ItemStats.OperationEnum.Multiply);
-            }
-
-            Stats.SetStat(StatsEnum.Size, new Vector2Int(Mathf.RoundToInt(BaseStats.GetStat<Vector2Int>(StatsEnum.Size).x * SizeMod.x), Mathf.RoundToInt(BaseStats.GetStat<Vector2Int>(StatsEnum.Size).y * SizeMod.y)));
-            Stats.SetStat(StatsEnum.Mass, BaseStats.GetStat<float>(StatsEnum.Mass) * MassMod);
-            Stats.SetStat(StatsEnum.Cost, BaseStats.GetStat<Resources>(StatsEnum.Cost) + ResourceMod);
-            FindSubtype();
+            SetStats(StatMods);
         }
 
-        public override void FindSubtype()
+        public struct ThresholdStruct
         {
+            public float Leniency;
+            public float Dagger;
+            public float Sword;
+        }
+        public static ThresholdStruct MaxLengths = new ThresholdStruct()
+        {
+            Leniency = 0.1f,
+            Dagger = 0.35f,
+            Sword = 0
+        };
+
+        public override bool FindSubtype()
+        {
+            SubTypes OldType = Subtype;
             Handle handle = (Handle)Modules.Where(M => M is Handle).ElementAtOrDefault(0);
             Blade blade = (Blade)Modules.Where(M => M is Blade).ElementAtOrDefault(0);
             MaulHead head = (MaulHead)Modules.Where(M => M is MaulHead).ElementAtOrDefault(0);
@@ -115,19 +99,19 @@ namespace Items
                 }
                 else if (blade != null) //Handle, blade
                 {
-                    float LengthLeniency = 0.1f;
                     float bladeLength = blade.GetStat<float>(StatsEnum.Length);
-                    if (handleLength > bladeLength + LengthLeniency) //Polearm
+                    float TotalLength = bladeLength + handleLength;
+                    if (TotalLength <= MaxLengths.Dagger) //Short weapon
+                    {
+                        Subtype = SubTypes.Dagger;
+                    }
+                    else if (handleLength > bladeLength + MaxLengths.Leniency) //long handle, shorter blade
                     {
                         Subtype = SubTypes.Polearm;
                     }
-                    else if (bladeLength > handleLength + LengthLeniency) //Sword 
+                    else 
                     {
                         Subtype = SubTypes.Sword;
-                    }
-                    else
-                    {
-                        Subtype = SubTypes.Dagger;
                     }
                 }
                 else //Handle, no blade
@@ -138,6 +122,13 @@ namespace Items
             else
             {
                 Subtype = SubTypes.Invalid;
+            }
+            if (Subtype != OldType)
+            {
+                return true;
+            } else
+            {
+                return false;
             }
         }
     } 

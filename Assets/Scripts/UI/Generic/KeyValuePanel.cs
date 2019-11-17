@@ -2,13 +2,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using Modules;
 using static ItemTypes;
 
 public class KeyValuePanel : TextKVGroup, IGroupableUI
 {
+    
     public float GroupTargetSize;
+    public Image Icon;
+    public Sprite WarningIcons;
 
     //Storing useful components rather than calling GetComponent<> multiple times
     public struct ChildData
@@ -86,6 +90,17 @@ public class KeyValuePanel : TextKVGroup, IGroupableUI
         return CalculateSize(Key.TextMesh, Value.TextMesh);
     }
 
+    void EnableWarningIcon()
+    {
+        Icon.color = Color.white;
+        Icon.sprite = WarningIcons;
+    }
+
+    void DisableWarningIcon()
+    {
+        Icon.color = new Color(0, 0, 0, 0);
+    }
+
     //Relating to Value
     public delegate string GetValueDelegate(AdditionalModule RefModule, Item RefItem, StatsAndSkills RefStats, Enum ValueEnum);
     public GetValueDelegate GetValue;
@@ -103,6 +118,12 @@ public class KeyValuePanel : TextKVGroup, IGroupableUI
     {
         if (DoNotUpdate) return;
         Value.TextMesh.text = GetValue(Refs.RefModule, Refs.RefItem, Refs.RefStats, GetValueEnum);
+        if (GetValueEnum is SubTypes Subtype)
+        {
+            if (Value.TextMesh.text == SubTypes.Invalid.ToString())
+            { EnableWarningIcon(); }
+            else { DisableWarningIcon(); }
+        }
     }
 
     public static string GetModuleStat(AdditionalModule RefModule, Item RefItem, StatsAndSkills RefStats, Enum ValueEnum)
@@ -137,7 +158,8 @@ public class KeyValuePanel : TextKVGroup, IGroupableUI
         }
         if (ValueEnum is SubTypes)
         {
-            return ((EquippableItem)RefItem).Subtype.ToString();
+            SubTypes Subtype = ((EquippableItem)RefItem).Subtype;
+            return Subtype.ToString();
         }
         return string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.GetStat<float>((StatsEnum)ValueEnum), 1));
     }

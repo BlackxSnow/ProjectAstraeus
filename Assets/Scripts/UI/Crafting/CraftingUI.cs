@@ -149,7 +149,11 @@ namespace UI
             }
             public void ClearModuleList()
             {
-                foreach (KeyValuePair<AdditionalModule, ModuleDisplayPanel> ModuleDisplay in ModuleDisplays) Destroy(ModuleDisplay.Value.gameObject);
+                foreach (KeyValuePair<AdditionalModule, ModuleDisplayPanel> ModuleDisplay in ModuleDisplays)
+                {
+                    if (ModuleDisplay.Value == null) continue;
+                    Destroy(ModuleDisplay.Value.gameObject);
+                }
                 ModuleDisplays.Clear();
             }
             public void DeselectModules()

@@ -1,0 +1,943 @@
+fileFormatVersion: 2
+guid: ea07c966c1c2e364583b5c94b8ced3bf
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -8149971842148294337
+    second: TexturesCom_Grass_Strands02_512_albedo_0
+  - first:
+      213: -8215068898604821865
+    second: TexturesCom_Grass_Strands02_512_albedo_1
+  - first:
+      213: 7230475421305297762
+    second: TexturesCom_Grass_Strands02_512_albedo_2
+  - first:
+      213: 9043605493109658115
+    second: TexturesCom_Grass_Strands02_512_albedo_3
+  - first:
+      213: 1660421704016472581
+    second: TexturesCom_Grass_Strands02_512_albedo_4
+  - first:
+      213: 1576915955658514951
+    second: TexturesCom_Grass_Strands02_512_albedo_5
+  - first:
+      213: 5362334228604175945
+    second: TexturesCom_Grass_Strands02_512_albedo_6
+  - first:
+      213: 3868783818643545322
+    second: TexturesCom_Grass_Strands02_512_albedo_7
+  - first:
+      213: -7107627459702855556
+    second: TexturesCom_Grass_Strands02_512_albedo_8
+  - first:
+      213: -2271391365108104857
+    second: TexturesCom_Grass_Strands02_512_albedo_9
+  - first:
+      213: 1860534996952708919
+    second: TexturesCom_Grass_Strands02_512_albedo_10
+  - first:
+      213: 6618257115813120284
+    second: TexturesCom_Grass_Strands02_512_albedo_11
+  - first:
+      213: 494470235987435525
+    second: TexturesCom_Grass_Strands02_512_albedo_12
+  - first:
+      213: 3543382081331541302
+    second: TexturesCom_Grass_Strands02_512_albedo_13
+  - first:
+      213: -6995361548093662134
+    second: TexturesCom_Grass_Strands02_512_albedo_14
+  - first:
+      213: 6927196589369468
+    second: TexturesCom_Grass_Strands02_512_albedo_15
+  - first:
+      213: 8515519750879587548
+    second: TexturesCom_Grass_Strands02_512_albedo_16
+  - first:
+      213: -2605545808859063138
+    second: TexturesCom_Grass_Strands02_512_albedo_17
+  - first:
+      213: 4310533767176240230
+    second: TexturesCom_Grass_Strands02_512_albedo_18
+  - first:
+      213: -1386846991850410397
+    second: TexturesCom_Grass_Strands02_512_albedo_19
+  - first:
+      213: 4488898911264655813
+    second: TexturesCom_Grass_Strands02_512_albedo_20
+  - first:
+      213: 8961193185020730783
+    second: TexturesCom_Grass_Strands02_512_albedo_21
+  - first:
+      213: 74948794868825654
+    second: TexturesCom_Grass_Strands02_512_albedo_22
+  - first:
+      213: 7488572269201426671
+    second: TexturesCom_Grass_Strands02_512_albedo_23
+  - first:
+      213: 899623126978739233
+    second: TexturesCom_Grass_Strands02_512_albedo_24
+  - first:
+      213: -8810977584732856038
+    second: TexturesCom_Grass_Strands02_512_albedo_25
+  - first:
+      213: 4265530307285010840
+    second: TexturesCom_Grass_Strands02_512_albedo_26
+  - first:
+      213: -7653327385231538813
+    second: TexturesCom_Grass_Strands02_512_albedo_27
+  - first:
+      213: 5527246179249933084
+    second: TexturesCom_Grass_Strands02_512_albedo_28
+  - first:
+      213: -3174328200885028144
+    second: TexturesCom_Grass_Strands02_512_albedo_29
+  - first:
+      213: -7468795919521881648
+    second: TexturesCom_Grass_Strands02_512_albedo_30
+  - first:
+      213: 8704232314756395363
+    second: TexturesCom_Grass_Strands02_512_albedo_31
+  - first:
+      213: 2492701789447740821
+    second: TexturesCom_Grass_Strands02_512_albedo_32
+  - first:
+      213: 2351246136216289474
+    second: TexturesCom_Grass_Strands02_512_albedo_33
+  - first:
+      213: -7851219517578744640
+    second: TexturesCom_Grass_Strands02_512_albedo_34
+  externalObjects: {}
+  serializedVersion: 10
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: -1
+    aniso: -1
+    mipBias: -100
+    wrapU: 1
+    wrapV: 1
+    wrapW: -1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_0
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 238
+        width: 14
+        height: 123
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c5aa98018e47eed419ef6bb47143ea57
+      internalID: -8149971842148294337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_1
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 242
+        width: 47
+        height: 261
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7034b4c372263564eae0b2c146c8fa97
+      internalID: -8215068898604821865
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_2
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 298
+        width: 10
+        height: 207
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0373a36b58dfc6947979c7ee1751dcfb
+      internalID: 7230475421305297762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_3
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 262
+        width: 14
+        height: 243
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f90d056378e31264c8cc9b4d82df1bb0
+      internalID: 9043605493109658115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_4
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 327
+        width: 11
+        height: 178
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3ebd0d4f8ec44134089f1be0947e5683
+      internalID: 1660421704016472581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_5
+      rect:
+        serializedVersion: 2
+        x: 109
+        y: 257
+        width: 20
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d97b632683f003c41b2418b3b48a8071
+      internalID: 1576915955658514951
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_6
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 246
+        width: 24
+        height: 259
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 60eefad6f50b9b94abbd3b9ff08df401
+      internalID: 5362334228604175945
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_7
+      rect:
+        serializedVersion: 2
+        x: 158
+        y: 323
+        width: 9
+        height: 186
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7ef7fdcfcd4571142acf7709c99c5eb0
+      internalID: 3868783818643545322
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_8
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 354
+        width: 9
+        height: 151
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e8214e17776f0994d861a67651c6b440
+      internalID: -7107627459702855556
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_9
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 298
+        width: 35
+        height: 207
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 41d563cb913a40842b235ed5ef3b7e02
+      internalID: -2271391365108104857
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_10
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 314
+        width: 9
+        height: 173
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f7bda9b45c2631b40b6d697261f4b714
+      internalID: 1860534996952708919
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_11
+      rect:
+        serializedVersion: 2
+        x: 230
+        y: 298
+        width: 37
+        height: 205
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b514d9550eee020409fe5e13238d688f
+      internalID: 6618257115813120284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_12
+      rect:
+        serializedVersion: 2
+        x: 265
+        y: 234
+        width: 20
+        height: 271
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0bb65c39e7952ae42bb4ba1afb998dcd
+      internalID: 494470235987435525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_13
+      rect:
+        serializedVersion: 2
+        x: 290
+        y: 360
+        width: 8
+        height: 145
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5e584f56a1795c44ea62d3a4b1fe7a48
+      internalID: 3543382081331541302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_14
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 210
+        width: 20
+        height: 297
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7e99cb6742139284ca2985c0fdea760c
+      internalID: -6995361548093662134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_15
+      rect:
+        serializedVersion: 2
+        x: 313
+        y: 227
+        width: 14
+        height: 278
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 16a3d65fc171e9841a0c586210c10217
+      internalID: 6927196589369468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_16
+      rect:
+        serializedVersion: 2
+        x: 323
+        y: 247
+        width: 26
+        height: 258
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 17a1e7dd2c6b504498cde5872180e9f0
+      internalID: 8515519750879587548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_17
+      rect:
+        serializedVersion: 2
+        x: 353
+        y: 192
+        width: 41
+        height: 281
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b015bee96332d6742a1fefb3ae4c99f8
+      internalID: -2605545808859063138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_18
+      rect:
+        serializedVersion: 2
+        x: 376
+        y: 190
+        width: 50
+        height: 261
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a3793f445e9e0e34aae3db3ffe17f39c
+      internalID: 4310533767176240230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_19
+      rect:
+        serializedVersion: 2
+        x: 395
+        y: 187
+        width: 107
+        height: 314
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: abfc5e9ab92fb48498817413c2dd460b
+      internalID: -1386846991850410397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_20
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 7
+        width: 20
+        height: 207
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e5652cfdaaca95e4e8a1669cd1861b19
+      internalID: 4488898911264655813
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_21
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 7
+        width: 45
+        height: 259
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0602bf4af14f6bd449e3a99fbee3d142
+      internalID: 8961193185020730783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_22
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 10
+        width: 32
+        height: 266
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1db49b9a2efe006419be5c9a45b57469
+      internalID: 74948794868825654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_23
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 7
+        width: 36
+        height: 281
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6745b9582a876a84fa15600aff12c4a7
+      internalID: 7488572269201426671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_24
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 9
+        width: 113
+        height: 329
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: df4eda5fb66959e42bd0938bdb48aef8
+      internalID: 899623126978739233
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_25
+      rect:
+        serializedVersion: 2
+        x: 234
+        y: 7
+        width: 42
+        height: 282
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b9e22d90d1a4837448f01ecdbe1bdf6f
+      internalID: -8810977584732856038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_26
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 10
+        width: 23
+        height: 321
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aebefc0534aa4f045b50e11f327115af
+      internalID: 4265530307285010840
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_27
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 9
+        width: 46
+        height: 202
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 34bc56af7d5719e4fa9ca3a849cb263a
+      internalID: -7653327385231538813
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_28
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 7
+        width: 18
+        height: 202
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f085e992782662241a86008f4a049dae
+      internalID: 5527246179249933084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_29
+      rect:
+        serializedVersion: 2
+        x: 351
+        y: 10
+        width: 16
+        height: 205
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 598a22b3ed5d5134f85aefb5d263147f
+      internalID: -3174328200885028144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_30
+      rect:
+        serializedVersion: 2
+        x: 370
+        y: 7
+        width: 17
+        height: 134
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cf4a1fafe1e122342b845edae0bde1d6
+      internalID: -7468795919521881648
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_31
+      rect:
+        serializedVersion: 2
+        x: 393
+        y: 7
+        width: 12
+        height: 153
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e4be56b825d087c49a014713ff41dd46
+      internalID: 8704232314756395363
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_32
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 7
+        width: 12
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 048acda14a6f0bc479f4627caecc5dda
+      internalID: 2492701789447740821
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_33
+      rect:
+        serializedVersion: 2
+        x: 425
+        y: 7
+        width: 17
+        height: 136
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1a6150c62537341468073c9c5ea1fdff
+      internalID: 2351246136216289474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TexturesCom_Grass_Strands02_512_albedo_34
+      rect:
+        serializedVersion: 2
+        x: 442
+        y: 7
+        width: 63
+        height: 275
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3a3028a326a306b4baac6997c9acb27e
+      internalID: -7851219517578744640
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 8904fd88a11a662489aebf1eac9a325f
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

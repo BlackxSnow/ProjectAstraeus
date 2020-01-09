@@ -96,6 +96,7 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -247,24 +248,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1351722989 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3918744458099364908, guid: e66df3c74e5dbe4498f3aac455aadfcd,
-    type: 3}
-  m_PrefabInstance: {fileID: 3918744456856979258}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1351722996
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1351722989}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d2570ec04ece1343befa1bb376b575c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1996322455
 GameObject:
   m_ObjectHideFlags: 0
@@ -429,10 +412,5 @@ PrefabInstance:
       propertyPath: Music
       value: 
       objectReference: {fileID: 250151435}
-    - target: {fileID: 3918744458099364899, guid: e66df3c74e5dbe4498f3aac455aadfcd,
-        type: 3}
-      propertyPath: SplashStart
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e66df3c74e5dbe4498f3aac455aadfcd, type: 3}

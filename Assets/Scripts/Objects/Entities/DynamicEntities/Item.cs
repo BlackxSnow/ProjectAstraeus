@@ -28,7 +28,6 @@ public class Item : DynamicEntity
 
     public class ItemStats
     {
-        //Move these dictionary additions to relevant derived classes
         public Dictionary<StatsEnum, object> Stats = new Dictionary<StatsEnum, object>()
         {
             { StatsEnum.Size, new Vector2Int(1,1) },

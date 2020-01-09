@@ -495,10 +495,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b0d7ec83ba4bc54c9a8b0bad3877b54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TSpeed: 1
-  RSpeedX: 4
-  RSpeedY: 2
-  ZSpeedMultiplier: 1
+  TSpeed: 0
+  RSpeedX: 0
+  RSpeedY: 0
+  ZSpeedMultiplier: 0
 --- !u!20 &282840813
 Camera:
   m_ObjectHideFlags: 0
@@ -894,8 +894,8 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 0.8
+  m_Color: {r: 1, g: 0.96646345, b: 0.875, a: 1}
+  m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -1277,7 +1277,7 @@ MonoBehaviour:
   CharacterUI: {fileID: 6560339336579615839, guid: 16fc6dfe2db85b44797d51e4e73c8974,
     type: 3}
   SelectHUD:
-    InfoPanel: {fileID: 1699130457}
+    InfoPanel: {fileID: 1362530256}
     Name: {fileID: 990737355}
     Type: {fileID: 1751629785}
     Icon: {fileID: 1584828664}

@@ -7,6 +7,56 @@ public class StatsAndSkills : MonoBehaviour
 {
     public class StatSkill
     {
+        
+        public bool Enabled;
+
+        public int Level;
+        public float Experience;
+        float[] LevelThresholds;
+
+        public int AdjustedLevel;
+
+        public string Description { get; }
+        public string[] XPGainActivities { get; }
+        public KeyValuePair<string, string>[] AffectedActivities { get; }
+
+        public void AddXP(float Amount)
+        {
+            Experience += Amount;
+            if (Experience >= LevelThresholds[Level + 1])
+            {
+#warning Add Injuries hook
+                Level++;
+                Experience -= LevelThresholds[Level];
+                Debug.Log(string.Format("Leveled up! Next threshold is Level {0} at {1} XP", Level + 1, LevelThresholds[Level + 1]));
+            }
+        }
+        public StatSkill(string Description, string[] XPGainActivities, KeyValuePair<string,string>[] AffectedActivities, bool Enabled = true)
+        {
+            this.Description = Description;
+            this.XPGainActivities = XPGainActivities;
+            this.AffectedActivities = AffectedActivities;
+            this.Enabled = Enabled;
+            Level = 1;
+            Experience = 0;
+            LevelThresholds = new float[100];
+            for (int i = 0; i < LevelThresholds.Length; i++)
+            {
+                LevelThresholds[i] = Mathf.Pow(i * 5, 2f);
+            }
+        }
+    }
+    public class Stat : StatSkill
+    {
+        public StatsEnum StatType;
+
+        public Stat(StatsEnum StatType, string Description, string[] XPGainActivities, KeyValuePair<string, string>[] AffectedActivities, bool Enabled = true) : base(Description, XPGainActivities, AffectedActivities, Enabled)
+        {
+            this.StatType = StatType;
+        }
+    }
+    public class Skill : StatSkill
+    {
         public enum SkillTypes
         {
             None,
@@ -21,41 +71,12 @@ public class StatsAndSkills : MonoBehaviour
             Special
         }
         public SkillTypes SkillType;
-        public bool Enabled;
 
-        public int Level;
-        public float Experience;
-        float[] LevelThresholds;
-
-        public string Description { get; }
-        public string[] XPGainActivities { get; }
-        public KeyValuePair<string, string>[] AffectedActivities { get; }
-
-        public void AddXP(float Amount)
-        {
-            Experience += Amount;
-            if (Experience >= LevelThresholds[Level + 1])
-            {
-                Level++;
-                Experience -= LevelThresholds[Level];
-                Debug.Log(string.Format("Leveled up! Next threshold is Level {0} at {1} XP", Level + 1, LevelThresholds[Level + 1]));
-            }
-        }
-        public StatSkill(SkillTypes SkillType, string Description, string[] XPGainActivities, KeyValuePair<string,string>[] AffectedActivities, bool Enabled = true)
+        public Skill(SkillTypes SkillType, string Description, string[] XPGainActivities, KeyValuePair<string, string>[] AffectedActivities, bool Enabled = true) : base(Description, XPGainActivities, AffectedActivities, Enabled)
         {
             this.SkillType = SkillType;
-            this.Description = Description;
-            this.XPGainActivities = XPGainActivities;
-            this.AffectedActivities = AffectedActivities;
-            this.Enabled = Enabled;
-            Level = 1;
-            Experience = 0;
-            LevelThresholds = new float[100];
-            for (int i = 0; i < LevelThresholds.Length; i++)
-            {
-                LevelThresholds[i] = Mathf.Pow(i * 5, 2f);
-            }
         }
+
     }
 
     public StatSkill GetSkillInfo(Enum StatSkillEnum)
@@ -98,14 +119,14 @@ public class StatsAndSkills : MonoBehaviour
         Perception,
         Charisma
     }
-    public Dictionary<StatsEnum, StatSkill> Stats = new Dictionary<StatsEnum, StatSkill>
+    public Dictionary<StatsEnum, Stat> Stats = new Dictionary<StatsEnum, Stat>
     {
-        { StatsEnum.Strength, new StatSkill(StatSkill.SkillTypes.None, "Raw physical strength. How much you can carry, pull, lift, as well as how hard you can smack things (or people).", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Swords] ) },
-        { StatsEnum.Dexterity, new StatSkill(StatSkill.SkillTypes.None, "A measure of how light footed you are. Anything that requires movement is enhanced by this. Synonymous with finesse in some contexts.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Swords] ) },
-        { StatsEnum.Endurance, new StatSkill(StatSkill.SkillTypes.None, "How long you can keep going for in tough conditions such as when critically injured, lacking sleep, or when carrying an extreme burden.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Swords] ) },
-        { StatsEnum.Intelligence, new StatSkill(StatSkill.SkillTypes.None, "The sharpness of your mind. How quickly and thoroughly you process data (computational and mental).", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Swords] ) },
-        { StatsEnum.Perception, new StatSkill(StatSkill.SkillTypes.None, "How quickly and accurately you're able to take in the world around you and make split second decisions based on it.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Swords] ) },
-        { StatsEnum.Charisma, new StatSkill(StatSkill.SkillTypes.None, "Your ability to sway and charm people, from casual flirting to formal diplomatic meetings.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Swords] ) }
+        { StatsEnum.Strength, new Stat(StatsEnum.Strength, "Raw physical strength. How much you can carry, pull, lift, as well as how hard you can smack things (or people).", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Swords] ) },
+        { StatsEnum.Dexterity, new Stat(StatsEnum.Dexterity, "A measure of how light footed you are. Anything that requires movement is enhanced by this. Synonymous with finesse in some contexts.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Swords] ) },
+        { StatsEnum.Endurance, new Stat(StatsEnum.Endurance, "How long you can keep going for in tough conditions such as when critically injured, lacking sleep, or when carrying an extreme burden.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Swords] ) },
+        { StatsEnum.Intelligence, new Stat(StatsEnum.Intelligence, "The sharpness of your mind. How quickly and thoroughly you process data (computational and mental).", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Swords] ) },
+        { StatsEnum.Perception, new Stat(StatsEnum.Perception, "How quickly and accurately you're able to take in the world around you and make split second decisions based on it.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Swords] ) },
+        { StatsEnum.Charisma, new Stat(StatsEnum.Charisma, "Your ability to sway and charm people, from casual flirting to formal diplomatic meetings.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Swords] ) }
     };
 
     public enum SkillsEnum
@@ -149,46 +170,46 @@ public class StatsAndSkills : MonoBehaviour
 
         Psionics
     }
-    public Dictionary<SkillsEnum, StatSkill> Skills = new Dictionary<SkillsEnum, StatSkill>
+    public Dictionary<SkillsEnum, Skill> Skills = new Dictionary<SkillsEnum, Skill>
     {
-        { SkillsEnum.Swords,            new StatSkill(StatSkill.SkillTypes.Melee, "Proficiency with all swords.", new string[]{"Fighting with swords"}, SkillEffects[SkillsEnum.Swords] )},
-        { SkillsEnum.Polearms,          new StatSkill(StatSkill.SkillTypes.Melee, "Proficiency with all polearms.", new string[]{"Fighting with polearms"}, SkillEffects[SkillsEnum.Polearms] )},
-        { SkillsEnum.Quarterstaffs,     new StatSkill(StatSkill.SkillTypes.Melee, "Proficiency with quarterstaffs.", new string[]{"Fighting with quarterstaffs"}, SkillEffects[SkillsEnum.Quarterstaffs] )},
-        { SkillsEnum.Daggers,           new StatSkill(StatSkill.SkillTypes.Melee, "Proficiency with daggers and knives.", new string[]{"Fighting with daggers"}, SkillEffects[SkillsEnum.Daggers] )},
-        { SkillsEnum.Hammers,           new StatSkill(StatSkill.SkillTypes.Melee, "Proficiency with Hammers, mauls, and other weapons which function via the 'cause your organs to cease functioning due to trauma' effect.", new string[]{"Fighting with hammers"}, SkillEffects[SkillsEnum.Hammers] )},
+        { SkillsEnum.Swords,            new Skill(Skill.SkillTypes.Melee, "Proficiency with all swords.", new string[]{"Fighting with swords"}, SkillEffects[SkillsEnum.Swords] )},
+        { SkillsEnum.Polearms,          new Skill(Skill.SkillTypes.Melee, "Proficiency with all polearms.", new string[]{"Fighting with polearms"}, SkillEffects[SkillsEnum.Polearms] )},
+        { SkillsEnum.Quarterstaffs,     new Skill(Skill.SkillTypes.Melee, "Proficiency with quarterstaffs.", new string[]{"Fighting with quarterstaffs"}, SkillEffects[SkillsEnum.Quarterstaffs] )},
+        { SkillsEnum.Daggers,           new Skill(Skill.SkillTypes.Melee, "Proficiency with daggers and knives.", new string[]{"Fighting with daggers"}, SkillEffects[SkillsEnum.Daggers] )},
+        { SkillsEnum.Hammers,           new Skill(Skill.SkillTypes.Melee, "Proficiency with Hammers, mauls, and other weapons which function via the 'cause your organs to cease functioning due to trauma' effect.", new string[]{"Fighting with hammers"}, SkillEffects[SkillsEnum.Hammers] )},
 
-        { SkillsEnum.Handguns,          new StatSkill(StatSkill.SkillTypes.Ranged, "Proficiency with all handguns", new string[]{"Fighting with handguns"}, SkillEffects[SkillsEnum.Handguns] )},
-        { SkillsEnum.PrecisionRifles,   new StatSkill(StatSkill.SkillTypes.Ranged, "Proficiency with sniper rifles, and hunting rifles.", new string[]{"Fighting with precision rifles"}, SkillEffects[SkillsEnum.PrecisionRifles] )},
-        { SkillsEnum.AssaultRifles,     new StatSkill(StatSkill.SkillTypes.Ranged, "Proficiency with semi or fully automatic rifles", new string[]{"Fighting with assault rifles"}, SkillEffects[SkillsEnum.AssaultRifles] )},
-        { SkillsEnum.SubmachineGuns,    new StatSkill(StatSkill.SkillTypes.Ranged, "Proficiency with submachine guns", new string[]{"Fighting with submachine guns"}, SkillEffects[SkillsEnum.SubmachineGuns] )},
-        { SkillsEnum.HeavyWeapons,      new StatSkill(StatSkill.SkillTypes.Ranged, "Proficiency with large, high calibre, fully automatic weaponry. Usually overkill unless you've got emus to kill.", new string[]{"Fighting with heavy weapons"}, SkillEffects[SkillsEnum.HeavyWeapons] )},
-        { SkillsEnum.ExplosiveWeaponry, new StatSkill(StatSkill.SkillTypes.Ranged, "Proficiency with rocket launchers, grenade launchers, and placed or thrown explosive devices.", new string[]{"Fighting with explosive weaponry"}, SkillEffects[SkillsEnum.ExplosiveWeaponry] )},
-        { SkillsEnum.Bows,              new StatSkill(StatSkill.SkillTypes.Ranged, "Proficiency with bows. Only the most confident fighters choose the bow as their weapon of choice in a world with machine guns.", new string[]{"Fighting with bows"}, SkillEffects[SkillsEnum.Bows] )},
+        { SkillsEnum.Handguns,          new Skill(Skill.SkillTypes.Ranged, "Proficiency with all handguns", new string[]{"Fighting with handguns"}, SkillEffects[SkillsEnum.Handguns] )},
+        { SkillsEnum.PrecisionRifles,   new Skill(Skill.SkillTypes.Ranged, "Proficiency with sniper rifles, and hunting rifles.", new string[]{"Fighting with precision rifles"}, SkillEffects[SkillsEnum.PrecisionRifles] )},
+        { SkillsEnum.AssaultRifles,     new Skill(Skill.SkillTypes.Ranged, "Proficiency with semi or fully automatic rifles", new string[]{"Fighting with assault rifles"}, SkillEffects[SkillsEnum.AssaultRifles] )},
+        { SkillsEnum.SubmachineGuns,    new Skill(Skill.SkillTypes.Ranged, "Proficiency with submachine guns", new string[]{"Fighting with submachine guns"}, SkillEffects[SkillsEnum.SubmachineGuns] )},
+        { SkillsEnum.HeavyWeapons,      new Skill(Skill.SkillTypes.Ranged, "Proficiency with large, high calibre, fully automatic weaponry. Usually overkill unless you've got emus to kill.", new string[]{"Fighting with heavy weapons"}, SkillEffects[SkillsEnum.HeavyWeapons] )},
+        { SkillsEnum.ExplosiveWeaponry, new Skill(Skill.SkillTypes.Ranged, "Proficiency with rocket launchers, grenade launchers, and placed or thrown explosive devices.", new string[]{"Fighting with explosive weaponry"}, SkillEffects[SkillsEnum.ExplosiveWeaponry] )},
+        { SkillsEnum.Bows,              new Skill(Skill.SkillTypes.Ranged, "Proficiency with bows. Only the most confident fighters choose the bow as their weapon of choice in a world with machine guns.", new string[]{"Fighting with bows"}, SkillEffects[SkillsEnum.Bows] )},
 
-        { SkillsEnum.Athletics,         new StatSkill(StatSkill.SkillTypes.Movement, "The ability to run and swim. Great for extending your lifespan a few seconds when the heavy weapons jam.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Athletics] )},
-        { SkillsEnum.Acrobatics,        new StatSkill(StatSkill.SkillTypes.Movement, "The ability to jump, climb, and fall. Sadly this won't save you from the emus, as they can jump 2.1m into the air.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Acrobatics] )},
+        { SkillsEnum.Athletics,         new Skill(Skill.SkillTypes.Movement, "The ability to run and swim. Great for extending your lifespan a few seconds when the heavy weapons jam.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Athletics] )},
+        { SkillsEnum.Acrobatics,        new Skill(Skill.SkillTypes.Movement, "The ability to jump, climb, and fall. Sadly this won't save you from the emus, as they can jump 2.1m into the air.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Acrobatics] )},
 
-        { SkillsEnum.LightArmour,       new StatSkill(StatSkill.SkillTypes.Defensive, "Proficiency with light armours.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.LightArmour] )},
-        { SkillsEnum.MediumArmour,      new StatSkill(StatSkill.SkillTypes.Defensive, "Proficiency with medium armours.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.MediumArmour] )},
-        { SkillsEnum.HeavyArmour,       new StatSkill(StatSkill.SkillTypes.Defensive, "Proficiency with heavy armours.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.HeavyArmour] )},
-        { SkillsEnum.Dodge,             new StatSkill(StatSkill.SkillTypes.Defensive, "The ability to duck and dodge out of the way of harm. Works against bullets too if you're good enough.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Dodge] )},
-        { SkillsEnum.Block,             new StatSkill(StatSkill.SkillTypes.Defensive, "The ability to block and deflect attacks. It is not recommended to try blocking bullets, however.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Block] )},
+        { SkillsEnum.LightArmour,       new Skill(Skill.SkillTypes.Defensive, "Proficiency with light armours.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.LightArmour] )},
+        { SkillsEnum.MediumArmour,      new Skill(Skill.SkillTypes.Defensive, "Proficiency with medium armours.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.MediumArmour] )},
+        { SkillsEnum.HeavyArmour,       new Skill(Skill.SkillTypes.Defensive, "Proficiency with heavy armours.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.HeavyArmour] )},
+        { SkillsEnum.Dodge,             new Skill(Skill.SkillTypes.Defensive, "The ability to duck and dodge out of the way of harm. Works against bullets too if you're good enough.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Dodge] )},
+        { SkillsEnum.Block,             new Skill(Skill.SkillTypes.Defensive, "The ability to block and deflect attacks. It is not recommended to try blocking bullets, however.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Block] )},
 
-        { SkillsEnum.ArmourSmithing,    new StatSkill(StatSkill.SkillTypes.Engineering, "Proficiency at crafting armours of all weights and sizes.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.ArmourSmithing] )},
-        { SkillsEnum.WeaponSmithing,    new StatSkill(StatSkill.SkillTypes.Engineering, "Proficiency at crafting weapons of all types.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.WeaponSmithing] )},
-        { SkillsEnum.Construction,      new StatSkill(StatSkill.SkillTypes.Engineering, "Procifiency at building structures and vehicles from huts and bikes to forts and gunships.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Construction] )},
+        { SkillsEnum.ArmourSmithing,    new Skill(Skill.SkillTypes.Engineering, "Proficiency at crafting armours of all weights and sizes.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.ArmourSmithing] )},
+        { SkillsEnum.WeaponSmithing,    new Skill(Skill.SkillTypes.Engineering, "Proficiency at crafting weapons of all types.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.WeaponSmithing] )},
+        { SkillsEnum.Construction,      new Skill(Skill.SkillTypes.Engineering, "Procifiency at building structures and vehicles from huts and bikes to forts and gunships.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Construction] )},
 
-        { SkillsEnum.Research,          new StatSkill(StatSkill.SkillTypes.Technology, "Proficiency at research and discovery.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Research] )},
-        { SkillsEnum.Hacking,           new StatSkill(StatSkill.SkillTypes.Technology, "Proficiency at hacking into computer systems and robotics.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Hacking] )},
-        { SkillsEnum.Medical,           new StatSkill(StatSkill.SkillTypes.Technology, "Proficiency at patching all types of wounds, as well as performing surgeries.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Medical] )},
+        { SkillsEnum.Research,          new Skill(Skill.SkillTypes.Technology, "Proficiency at research and discovery.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Research] )},
+        { SkillsEnum.Hacking,           new Skill(Skill.SkillTypes.Technology, "Proficiency at hacking into computer systems and robotics.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Hacking] )},
+        { SkillsEnum.Medical,           new Skill(Skill.SkillTypes.Technology, "Proficiency at patching all types of wounds, as well as performing surgeries.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Medical] )},
 
-        { SkillsEnum.Stealth,           new StatSkill(StatSkill.SkillTypes.Covert, "The ability to sneak and hide from potentially dangerous or unwanted creatures, sapient or otherwise.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Stealth] )},
-        { SkillsEnum.Thievery,          new StatSkill(StatSkill.SkillTypes.Covert, "The ability to steal valuable (or not so valuable) items without their owner or nearby people noticing.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Thievery] )},
+        { SkillsEnum.Stealth,           new Skill(Skill.SkillTypes.Covert, "The ability to sneak and hide from potentially dangerous or unwanted creatures, sapient or otherwise.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Stealth] )},
+        { SkillsEnum.Thievery,          new Skill(Skill.SkillTypes.Covert, "The ability to steal valuable (or not so valuable) items without their owner or nearby people noticing.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Thievery] )},
 
-        { SkillsEnum.Persuasion,        new StatSkill(StatSkill.SkillTypes.Social, "The ability to charm and persuade people into doing what you want them to, and being happy about it.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Persuasion] )},
-        { SkillsEnum.Intimidation,      new StatSkill(StatSkill.SkillTypes.Social, "The ability to scare people into doing what you want them to. They won't like it, though.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Intimidation] )},
+        { SkillsEnum.Persuasion,        new Skill(Skill.SkillTypes.Social, "The ability to charm and persuade people into doing what you want them to, and being happy about it.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Persuasion] )},
+        { SkillsEnum.Intimidation,      new Skill(Skill.SkillTypes.Social, "The ability to scare people into doing what you want them to. They won't like it, though.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Intimidation] )},
 
-        { SkillsEnum.Psionics,          new StatSkill(StatSkill.SkillTypes.Special, "Proficiency with utilising the energy of the aether to improve abilities and cause unnatural, powerful phenomena.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Psionics] )}
+        { SkillsEnum.Psionics,          new Skill(Skill.SkillTypes.Special, "Proficiency with utilising the energy of the aether to improve abilities and cause unnatural, powerful phenomena.", new string[]{"XPGain","Activities"}, SkillEffects[SkillsEnum.Psionics] )}
     };
 
     public static Dictionary<SkillsEnum, KeyValuePair<string, string>[]> SkillEffects = new Dictionary<SkillsEnum, KeyValuePair<string, string>[]>

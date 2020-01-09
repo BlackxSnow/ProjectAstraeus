@@ -1,0 +1,39 @@
+{
+"DataArray":
+[
+	{
+		"Name": "Goat",
+		"Body": 
+		[
+			{
+				"Name": "Head",
+				"S_Functions": [{"Control": 1}]
+			},
+			{
+				"Name": "Left Eye",
+				"S_Functions": [{"Vision": 0.5}]
+			},
+			{
+				"Name": "Right Eye",
+				"S_Functions": [{"Vision": 0.5}]
+			},
+			{
+				"Name": "Front Left Leg",
+				"S_Functions": [{"Locomotion": 0.25}]
+			},
+			{
+				"Name": "Front Right Leg",
+				"S_Functions": [{"Locomotion": 0.25}]
+			},
+			{
+				"Name": "Back Left Leg",
+				"S_Functions": [{"Locomotion": 0.25}]
+			},
+			{
+				"Name": "Back Right Leg",
+				"S_Functions": [{"Locomotion": 0.25}]
+			}
+		]
+	}
+]
+}

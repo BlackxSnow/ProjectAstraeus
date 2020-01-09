@@ -41,13 +41,13 @@ public class StatsUI : Window
 
     void CreateSkillPanels()
     {
-        SkillPanels = new Transform[(Enum.GetNames(typeof(StatSkill.SkillTypes)).Length - 1)]; //-1 to skip "None"
+        SkillPanels = new Transform[(Enum.GetNames(typeof(Skill.SkillTypes)).Length - 1)]; //-1 to skip "None"
         float Threshold = Mathf.Ceil(SkillPanels.Length / 2f);
         float XOffset = 1f / Threshold;
 
         for (int i = 0; i < SkillPanels.Length; i++)
         {
-            SkillPanels[i] = UIController.InstantiateLayoutPanel(SkillPanelContainer, UIController.LayoutTypes.Vertical, true, false, 5f, Enum.GetName(typeof(StatSkill.SkillTypes), i + 1)).transform;
+            SkillPanels[i] = UIController.InstantiateLayoutPanel(SkillPanelContainer, UIController.LayoutTypes.Vertical, true, false, 5f, Enum.GetName(typeof(Skill.SkillTypes), i + 1)).transform;
             VerticalLayoutGroup VLayout = SkillPanels[i].GetComponent<VerticalLayoutGroup>();
             RectTransform RTransform = SkillPanels[i].GetComponent<RectTransform>();
 
@@ -62,7 +62,7 @@ public class StatsUI : Window
             RTransform.anchorMin = new Vector2(HorizontalOffset, VerticalOffset);
             RTransform.anchorMax = new Vector2(HorizontalOffset + XOffset, VerticalOffset + 0.5f);
 
-            GameObject TitleText = UIController.InstantiateText(Enum.GetName(typeof(StatSkill.SkillTypes), i + 1), SkillPanels[i], SkillsGroup);
+            GameObject TitleText = UIController.InstantiateText(Enum.GetName(typeof(Skill.SkillTypes), i + 1), SkillPanels[i], SkillsGroup);
             TextMeshProUGUI TitleTextMesh = TitleText.GetComponent<TextMeshProUGUI>();
             TitleTextMesh.fontStyle = FontStyles.Bold;
             TitleTextMesh.color = Color.red;
@@ -71,7 +71,7 @@ public class StatsUI : Window
 
     void DisplayKVPs()
     {
-        foreach (KeyValuePair<StatsEnum, StatSkill> Stat in RefStats.Stats)
+        foreach (KeyValuePair<StatsEnum, Stat> Stat in RefStats.Stats)
         {
             UIController.KVPData Data = new UIController.KVPData(Stat.Key.ToString(), Stat.Value.Level, StatsPanel, KeyRatio: 0.8f)
             {
@@ -83,7 +83,7 @@ public class StatsUI : Window
             GameObject KVP = UIController.InstantiateKVP(Data);
             KVP.AddComponent<SkillHover>().ParentStatsWindow = this;
         }
-        foreach (KeyValuePair<SkillsEnum, StatSkill> Skill in RefStats.Skills)
+        foreach (KeyValuePair<SkillsEnum, Skill> Skill in RefStats.Skills)
         {
             UIController.KVPData Data = new UIController.KVPData(Skill.Key.ToString(), Skill.Value.Level, SkillPanels[(int)Skill.Value.SkillType - 1], KeyRatio: 0.8f)
             {

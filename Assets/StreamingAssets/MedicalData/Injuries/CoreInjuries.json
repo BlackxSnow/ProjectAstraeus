@@ -1,0 +1,17 @@
+{
+	"DataArray": 
+	[
+		{
+		"Name": "TestInjury1",
+		"StatName": "Strength",
+		"Modifier": 0.8
+		},
+			
+		{
+		"Name": "TestInjury2",
+		"StatName": "Dexterity",
+		"Modifier": 0.5
+		}
+		
+	]
+}

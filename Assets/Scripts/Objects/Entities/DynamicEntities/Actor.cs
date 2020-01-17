@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
+using TMPro;
 
 public class Actor : DynamicEntity, IOrderable, IDamageable
 {
@@ -13,6 +15,8 @@ public class Actor : DynamicEntity, IOrderable, IDamageable
     bool Movable;
 
     float PickupDistance = 1.5f;
+
+    public Species Race;
 
     // Start is called before the first frame update
     protected override void Start()
@@ -90,5 +94,28 @@ public class Actor : DynamicEntity, IOrderable, IDamageable
             OrderEvents.OnPickup -= Pickup;
             Subscribed = false;
         }
+    }
+
+    //Create medical info display for HUD
+    public override List<GameObject> InstantiateStatDisplay()
+    {
+        GameObject MedicalPanel = Instantiate(UIController.ObjectPrefabs[UIController.ObjectPrefabsEnum.MedicalDetailsPrefab], HUDController.HUDControl.SelectHUD.DetailsPanel.transform);
+        MedicalDetailsHUD MedicalPanelScript = MedicalPanel.GetComponent<MedicalDetailsHUD>();
+        foreach(Medical.Health.BodyPart part in EntityComponents.Health.Body)
+        {
+            foreach(Medical.Health.Injury injury in part.Injuries)
+            {
+                GameObject InjuryIcon = Instantiate(UIController.ObjectPrefabs[UIController.ObjectPrefabsEnum.ToolTippedIconPrefab], MedicalPanelScript.InjuriesPanel.transform);
+                ToolTipData InjuryToolTip = InjuryIcon.GetComponent<ToolTipData>();
+                Image InjuryImage = InjuryIcon.GetComponent<Image>();
+
+                InjuryToolTip.TitleText = $"{injury.Name} {part.Name}";
+                InjuryToolTip.DescriptionText = injury.Description;
+
+                InjuryImage.sprite = injury.Icon;
+            }
+        }
+
+        return new List<GameObject>() { MedicalPanel };
     }
 }

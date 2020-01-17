@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Default Local Group
+  m_EditorClassIdentifier: 
+  m_GroupName: Default Local Group
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 0eab680ee5a3cf340999eefe974d4f59
+  m_SerializeEntries:
+  - m_GUID: 0a3c648d9c4aaab42a1c158168fc3260
+    m_Address: ValueSlider
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 1dbba977907a45f4ca99e542f6756850
+    m_Address: Dropdown
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 40fdaf03509249e44892f04f5aa0cbaa
+    m_Address: ToolTippedIcon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 414bfbfe715ed854b89a8047b52baff7
+    m_Address: TextObject
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 4d61a09c36f643a42b6283cf3bcc587f
+    m_Address: StatsUI
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 622d7a9684de2ef41ad998be08bfad5f
+    m_Address: LayoutPanel
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 63c698928291ce8499fdca599a96a8b6
+    m_Address: KeyValueList
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 6d992f2fcecc27f4b99a749bb397ae04
+    m_Address: ItemToolTip
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: a0fc7e1eab0c10445a1be745b4b7a108
+    m_Address: KeyValuePanel
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: a2ce212d6e9731948ac30a9806532db4
+    m_Address: ModuleDisplayPanel
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d08944c2ae8e80a459afbad134931a79
+    m_Address: ToolTip
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: e2ede8221adbea64caee37773318a84d
+    m_Address: MedicalInfo
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: ef780915b5e55ef418cfab8dbeb2c8e9
+    m_Address: InventoryUI
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: fc310f9909d3caa48afd55f2e554b57a
+    m_Address: EquipmentUI
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 7f4b204824f65874fbdf518f1e2f5c90, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 5285f5057c11dfc438dd116c04f9f35e, type: 2}
+    - {fileID: 11400000, guid: f6c232061d9b1f14aa2adaf560de9d0c, type: 2}

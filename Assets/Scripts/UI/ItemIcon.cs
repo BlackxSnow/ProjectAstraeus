@@ -38,8 +38,6 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
     public Vector3 ModifiedMousePosition;
     Vector3 MouseOffset;
 
-    Utility.Timer HoverTimer;
-    bool AllowToolTip = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -183,6 +181,8 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
     //ToolTips
     GameObject ToolTipObject;
     bool MouseOver = false;
+    Utility.Timer HoverTimer;
+    bool AllowToolTip = true;
     public void OnPointerEnter(PointerEventData data)
     {
         MouseOver = true;
@@ -219,7 +219,7 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
     {
         AllowToolTip = false;
         SpawnPosition = Input.mousePosition;
-        ToolTipObject = UIController.InstantiateToolTip(RefItem);
+        ToolTipObject = UIController.InstantiateItemToolTip(RefItem);
     }
 
     void CheckHover()

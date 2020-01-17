@@ -66,9 +66,15 @@ public class HUDController : MonoBehaviour
         Window.SetActive(true);
     }
 
-    List<GameObject> SelectionUIKVPs;
+    List<GameObject> SelectionUIDetails = new List<GameObject>();
     public void DisplaySelectionUI(ISelectable Selection)
     {
+        foreach (GameObject obj in SelectionUIDetails)
+        {
+            Destroy(obj);
+        }
+        SelectionUIDetails.Clear();
+
         DynamicEntity SelectedEntity = Selection as DynamicEntity;
         SelectHUD.InfoPanel.SetActive(true);
         SelectHUD.Name.text = SelectedEntity.Name;
@@ -76,11 +82,11 @@ public class HUDController : MonoBehaviour
 
         if(Selection is Item)
         {
-            SelectionUIKVPs = (Selection as Item).InstantiateStatKVPs(false, out List<GameObject> KVPLists, SelectHUD.DetailsPanel.transform);
-            Utility.CombineLists(SelectionUIKVPs, KVPLists);
+            SelectionUIDetails = (Selection as Item).InstantiateStatKVPs(false, out List<GameObject> KVPLists, SelectHUD.DetailsPanel.transform);
+            Utility.CombineLists(SelectionUIDetails, KVPLists);
         } else
         {
-            SelectionUIKVPs = Selection.InstantiateStatDisplay();
+            SelectionUIDetails = Selection.InstantiateStatDisplay();
         }
         DisplaySelectionButtons(Selection);
         
@@ -119,12 +125,12 @@ public class HUDController : MonoBehaviour
     public void ClearSelectionUI()
     {
         SelectHUD.InfoPanel.SetActive(false);
-        if (SelectionUIKVPs == null) return;
-        foreach (GameObject UIObject in SelectionUIKVPs)
+        if (SelectionUIDetails == null) return;
+        foreach (GameObject UIObject in SelectionUIDetails)
         {
             Destroy(UIObject);
         }
-        SelectionUIKVPs = null;
+        SelectionUIDetails.Clear();
         
     }
 }

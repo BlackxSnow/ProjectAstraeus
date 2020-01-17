@@ -19,7 +19,8 @@ public class Entity : MonoBehaviour, IOwnable
         HasInventory = 1 << 0,
         CanEquip = 1 << 1,
         HasStats = 1 << 2,
-        CanMove = 1 << 3
+        CanMove = 1 << 3,
+        HasHealth = 1 << 4
     }
 
     public struct BaseEntityStatsStruct
@@ -33,6 +34,7 @@ public class Entity : MonoBehaviour, IOwnable
         public Equipment @Equipment;
         public StatsAndSkills @Stats;
         public Movement @Movement;
+        public Medical.Health @Health;
     }
 
     public int FactionID { get; set; }
@@ -59,10 +61,13 @@ public class Entity : MonoBehaviour, IOwnable
         EntityComponents.Inventory = GetComponent<Inventory>();
         EntityComponents.Equipment = GetComponent<Equipment>();
         EntityComponents.Stats = GetComponent<StatsAndSkills>();
+        EntityComponents.Movement = GetComponent<Movement>();
+        EntityComponents.Health = GetComponent<Medical.Health>();
         if (EntityComponents.Inventory) EntityFlags |= EntityFlagsEnum.HasInventory;
         if (EntityComponents.Equipment) EntityFlags |= EntityFlagsEnum.CanEquip;
         if (EntityComponents.Stats) EntityFlags |= EntityFlagsEnum.HasStats;
         if (EntityComponents.Movement) EntityFlags |= EntityFlagsEnum.CanMove;
+        if (EntityComponents.Health) EntityFlags |= EntityFlagsEnum.HasHealth;
     }
     bool Initialised = false;
     public virtual void Init()

@@ -28,7 +28,6 @@ public class StatsAndSkills : MonoBehaviour
 #warning Add Injuries hook
                 Level++;
                 Experience -= LevelThresholds[Level];
-                Debug.Log(string.Format("Leveled up! Next threshold is Level {0} at {1} XP", Level + 1, LevelThresholds[Level + 1]));
             }
         }
         public StatSkill(string Description, string[] XPGainActivities, KeyValuePair<string,string>[] AffectedActivities, bool Enabled = true)

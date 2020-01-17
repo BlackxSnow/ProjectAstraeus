@@ -48,9 +48,9 @@ public class Selection : MonoBehaviour
         {
             if(!MultiSelected && !EventSystem.current.IsPointerOverGameObject()) SingleSelect();
             Selecting = false;
+            if (MultiSelected) SetSelectionDisplay();
             MultiSelected = false;
             FinaliseSelection();
-            SetSelectionDisplay();
         }
     }
 
@@ -125,6 +125,7 @@ public class Selection : MonoBehaviour
                 }
             }
         }
+        SetSelectionDisplay();
     }
 
     void MultiSelect() //Select multiple in rectangle

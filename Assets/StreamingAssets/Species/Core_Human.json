@@ -7,31 +7,31 @@
 		[
 			{
 				"Name": "Head",
-				"S_Functions": [{"Control": 1}]
+				"S_Functions": {"Control": 1}
 			},
 			{
 				"Name": "Left Eye",
-				"S_Functions": [{"Vision": 0.5}]
+				"S_Functions": {"Vision": 0.5}
 			},
 			{
 				"Name": "Right Eye",
-				"S_Functions": [{"Vision": 0.5}]
+				"S_Functions": {"Vision": 0.5}
 			},
 			{
 				"Name": "Left Arm",
-				"S_Functions": [{"Manipulation": 0.5}]
+				"S_Functions": {"Manipulation": 0.5}
 			},
 			{
 				"Name": "Right Arm",
-				"S_Functions": [{"Manipulation": 0.5}]
+				"S_Functions": {"Manipulation": 0.5}
 			},
 			{
 				"Name": "Left Leg",
-				"S_Functions": [{"Locomotion": 0.5}]
+				"S_Functions": {"Locomotion": 0.5}
 			},
 			{
 				"Name": "Right Leg",
-				"S_Functions": [{"Locomotion": 0.5}]
+				"S_Functions": {"Locomotion": 0.5}
 			}
 		]
 	}

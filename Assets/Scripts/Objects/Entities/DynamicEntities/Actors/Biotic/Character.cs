@@ -26,10 +26,5 @@ public class Character : Actor
         base.Update();
     }
 
-    public override List<GameObject> InstantiateStatDisplay()
-    {
-        //Instantiate medical stats for body parts
-        
-        return null;
-    }
+
 }

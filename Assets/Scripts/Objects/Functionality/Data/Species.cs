@@ -8,7 +8,8 @@ using Medical;
 [Serializable]
 public class Species
 {
+    public static List<Species> LoadedSpecies = new List<Species>();
     public string Name;
-    public List<Health.BodyPart> Body;
+    public List<Health.BodyPart> Body = new List<Health.BodyPart>();
     
 }

@@ -1,17 +1,37 @@
 {
-	"DataArray": 
-	[
-		{
-		"Name": "TestInjury1",
-		"StatName": "Strength",
-		"Modifier": 0.8
+"DataArray": 
+[
+	{
+		"Name": "Broken",
+		"InternalID": "Broken",
+		"Description": "Barely usable, and extremely painful!",
+		"IconFile": "Injury_Severe.png",
+		"FunctionModifiers_S":
+		{ 
+			"Locomotion": 0.2,
+			"Manipulation": 0.2,
+			"Flight": 0.2
 		},
-			
-		{
-		"Name": "TestInjury2",
-		"StatName": "Dexterity",
-		"Modifier": 0.5
-		}
+		"BaseHealTime": 14,
+		"SeverityCost": 13
+	},
 		
-	]
+	{
+		"Name": "Destroyed",
+		"InternalID": "Destroyed",
+		"Description": "May as well not even exist. Utterly destroyed.",
+		"IconFile": "Injury_Severe.png",
+		"FunctionModifiers_S":
+		{ 
+			"Locomotion": 0,
+			"Manipulation": 0,
+			"Flight": 0,
+			"Vision": 0,
+			"Control": 0
+		},
+		"BaseHealTime": 0,
+		"SeverityCost": 18
+	}
+	
+]
 }

@@ -3,48 +3,82 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.AddressableAssets;
 using TMPro;
 using Modules;
+using System.Threading.Tasks;
 
 public class UIController : MonoBehaviour
 {
+    public enum ObjectPrefabsEnum
+    {
+        KeyValuePanelObjectPrefab,
+        KeyValueListObjectPrefab,
+        TextObjectPrefab,
+        ValueSliderPrefab,
+        ModuleDisplayPrefab,
+        PanelPrefab,
+        ItemToolTipPrefab,
+        ToolTipPrefab,
+        ToolTippedIconPrefab,
+        DropdownPrefab,
+
+        InventoryPrefab,
+        EquipmentPrefab,
+        StatsPrefab,
+
+        MedicalDetailsPrefab
+    }
+
+    public static Dictionary<ObjectPrefabsEnum, GameObject> ObjectPrefabs = new Dictionary<ObjectPrefabsEnum, GameObject>();
+
+    public static string[] AssetKeys = new string[]
+    {
+        "KeyValuePanel",
+        "KeyValueList",
+        "TextObject",
+        "ValueSlider",
+        "ModuleDisplayPanel",
+        "LayoutPanel",
+        "ItemToolTip",
+        "ToolTip",
+        "ToolTippedIcon",
+        "Dropdown",
+
+        "InventoryUI",
+        "EquipmentUI",
+        "StatsUI",
+
+        "MedicalInfo"
+    };
+
     public static GameObject CanvasObject;
     public static Transform PinnedPanel;
     public static Transform UnpinnedPanel;
 
-    public static GameObject KeyValuePanelObjectPrefab;
-    public static GameObject KeyValueListObjectPrefab;
-    public static GameObject TextObjectPrefab;
-    public static GameObject ValueSliderPrefab;
-    public static GameObject ModuleDisplayPrefab;
-    public static GameObject PanelPrefab;
-    public static GameObject ItemToolTipPrefab;
-    public static GameObject DropdownPrefab;
-    //public static GameObject ToolTipPrefab;
-
-    //Window Prefabs
-    public static GameObject InventoryPrefab;
-    public static GameObject EquipmentPrefab;
-    public static GameObject StatsPrefab;
-
     private void Awake()
     {
-        KeyValuePanelObjectPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/KeyValuePanel");
-        KeyValueListObjectPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/KeyValueList");
-        TextObjectPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/TextObject");
-        ValueSliderPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/ValueSlider");
-        ModuleDisplayPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/ModuleDisplayPanel");
-        PanelPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/LayoutPanel");
-        ItemToolTipPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Generic/ItemToolTip");
-        DropdownPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Crafting/Dropdown");
-
-        InventoryPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/InventoryUI");
-        EquipmentPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Equipment/EquipmentUI");
-        StatsPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Windows/Stats/StatsUI");
+        LoadAssets();
 
         CanvasObject = FindObjectOfType<Canvas>().gameObject;
         UnpinnedPanel = CanvasObject.transform.GetChild(0);
         PinnedPanel = CanvasObject.transform.GetChild(1);
+    }
+
+    async void LoadAssets()
+    {
+        Task<IList<GameObject>> AssetTasks = Addressables.LoadAssetsAsync<GameObject>(AssetKeys, null, Addressables.MergeMode.Union).Task;
+        await AssetTasks;
+
+        if (AssetTasks.Result.Count != AssetKeys.Length) { Debug.LogWarning($"{AssetKeys.Length} asset keys exist but {AssetTasks.Result.Count} were loaded"); }
+
+        int i = 0;
+        foreach(GameObject Asset in AssetTasks.Result)
+        {
+            ObjectPrefabs.Add((ObjectPrefabsEnum)i, Asset);
+            Debug.Log($"Loaded {(ObjectPrefabsEnum)i} :: {Asset.name}");
+            i++;
+        }
     }
 
     public enum LayoutTypes
@@ -84,7 +118,7 @@ public class UIController : MonoBehaviour
 
     public static GameObject OpenInventory(Inventory TargetInventory)
     {
-        GameObject InventoryObject = Instantiate(InventoryPrefab, UnpinnedPanel);
+        GameObject InventoryObject = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.InventoryPrefab], UnpinnedPanel);
         InventoryUI Inventory = InventoryObject.GetComponent<InventoryUI>();
 
         Inventory.OpenInventory(TargetInventory);
@@ -94,7 +128,7 @@ public class UIController : MonoBehaviour
 
     public static GameObject OpenEquipmentWindow(Entity TargetEntity)
     {
-        GameObject EquipmentObject = Instantiate(EquipmentPrefab, UnpinnedPanel);
+        GameObject EquipmentObject = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.EquipmentPrefab], UnpinnedPanel);
         EquipmentUI Script = EquipmentObject.GetComponent<EquipmentUI>();
 
         Script.Init(TargetEntity);
@@ -105,7 +139,7 @@ public class UIController : MonoBehaviour
 
     public static GameObject OpenStatsWindow(StatsAndSkills TargetStats)
     {
-        GameObject StatsObject = Instantiate(StatsPrefab, UnpinnedPanel);
+        GameObject StatsObject = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.StatsPrefab], UnpinnedPanel);
         StatsUI Script = StatsObject.GetComponent<StatsUI>();
 
         Script.Init(TargetStats);
@@ -116,7 +150,7 @@ public class UIController : MonoBehaviour
 
     public static GameObject InstantiateText<T>(T Value, Transform Parent, KeyValueGroup Group = null, bool AllowWrapping = false, bool InList = false)
     {
-        GameObject TextInstanceObject = Instantiate(TextObjectPrefab, Parent);
+        GameObject TextInstanceObject = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.TextObjectPrefab], Parent);
         TextInstanceObject.GetComponent<TextMeshProUGUI>().text = string.Format("{0}", Value);
         TextKVGroup Script = TextInstanceObject.GetComponent<TextKVGroup>();
         Script.TextComponent.enableWordWrapping = AllowWrapping;
@@ -147,7 +181,7 @@ public class UIController : MonoBehaviour
         TextMeshProUGUI ValueText;
         KeyValuePanel KVPScript;
 
-        Panel = Instantiate(KeyValuePanelObjectPrefab, Data.Parent);
+        Panel = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.KeyValuePanelObjectPrefab], Data.Parent);
         KVPScript = Panel.GetComponent<KeyValuePanel>();
         KeyText = KVPScript.Key.TextMesh;
         ValueText = KVPScript.Value.TextMesh;
@@ -206,7 +240,7 @@ public class UIController : MonoBehaviour
     //Instantiates a prefab for a list of Key Value Panels
     public static GameObject InstantiateKVPList(string ListName, KVPData[] KeyValuePanels, Transform Parent, KeyValueGroup Group = null)
     {
-        GameObject ListPanel = Instantiate(KeyValueListObjectPrefab, Parent);
+        GameObject ListPanel = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.KeyValueListObjectPrefab], Parent);
         GameObject ListNameObject = InstantiateText(ListName, ListPanel.transform, Group: Group, InList: true);
         ListNameObject.transform.SetAsFirstSibling();
 
@@ -228,7 +262,7 @@ public class UIController : MonoBehaviour
         if (StatEnum == ItemTypes.StatsEnum.Material) throw new ArgumentException(string.Format("ValueSlider cannot be instantiated with non float target: 'Material'") );
         GameObject ValueSlider;
 
-        ValueSlider = Instantiate(ValueSliderPrefab, Parent);
+        ValueSlider = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.ValueSliderPrefab], Parent);
 
         UI.Crafting.ModuleSlider ValueSliderScript = ValueSlider.GetComponent<UI.Crafting.ModuleSlider>();
         TextMeshProUGUI LabelText = ValueSliderScript.LabelText;
@@ -257,7 +291,7 @@ public class UIController : MonoBehaviour
     {
         GameObject DropdownObject;
 
-        DropdownObject = Instantiate(DropdownPrefab, Parent);
+        DropdownObject = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.DropdownPrefab], Parent);
 
         UI.Crafting.ModuleDropdown DropdownScript = DropdownObject.GetComponent<UI.Crafting.ModuleDropdown>();
         DropdownScript.DropdownType = DropdownType;
@@ -269,7 +303,7 @@ public class UIController : MonoBehaviour
 
     public static GameObject InstantiateModulePanel(AdditionalModule Module, Transform Parent, out GameObject[] KVPs, KeyValueGroup Group = null)
     {
-        GameObject DisplayPanel = Instantiate(ModuleDisplayPrefab, Parent);
+        GameObject DisplayPanel = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.ModuleDisplayPrefab], Parent);
         ModuleDisplayPanel Script = DisplayPanel.GetComponent<ModuleDisplayPanel>();
         Script.Module = Module;
         if (!Group)
@@ -287,7 +321,7 @@ public class UIController : MonoBehaviour
 
     public static GameObject InstantiateLayoutPanel(Transform Parent, LayoutTypes Layout = LayoutTypes.None, bool ExpandHorizontal = true, bool ExpandVertical = true, float spacing = 0, string PanelName = "")
     {
-        GameObject PanelInstance = Instantiate(PanelPrefab, Parent);
+        GameObject PanelInstance = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.PanelPrefab], Parent);
         switch (Layout)
         {
             case LayoutTypes.None:
@@ -314,13 +348,13 @@ public class UIController : MonoBehaviour
         }
         return PanelInstance;
     }
-    public static GameObject InstantiateToolTip(Item item)
+    public static GameObject InstantiateItemToolTip(Item item)
     {
-        GameObject ToolTip;
-        ToolTip = Instantiate(ItemToolTipPrefab, CanvasObject.transform);
-        ToolTip.GetComponent<RectTransform>().position = Input.mousePosition;
+        GameObject ToolTipObject;
+        ToolTipObject = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.ItemToolTipPrefab], CanvasObject.transform);
+        ToolTipObject.GetComponent<RectTransform>().position = Input.mousePosition;
 
-        ItemTooltip Script = ToolTip.GetComponent<ItemTooltip>();
+        ItemTooltip Script = ToolTipObject.GetComponent<ItemTooltip>();
         Item Data = item;
 
         Script.SetInfo(Data.ItemName, string.Format("{0}", Data.Type));
@@ -330,6 +364,18 @@ public class UIController : MonoBehaviour
         Data.InstantiateStatKVPs(false, out List<GameObject> _, Script.StatsPanel.transform, Group);
         Group.ForceRecalculate();
 
-        return ToolTip;
+        return ToolTipObject;
+    }
+
+    public static GameObject InstantiateToolTip(string Title, string Description)
+    {
+        GameObject ToolTipObject;
+        ToolTipObject = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.ToolTipPrefab], CanvasObject.transform);
+        ToolTipObject.GetComponent<RectTransform>().position = Input.mousePosition;
+
+        ToolTip Script = ToolTipObject.GetComponent<ToolTip>();
+        Script.SetInfo(Title, Description);
+
+        return ToolTipObject;
     }
 }

@@ -6,8 +6,9 @@ using UnityEngine;
 
 public class DataManager : MonoBehaviour
 {
-    public string InjuriesPath = "MedicalData/Injuries";
-    public string SpeciesPath = "Species";
+    public static string InjuryIconsPath = "Graphics/Sprites/Medical/Injuries";
+    public static string InjuriesPath = "MedicalData/Injuries";
+    public static string SpeciesPath = "Species";
 
     public void LoadObjectData()
     {
@@ -19,6 +20,22 @@ public class DataManager : MonoBehaviour
     public struct DataStruct<T>
     {
         public List<T> DataArray;
+    }
+    
+    public static Sprite LoadSprite(string FileName, string AssetPath)
+    {
+        string FolderPath = Path.Combine(Application.streamingAssetsPath, AssetPath);
+        DirectoryInfo Info = new DirectoryInfo(FolderPath);
+        FileInfo[] File = Info.GetFiles(FileName);
+
+        if (File.Length != 1) throw new Exception($"{File.Length} files were found for search {FileName}");
+
+        byte[] ImageBytes = System.IO.File.ReadAllBytes(Path.Combine(FolderPath, File[0].Name));
+        Texture2D Tex = new Texture2D(24,24);
+        Tex.LoadImage(ImageBytes);
+
+        Sprite Result = Sprite.Create(Tex, new Rect(0, 0, 258, 258), new Vector2(0, 1));
+        return Result;
     }
 
     private DataStruct<T> LoadArrayedData<T>(string AssetPath, out int FileCount)
@@ -34,7 +51,8 @@ public class DataManager : MonoBehaviour
         {
             string FilePath = Path.Combine(FolderPath, Files[i].Name);
             string JsonData = File.ReadAllText(FilePath);
-            DataStruct<T> LoadedData = JsonUtility.FromJson<DataStruct<T>>(JsonData);
+            DataStruct<T> LoadedData = Newtonsoft.Json.JsonConvert.DeserializeObject<DataStruct<T>>(JsonData);
+            //DataStruct<T> LoadedData = JsonUtility.FromJson<DataStruct<T>>(JsonData);
 
             AllLoadedData.DataArray = Utility.CombineLists(AllLoadedData.DataArray, LoadedData.DataArray);
 
@@ -58,13 +76,9 @@ public class DataManager : MonoBehaviour
     #endregion
 
     #region Species
-    public struct SpeciesData
-    {
-        public List<Species> Species;
-    }
     public void InitSpecies(DataStruct<Species> Data)
     {
-        
+        Species.LoadedSpecies = Data.DataArray;
     }
     public void LoadSpecies()
     {

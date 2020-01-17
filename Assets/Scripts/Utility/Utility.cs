@@ -179,7 +179,7 @@ public class Utility : MonoBehaviour
         return Children;
     }
 
-    public class Timer : ScriptableObject
+    public class Timer
     {
         //Limit in seconds
         public float Limit = 1f;

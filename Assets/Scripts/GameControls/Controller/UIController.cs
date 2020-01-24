@@ -29,9 +29,6 @@ public class UIController : MonoBehaviour
 
         MedicalDetailsPrefab
     }
-
-    public static Dictionary<ObjectPrefabsEnum, GameObject> ObjectPrefabs = new Dictionary<ObjectPrefabsEnum, GameObject>();
-
     public static string[] AssetKeys = new string[]
     {
         "KeyValuePanel",
@@ -51,6 +48,19 @@ public class UIController : MonoBehaviour
 
         "MedicalInfo"
     };
+    public enum SpritesEnum
+    {
+        Condition_Bleeding
+    }
+    public static string[] SpriteKeys = new string[]
+    {
+        "Condition_Bleeding"
+    };
+
+    public static Dictionary<ObjectPrefabsEnum, GameObject> ObjectPrefabs = new Dictionary<ObjectPrefabsEnum, GameObject>();
+    public static Dictionary<SpritesEnum, Sprite> LoadedSprites = new Dictionary<SpritesEnum, Sprite>();
+
+
 
     public static GameObject CanvasObject;
     public static Transform PinnedPanel;
@@ -65,10 +75,12 @@ public class UIController : MonoBehaviour
         PinnedPanel = CanvasObject.transform.GetChild(1);
     }
 
+
     async void LoadAssets()
     {
         Task<IList<GameObject>> AssetTasks = Addressables.LoadAssetsAsync<GameObject>(AssetKeys, null, Addressables.MergeMode.Union).Task;
-        await AssetTasks;
+        Task<IList<Sprite>> SpriteTasks = Addressables.LoadAssetsAsync<Sprite>(SpriteKeys, null, Addressables.MergeMode.Union).Task;
+        await Task.WhenAll(AssetTasks, SpriteTasks);
 
         if (AssetTasks.Result.Count != AssetKeys.Length) { Debug.LogWarning($"{AssetKeys.Length} asset keys exist but {AssetTasks.Result.Count} were loaded"); }
 
@@ -77,6 +89,13 @@ public class UIController : MonoBehaviour
         {
             ObjectPrefabs.Add((ObjectPrefabsEnum)i, Asset);
             Debug.Log($"Loaded {(ObjectPrefabsEnum)i} :: {Asset.name}");
+            i++;
+        }
+        i = 0;
+        foreach (Sprite Asset in SpriteTasks.Result)
+        {
+            LoadedSprites.Add((SpritesEnum)i, Asset);
+            Debug.Log($"Loaded {(SpritesEnum)i} :: {Asset.name}");
             i++;
         }
     }

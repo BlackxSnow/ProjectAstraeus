@@ -101,20 +101,8 @@ public class Actor : DynamicEntity, IOrderable, IDamageable
     {
         GameObject MedicalPanel = Instantiate(UIController.ObjectPrefabs[UIController.ObjectPrefabsEnum.MedicalDetailsPrefab], HUDController.HUDControl.SelectHUD.DetailsPanel.transform);
         MedicalDetailsHUD MedicalPanelScript = MedicalPanel.GetComponent<MedicalDetailsHUD>();
-        foreach(Medical.Health.BodyPart part in EntityComponents.Health.Body)
-        {
-            foreach(Medical.Health.Injury injury in part.Injuries)
-            {
-                GameObject InjuryIcon = Instantiate(UIController.ObjectPrefabs[UIController.ObjectPrefabsEnum.ToolTippedIconPrefab], MedicalPanelScript.InjuriesPanel.transform);
-                ToolTipData InjuryToolTip = InjuryIcon.GetComponent<ToolTipData>();
-                Image InjuryImage = InjuryIcon.GetComponent<Image>();
-
-                InjuryToolTip.TitleText = $"{injury.Name} {part.Name}";
-                InjuryToolTip.DescriptionText = injury.Description;
-
-                InjuryImage.sprite = injury.Icon;
-            }
-        }
+        MedicalPanelScript.SelectedActor = this;
+        MedicalPanelScript.Init();
 
         return new List<GameObject>() { MedicalPanel };
     }

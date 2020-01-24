@@ -33,7 +33,7 @@ public class DebugConsole : MonoBehaviour
         if (TargetRace != null && TargetChar != null)
         {
             TargetChar.Race = TargetRace;
-            TargetChar.EntityComponents.Health.Body = new List<Medical.Health.BodyPart>(TargetRace.Body);
+            TargetChar.EntityComponents.Health.Body = TargetRace.Body.ConvertAll(p => p.Clone());
             TargetChar.EntityComponents.Health.Init();
             Debug.Log("Race set");
         } else

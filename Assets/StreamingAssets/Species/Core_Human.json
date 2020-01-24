@@ -7,31 +7,43 @@
 		[
 			{
 				"Name": "Head",
+				"InjuryChance": 1,
 				"S_Functions": {"Control": 1}
 			},
 			{
 				"Name": "Left Eye",
+				"InjuryChance": 0.2,
 				"S_Functions": {"Vision": 0.5}
 			},
 			{
 				"Name": "Right Eye",
+				"InjuryChance": 0.2,
 				"S_Functions": {"Vision": 0.5}
 			},
 			{
 				"Name": "Left Arm",
-				"S_Functions": {"Manipulation": 0.5}
+				"InjuryChance": 1,
+				"S_Functions": {"Manipulation": 0.4}
+			},
+			{
+				"Name": "Torso",
+				"InjuryChance": 2,
+				"S_Functions": {"Manipulation": 0.2, "Locomotion": 0.2}
 			},
 			{
 				"Name": "Right Arm",
-				"S_Functions": {"Manipulation": 0.5}
+				"InjuryChance": 1,
+				"S_Functions": {"Manipulation": 0.4}
 			},
 			{
 				"Name": "Left Leg",
-				"S_Functions": {"Locomotion": 0.5}
+				"InjuryChance": 1.5,
+				"S_Functions": {"Locomotion": 0.4}
 			},
 			{
 				"Name": "Right Leg",
-				"S_Functions": {"Locomotion": 0.5}
+				"InjuryChance": 1.5,
+				"S_Functions": {"Locomotion": 0.4}
 			}
 		]
 	}

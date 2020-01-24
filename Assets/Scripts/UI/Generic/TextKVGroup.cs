@@ -31,7 +31,10 @@ public class TextKVGroup : MonoBehaviour, IGroupableUI
 
     void OnDestroy()
     {
-        Group.RemoveMember(this);
+        if (Group)
+        {
+            Group.RemoveMember(this);
+        }
     }
 
     public virtual void Init()

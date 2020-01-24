@@ -12,8 +12,19 @@
 			"Manipulation": 0.2,
 			"Flight": 0.2
 		},
+		"Conditions_S":
+		{
+			"Bleeding":
+			{
+				"DisplayName": "Moderately bleeding",
+				"Chance": 1.0,
+				"Severity": 0.5,
+				"Duration": 30
+			}
+		},
 		"BaseHealTime": 14,
-		"SeverityCost": 13
+		"SeverityCost": 13,
+		"Overriding": false
 	},
 		
 	{
@@ -29,8 +40,19 @@
 			"Vision": 0,
 			"Control": 0
 		},
+		"Conditions_S":
+		{
+			"Bleeding":
+			{
+				"DisplayName": "Heavily bleeding",
+				"Chance": 1.0,
+				"Severity": 1,
+				"Duration": 60
+			}
+		},
 		"BaseHealTime": 0,
-		"SeverityCost": 18
+		"SeverityCost": 18,
+		"Overriding": true
 	}
 	
 ]

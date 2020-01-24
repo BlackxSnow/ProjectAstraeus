@@ -57,6 +57,10 @@ MonoBehaviour:
     m_Address: ModuleDisplayPanel
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: cfd2be4c218d6d04ab5908e9d3275c1f
+    m_Address: Condition_Bleeding
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   - m_GUID: d08944c2ae8e80a459afbad134931a79
     m_Address: ToolTip
     m_ReadOnly: 0

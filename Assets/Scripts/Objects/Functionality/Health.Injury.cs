@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Timers;
 using System.Runtime.Serialization;
 using Medical.Conditions;
 using System.Linq;
@@ -10,61 +11,125 @@ namespace Medical
     public partial class Health
     {
         int InjuryCostSum = 0;
-        float CostRemainder = 0;
         public int InjuryCount = 0;
-        public struct ConditionStruct
-        {
-            public string DisplayName;
-            public float Chance;
-            public float Severity;
-            public float Duration;
-        }
 
         [Serializable]
-        public struct Injury
+        public class Injury
         {
-            //TODO Add damage type restrictions
             public string Name;
             public string InternalID;
             public string Description;
+            public bool AppliesToBone;
+            
             
             public Sprite Icon;
             public string IconFile;
 
-            //Serialised and deserialised collections since JSON cannot handle Enums;
+            //Serialised and deserialised collections since JSON does not handle Enums;
+            //Valid functions and their modifiers
             public Dictionary<string, float> FunctionModifiers_S;
             public Dictionary<PartFunctions, float> FunctionModifiers;
 
-            //Possible conditions to be inflicted
+            //Valid damage types to cause this injury
+            public List<string> DamageTypes_S;
+            public List<Weapon.DamageTypesEnum> DamageTypes;
+
+            //Possible conditions to be inflicted and their chances
             public Dictionary<string, ConditionStruct> Conditions_S;
             public Dictionary<Condition.ConditionTypes, ConditionStruct> Conditions;
 
-            //Base time to heal. 0 is never; measured in days.
+            //Base time to heal. 0 is never; measured in real minutes. Remaining time is in seconds
             public float BaseHealTime;
+
+            //Percentage functionality restored on tend. eg. 0.75 value results in a 100% tend quality reducing Function Modifiers to 25% of original penalty (0.6 penalty => 0.15)
+            public float MaxTendReduction;
+            //Percentage of remaining duration negated by 100% quality tend
+            public float MaxTendDurationReduction;
+            
             public int SeverityCost;
             public bool Overriding;
 
+            //Internal
+            public bool Tended;
+            public float TendQuality;
+            public float RemainingTime;
+            public float EffectiveRemainingTime;
+            public Health CharacterHealth;
+            public BodyPart Part;
+            private Utility.Timer HealTimer;
+            public Injury Clone()
+            {
+                Injury Result = (Injury)MemberwiseClone();
+                return Result;
+            }
+            public void Init(Health ParentHealth, BodyPart ParentPart)
+            {
+                CharacterHealth = ParentHealth;
+                Part = ParentPart;
+                RemainingTime = BaseHealTime;
+                if (BaseHealTime == 0) return;
+                HealTimer = new Utility.Timer(1, new Utility.Timer.ElapsedDelegate(AdvanceHeal), true);
+                HealTimer.Start();
+            }
+
+            public void AdvanceHeal()
+            {
+                float RestModifier = CharacterHealth.RestHealModifier;
+                float TendModifier = Tended ? (1f / MaxTendDurationReduction - 1f) * TendQuality + 1f : 1f;
+                float ModifiedTotal = 1f * RestModifier * TendModifier;
+                EffectiveRemainingTime = RemainingTime / ModifiedTotal;
+                RemainingTime -= ModifiedTotal;
+                if (RemainingTime <= 0f)
+                {
+                    HealInjury();
+                }
+            }
+            public void HealInjury()
+            {
+                HealTimer.Stop();
+                Part.Injuries.Remove(this);
+                CharacterHealth.InjuryCount--;
+                CharacterHealth.InjuryCostSum -= SeverityCost;
+                CharacterHealth.RefreshInjuries();
+            }
+
+            public string GetRemainingTime()
+            {
+                Dictionary<string, float> Time = new Dictionary<string, float>()
+                {
+                    { "h", EffectiveRemainingTime / 60f / 60f },
+                    { "m", EffectiveRemainingTime / 60f },
+                    { "s", EffectiveRemainingTime }
+                };
+                KeyValuePair<string, float> SelectedTime = new KeyValuePair<string, float>();
+                foreach(KeyValuePair<string, float> kvp in Time)
+                {
+                    if(kvp.Value > 1)
+                    {
+                        SelectedTime = new KeyValuePair<string, float>(kvp.Key, Utility.RoundToNDecimals(kvp.Value, 1, Utility.RoundType.Ceil));
+                        break;
+                    }
+                }
+
+
+                string Result = $"{SelectedTime.Value}{SelectedTime.Key}";
+                return Result;
+            }
             //Resolve enums and clear old dictionaries
             [OnDeserialized]
             public void OnDeserialised(StreamingContext context)
             {
                 Icon = DataManager.LoadSprite(IconFile, DataManager.InjuryIconsPath);
-                FunctionModifiers = new Dictionary<PartFunctions, float>();
-                foreach (KeyValuePair<string, float> FunctionMod in FunctionModifiers_S)
-                {
-                    PartFunctions Function = (PartFunctions)Enum.Parse(typeof(PartFunctions), FunctionMod.Key);
-                    FunctionModifiers.Add(Function, FunctionMod.Value);
-                }
+                RemainingTime = BaseHealTime;
+
+                FunctionModifiers = Utility.DeserializeEnumCollection<PartFunctions, float>(FunctionModifiers_S);
                 FunctionModifiers_S.Clear();
 
-                Conditions = new Dictionary<Condition.ConditionTypes, ConditionStruct>();
-                if (Conditions_S == null) return;
-                foreach (KeyValuePair<string, ConditionStruct> kvp in Conditions_S)
-                {
-                    Condition.ConditionTypes ConType = (Condition.ConditionTypes)Enum.Parse(typeof(Condition.ConditionTypes), kvp.Key);
-                    Conditions.Add(ConType, kvp.Value);
-                }
+                Conditions = Utility.DeserializeEnumCollection<Condition.ConditionTypes, ConditionStruct>(Conditions_S);
                 Conditions_S.Clear();
+
+                DamageTypes = Utility.DeserializeEnumCollection<Weapon.DamageTypesEnum>(DamageTypes_S);
+                DamageTypes_S.Clear();
             }
         }
 
@@ -97,55 +162,96 @@ namespace Medical
             }
         }
 
-        //TODO Restrict based on damage type; Add severity cost to hitting parts;
         float AccumulatedSeverity = 0;
-        public void AddInjury(float Severity)
+        public void AddInjury(float Severity, Weapon.DamageTypesEnum DamageType)
+        {
+            Severity += AccumulatedSeverity;
+            AccumulatedSeverity = 0;
+
+            BodyPart ChosenPart = FindValidPart(Severity);
+            List<int> ValidInjuryIndices = FindValidInjuries(ChosenPart, Severity, DamageType);
+            if (ValidInjuryIndices == null) return;
+
+            //Apply random injury
+            int IRoll = UnityEngine.Random.Range(0, ValidInjuryIndices.Count - 1);
+            int ChosenInjury = ValidInjuryIndices[IRoll];
+
+
+
+            if (LoadedInjuries[ChosenInjury].Overriding && ChosenPart.Injuries.Count != 0)
+            {
+                InjuryCount -= ChosenPart.Injuries.Count;
+                foreach(Injury injury in ChosenPart.Injuries)
+                {
+                    InjuryCostSum -= injury.SeverityCost;
+                }
+                ChosenPart.Injuries.Clear();
+            }
+            Injury ClonedInjury = LoadedInjuries[ChosenInjury].Clone();
+            ClonedInjury.Init(this, ChosenPart);
+            ChosenPart.Injuries.Add(ClonedInjury);
+
+            InjuryCount++;
+            InjuryCostSum += LoadedInjuries[ChosenInjury].SeverityCost;
+
+            if (InjuriesChanged != null) InjuriesChanged.Invoke();
+            CheckConditions(LoadedInjuries[ChosenInjury]);
+        }
+
+        //TODO Kill character when all possible injuries are applied
+        private BodyPart FindValidPart(float Severity)
         {
             //Create List of valid part indices
             //Find Part based on part hit chance
-            Severity += AccumulatedSeverity;
-            AccumulatedSeverity = 0;
-            int i = 0;
             float AccumulatedChance = 0;
             float PartChanceTotal = 0;
             BodyPart ChosenPart = null;
-            float[] Chances = new float[Body.Count];
-            foreach(BodyPart part in Body)
+            List<BodyPart> ValidParts = new List<BodyPart>();
+            List<float> Chances = new List<float>();
+            foreach (BodyPart part in Body)
             {
-                if(part.Injuries.Any(n => n.Overriding))
+                if (part.SeverityCost > Severity || part.Injuries.Any(n => n.Overriding))
                 {
-                    i++;
                     continue;
                 }
-                Chances[i] = AccumulatedChance + part.InjuryChance;
+                ValidParts.Add(part);
+                Chances.Add(AccumulatedChance + part.InjuryChance);
                 AccumulatedChance += part.InjuryChance;
                 PartChanceTotal += part.InjuryChance;
-                i++;
             }
-            float Roll = UnityEngine.Random.Range(0f, Chances.Length - 1f);
-            for(i = 0; i < Chances.Length; i++)
+            float Roll = UnityEngine.Random.Range(0f, Chances.Count - 1f);
+            for (int i = 0; i < Chances.Count; i++)
             {
                 if (Roll <= Chances[i])
                 {
-                    ChosenPart = Body[i];
+                    ChosenPart = ValidParts[i];
                     break;
                 }
             }
 
-            if (ChosenPart == null) throw new Exception($"No part rolled for roll {Roll} in array {Chances}");
-
+            if (ChosenPart == null)
+                throw new Exception($"No part rolled for roll {Roll} in array length {Chances.Count}");
+            return ChosenPart;
+        }
+        private List<int> FindValidInjuries(BodyPart ChosenPart, float Severity, Weapon.DamageTypesEnum DamageType)
+        {
             //Create list of valid injuries
+            float AdjustedSeverity = Severity - ChosenPart.SeverityCost;
             List<int> ValidInjuryIndices = new List<int>();
-            i = 0;
+            int i = 0;
+            bool Floor = false;
+            if(LoadedInjuries.Exists(n => n.SeverityCost > AdjustedSeverity / 2f))
+            {
+                Floor = true;
+            }
             foreach (Injury injury in LoadedInjuries)
             {
-                //If there are common functions in part and injury, and the injury does not already exist in the part
-                bool one = injury.SeverityCost <= Severity;
-                bool two = injury.SeverityCost >= Severity / 2;
-                bool three = injury.FunctionModifiers.Any(f => ChosenPart.Functions.ContainsKey(f.Key));
-                bool four = !ChosenPart.Injuries.Exists(n => n.Name == injury.Name);
-                Debug.Log("Pre if");
-                if (injury.SeverityCost <= Severity && injury.SeverityCost >= Severity / 2 && injury.FunctionModifiers.Any(f => ChosenPart.Functions.ContainsKey(f.Key)) && !ChosenPart.Injuries.Exists(n => n.Name == injury.Name))
+
+                if (injury.SeverityCost <= AdjustedSeverity && 
+                    ((Floor && injury.SeverityCost >= AdjustedSeverity / 2f) || !Floor) && //Is the severity between the floor and ceiling, and do we need a floor?
+                    injury.FunctionModifiers.Any(f => ChosenPart.Functions.ContainsKey(f.Key)) && //Does the injury share functionality with the target part?
+                    !ChosenPart.Injuries.Exists(n => n.Name == injury.Name) && //Does the injury already exist on the part?
+                    injury.DamageTypes.Contains(DamageType)) //Is the injury caused by the input damage type?
                 {
                     ValidInjuryIndices.Add(i);
                 }
@@ -154,30 +260,25 @@ namespace Medical
             if (ValidInjuryIndices.Count == 0)
             {
                 AccumulatedSeverity = Severity;
-                return;
+                return null;
             }
-
-            //Apply random injury
-            int IRoll = UnityEngine.Random.Range(0, ValidInjuryIndices.Count - 1);
-            int ChosenInjury = ValidInjuryIndices[IRoll];
-            Debug.Log($"Attempting injury '{LoadedInjuries[IRoll].Name}' at '{ChosenPart.Name}'");
-            ChosenPart.Injuries.Add(LoadedInjuries[ValidInjuryIndices[IRoll]]);
-            InjuryCount++;
-            InjuryCostSum += LoadedInjuries[ValidInjuryIndices[IRoll]].SeverityCost;
-            CheckConditions(LoadedInjuries[ValidInjuryIndices[IRoll]]);
+            return ValidInjuryIndices;
         }
-
         private void CheckConditions(Injury injury)
         {
+            bool Added = false;
             foreach(KeyValuePair<Condition.ConditionTypes, ConditionStruct> kvp in injury.Conditions)
             {
                 float Roll = UnityEngine.Random.value;
                 if (Roll <= kvp.Value.Chance)
                 {
-                    AddCondition(kvp.Key, kvp.Value);
+                    AddCondition(kvp.Key, kvp.Value, false);
+                    Added = true;
                 }
             }
+            if (ConditionsChanged != null && Added) ConditionsChanged.Invoke();
         }
+
 
         private void RunConditions()
         {
@@ -187,9 +288,10 @@ namespace Medical
             }
         }
 
+        //TODO Add ability to remove injuries. Reduce InjuryCount and InjuryCostSum, Invoke InjuriesChanged
         public void RemoveInjury(BodyPart Part, string InjuryName)
         {
-            //TODO add functionality, InjuryCostSum -= severity cost of injury. Reset Remainder
+            
         }
     }
 

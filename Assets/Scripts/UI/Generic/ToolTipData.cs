@@ -9,9 +9,14 @@ public class ToolTipData : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public string DescriptionText;
 
     GameObject ToolTipObject;
+    ToolTip ToolTipScript;
+    public object RefObject;
     bool MouseOver = false;
     Utility.Timer HoverTimer;
     bool AllowToolTip = true;
+
+    public delegate string UpdateValueDelegate();
+    public UpdateValueDelegate UpdateValue;
 
     void Start()
     {
@@ -22,6 +27,10 @@ public class ToolTipData : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     void Update()
     {
         CheckHover();
+        if (ToolTipObject)
+        {
+            UpdateToolTip();
+        }
     }
 
     public void OnPointerEnter(PointerEventData data)
@@ -31,6 +40,12 @@ public class ToolTipData : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public void OnPointerExit(PointerEventData data)
     {
         MouseOver = false;
+    }
+
+    void OnDestroy()
+    {
+        if (ToolTipObject)
+            Destroy(ToolTipObject);
     }
 
     Vector3 LastMousePosition;
@@ -61,7 +76,13 @@ public class ToolTipData : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     {
         AllowToolTip = false;
         SpawnPosition = Input.mousePosition;
-        ToolTipObject = UIController.InstantiateToolTip(TitleText, DescriptionText);
+        ToolTipObject = UIController.InstantiateToolTip($"{TitleText} ({UpdateValue()})", DescriptionText, gameObject);
+        ToolTipScript = ToolTipObject.GetComponent<ToolTip>();
+    }
+    
+    void UpdateToolTip()
+    {
+        ToolTipScript.Title.text = $"{TitleText} ({UpdateValue()})";
     }
 
     void CheckHover()

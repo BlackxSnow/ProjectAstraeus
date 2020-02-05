@@ -7,7 +7,14 @@ using static ItemTypes;
 
 public class Weapon : EquippableItem
 {
-
+    public enum DamageTypesEnum
+    {
+        Blunt,
+        Sharp,
+        Explosive,
+        Psionic,
+        Other
+    }
     public override void Init()
     {
         base.Init();

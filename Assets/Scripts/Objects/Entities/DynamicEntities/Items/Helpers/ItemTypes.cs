@@ -52,7 +52,7 @@ public class ItemTypes : MonoBehaviour
         Feet,
         [Type(typeof(Arms))]
         Arms,
-#warning Unimplemented
+        //TODO Implement back and accessory slots
         //[Type(typeof(Back))]
         Back,
         //[Type(typeof(Accessory))]

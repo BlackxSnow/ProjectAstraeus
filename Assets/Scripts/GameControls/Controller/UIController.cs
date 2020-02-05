@@ -386,14 +386,14 @@ public class UIController : MonoBehaviour
         return ToolTipObject;
     }
 
-    public static GameObject InstantiateToolTip(string Title, string Description)
+    public static GameObject InstantiateToolTip(string Title, string Description, GameObject TargetObj)
     {
         GameObject ToolTipObject;
         ToolTipObject = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.ToolTipPrefab], CanvasObject.transform);
         ToolTipObject.GetComponent<RectTransform>().position = Input.mousePosition;
 
         ToolTip Script = ToolTipObject.GetComponent<ToolTip>();
-        Script.SetInfo(Title, Description);
+        Script.SetInfo(Title, Description, TargetObj);
 
         return ToolTipObject;
     }

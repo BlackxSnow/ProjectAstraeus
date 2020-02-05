@@ -7,43 +7,59 @@
 		[
 			{
 				"Name": "Head",
+				"BoneName": "Skull",
 				"InjuryChance": 1,
-				"S_Functions": {"Control": 1}
+				"SeverityCost": 5,
+				"Functions_S": {"Control": 1}
 			},
 			{
 				"Name": "Left Eye",
+				"BoneName": "N/A",
 				"InjuryChance": 0.2,
-				"S_Functions": {"Vision": 0.5}
+				"SeverityCost": 2,
+				"Functions_S": {"Vision": 0.5}
 			},
 			{
 				"Name": "Right Eye",
+				"BoneName": "N/A",
 				"InjuryChance": 0.2,
-				"S_Functions": {"Vision": 0.5}
+				"SeverityCost": 2,
+				"Functions_S": {"Vision": 0.5}
 			},
 			{
 				"Name": "Left Arm",
+				"BoneName": "Left Arm",
 				"InjuryChance": 1,
-				"S_Functions": {"Manipulation": 0.4}
+				"SeverityCost": 0,
+				"Functions_S": {"Manipulation": 0.4}
 			},
 			{
 				"Name": "Torso",
+				"BoneName": "Ribs",
 				"InjuryChance": 2,
-				"S_Functions": {"Manipulation": 0.2, "Locomotion": 0.2}
+				"SeverityCost": 0,
+				"Functions_S": {"Manipulation": 0.2, "Locomotion": 0.2}
 			},
 			{
 				"Name": "Right Arm",
+				"BoneName": "Right Arm",
 				"InjuryChance": 1,
-				"S_Functions": {"Manipulation": 0.4}
+				"SeverityCost": 0,
+				"Functions_S": {"Manipulation": 0.4}
 			},
 			{
 				"Name": "Left Leg",
+				"BoneName": "Left Leg",
 				"InjuryChance": 1.5,
-				"S_Functions": {"Locomotion": 0.4}
+				"SeverityCost": 0,
+				"Functions_S": {"Locomotion": 0.4}
 			},
 			{
 				"Name": "Right Leg",
+				"BoneName": "Right Leg",
 				"InjuryChance": 1.5,
-				"S_Functions": {"Locomotion": 0.4}
+				"SeverityCost": 0,
+				"Functions_S": {"Locomotion": 0.4}
 			}
 		]
 	}

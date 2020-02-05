@@ -1,9 +1,11 @@
 ﻿using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
 using TMPro;
 using UnityEngine.UI;
+using Medical.Conditions;
 
 public class MedicalDetailsHUD : MonoBehaviour
 {
@@ -24,19 +26,21 @@ public class MedicalDetailsHUD : MonoBehaviour
     public HealthBarStruct HealthBar;
 
     List<GameObject> DisplayedInjuries = new List<GameObject>();
-    List<GameObject> DisplayedConditions = new List<GameObject>();
+    List<ToolTipData> DisplayedConditions = new List<ToolTipData>();
 
     public void Init()
     {
         SelectedActor.EntityComponents.Health.HealthChanged += UpdateHealthBar;
-        UpdateHealthBar(0);
+        SelectedActor.EntityComponents.Health.InjuriesChanged += DisplayInjuries;
+        SelectedActor.EntityComponents.Health.ConditionsChanged += DisplayConditions;
+        UpdateHealthBar();
     }
     int f = 5;
     private void Update()
     {
         if (f > 0)
         {
-            UpdateHealthBar(0);
+            UpdateHealthBar();
             f--;
         }
         if (CheckInjuries()) DisplayInjuries();
@@ -44,12 +48,16 @@ public class MedicalDetailsHUD : MonoBehaviour
         
     }
 
-    private void UpdateHealthBar(float _)
+    private void UpdateHealthBar()
     {
         if(HealthBar.Foreground == null)
         {
             SelectedActor.EntityComponents.Health.HealthChanged -= UpdateHealthBar;
             return;
+        }
+        if (f == 0)
+        {
+            f++;
         }
         float MaxHP = SelectedActor.EntityComponents.Health.MaxHitPoints;
         float CurrHP = SelectedActor.EntityComponents.Health.HitPoints;
@@ -85,12 +93,20 @@ public class MedicalDetailsHUD : MonoBehaviour
         {
             foreach (Medical.Health.Injury injury in part.Injuries)
             {
+                if (InjuriesPanel == null) return;
                 GameObject InjuryIcon = Instantiate(UIController.ObjectPrefabs[UIController.ObjectPrefabsEnum.ToolTippedIconPrefab], InjuriesPanel.transform);
                 ToolTipData InjuryToolTip = InjuryIcon.GetComponent<ToolTipData>();
                 Image InjuryImage = InjuryIcon.GetComponent<Image>();
 
-                InjuryToolTip.TitleText = $"{injury.Name} {part.Name}";
+                string PartName;
+                if (injury.AppliesToBone)
+                    PartName = part.BoneName;
+                else
+                    PartName = part.Name;
+
+                InjuryToolTip.TitleText = $"{injury.Name} {PartName}";
                 InjuryToolTip.DescriptionText = injury.Description;
+                InjuryToolTip.UpdateValue = injury.GetRemainingTime;
 
                 InjuryImage.sprite = injury.Icon;
                 DisplayedInjuries.Add(InjuryIcon);
@@ -99,22 +115,42 @@ public class MedicalDetailsHUD : MonoBehaviour
     }
     private void DisplayConditions()
     {
-        foreach(GameObject obj in DisplayedConditions)
+        int StartCount = DisplayedConditions.Count;
+        List<ToolTipData> PreservedIcons = new List<ToolTipData>();
+        foreach(ToolTipData icon in DisplayedConditions)
         {
-            Destroy(obj);
+            if(SelectedActor.EntityComponents.Health.ActiveConditions.Any(c => icon.RefObject == c))
+            {
+                PreservedIcons.Add(icon);
+                continue;
+            } else
+            {
+                Destroy(icon.gameObject);
+            }
         }
-        DisplayedConditions.Clear();
-        foreach (Medical.Conditions.Condition condition in SelectedActor.EntityComponents.Health.ActiveConditions)
+        DisplayedConditions = PreservedIcons;
+        int PreservedCount = DisplayedConditions.Count;
+        
+        foreach(Condition condition in SelectedActor.EntityComponents.Health.ActiveConditions)
         {
-            GameObject ConditionIcon = Instantiate(UIController.ObjectPrefabs[UIController.ObjectPrefabsEnum.ToolTippedIconPrefab], ConditionsPanel.transform);
-            ToolTipData ConditionToolTip = ConditionIcon.GetComponent<ToolTipData>();
-            Image ConditionImage = ConditionIcon.GetComponent<Image>();
+            if(!DisplayedConditions.Any(c => c.RefObject == condition))
+            {
+                if (ConditionsPanel == null) return;
+                GameObject ConditionIcon = Instantiate(UIController.ObjectPrefabs[UIController.ObjectPrefabsEnum.ToolTippedIconPrefab], ConditionsPanel.transform);
+                ToolTipData ConditionToolTip = ConditionIcon.GetComponent<ToolTipData>();
+                Image ConditionImage = ConditionIcon.GetComponent<Image>();
 
-            ConditionToolTip.TitleText = $"{condition.DisplayName}";
-            ConditionToolTip.DescriptionText = condition.Description;
+                ConditionToolTip.TitleText = $"{condition.DisplayName}";
+                ConditionToolTip.DescriptionText = condition.Description;
+                ConditionToolTip.UpdateValue = condition.GetRemainingTime;
+                ConditionToolTip.RefObject = condition;
 
-            ConditionImage.sprite = condition.Icon;
-            DisplayedConditions.Add(ConditionIcon);
+                ConditionImage.sprite = condition.Icon;
+                DisplayedConditions.Add(ConditionToolTip);
+            }
         }
+        int FinalCount = DisplayedConditions.Count;
+        int ConditionCount = SelectedActor.EntityComponents.Health.ActiveConditions.Count;
+        //Debug.Log($"{StartCount} => {PreservedCount} => {FinalCount} || {ConditionCount}");
     }
 }

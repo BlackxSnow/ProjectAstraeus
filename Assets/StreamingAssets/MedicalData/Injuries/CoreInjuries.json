@@ -19,10 +19,21 @@
 				"DisplayName": "Moderately bleeding",
 				"Chance": 1.0,
 				"Severity": 0.5,
-				"Duration": 30
+				"Duration": 30,
+				"ChildConditions_S":
+				{
+					"Bleeding":
+					{
+						"DisplayName": "(Child) Lightly bleeding",
+						"Chance": 1.0,
+						"Severity": 0.25,
+						"Duration": 30
+					}
+				}
 			}
 		},
-		"BaseHealTime": 14,
+		"DamageTypes_S": ["Blunt", "Explosive"],
+		"BaseHealTime": 120,
 		"SeverityCost": 13,
 		"Overriding": false
 	},
@@ -47,9 +58,20 @@
 				"DisplayName": "Heavily bleeding",
 				"Chance": 1.0,
 				"Severity": 1,
-				"Duration": 60
+				"Duration": 3,
+				"ChildConditions_S":
+				{
+					"Bleeding":
+					{
+						"DisplayName": "(Child) Moderately bleeding",
+						"Chance": 1.0,
+						"Severity": 0.5,
+						"Duration": 3
+					}
+				}
 			}
 		},
+		"DamageTypes_S": ["Blunt", "Sharp", "Explosive"],
 		"BaseHealTime": 0,
 		"SeverityCost": 18,
 		"Overriding": true

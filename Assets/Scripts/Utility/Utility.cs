@@ -38,8 +38,13 @@ public class Utility : MonoBehaviour
             throw new System.ArgumentException("Parameter must be numerical type", "Value");
         }
     }
-
-    public static float RoundToNDecimals<T>(T Value, int Decimals)
+    public enum RoundType
+    {
+        Floor,
+        Ceil,
+        Round
+    }
+    public static float RoundToNDecimals<T>(T Value, int Decimals, RoundType roundType = RoundType.Round)
     {
         dynamic ValueF;
         if (Value is float || Value is int || Value is double)
@@ -48,7 +53,21 @@ public class Utility : MonoBehaviour
         } else throw new System.ArgumentException("Parameter must be numerical type", "Value");
 
         float MultipliedValue = ValueF * Mathf.Pow(10, Decimals);
-        MultipliedValue = Mathf.Round(MultipliedValue);
+        switch (roundType)
+        {
+            case RoundType.Floor:
+                MultipliedValue = Mathf.Floor(MultipliedValue);
+                break;
+            case RoundType.Ceil:
+                MultipliedValue = Mathf.Ceil(MultipliedValue);
+                break;
+            case RoundType.Round:
+                MultipliedValue = Mathf.Round(MultipliedValue);
+                break;
+            default:
+                break;
+        }
+        
         return MultipliedValue / Mathf.Pow(10, Decimals);
     }
 
@@ -179,12 +198,37 @@ public class Utility : MonoBehaviour
         return Children;
     }
 
+    public static Dictionary<T,V> DeserializeEnumCollection<T,V>(Dictionary<string,V> Input)
+    {
+
+        Dictionary<T,V> Result = new Dictionary<T, V>();
+        if (Input == null) return null;
+        foreach (KeyValuePair<string, V> kvp in Input)
+        {
+           T ParsedValue = (T)Enum.Parse(typeof(T), kvp.Key);
+            Result.Add(ParsedValue, kvp.Value);
+        }
+        return Result;
+    }
+    public static List<T> DeserializeEnumCollection<T>(List<string> Input)
+    {
+        List<T> Result = new List<T>();
+        if (Input == null) return null;
+        foreach (string TypeString in Input)
+        {
+            T ParsedValue = (T)Enum.Parse(typeof(T), TypeString);
+            Result.Add(ParsedValue);
+        }
+        return Result;
+    }
+
     public class Timer
     {
         //Limit in seconds
         public float Limit = 1f;
         public float Current = 0f;
         private float Interval;
+        public bool Repeat;
 
         public delegate void ElapsedDelegate();
         public ElapsedDelegate Elapsed;
@@ -193,7 +237,7 @@ public class Utility : MonoBehaviour
         public void Start()
         {
             Current = 0f;
-            Interval = Mathf.Min(Limit / 5, 1);
+            Interval = Mathf.Min(Limit / 5f, 1f);
             Enabled = true;
             Controller.Control.StartCoroutine(Counter());
         }
@@ -207,11 +251,18 @@ public class Utility : MonoBehaviour
         {
             while (Enabled)
             {
-
                 if (Current >= Limit)
                 {
-                    Elapsed();
-                    yield break;
+                    if (Repeat)
+                    {
+                        Elapsed();
+                        Current = 0;
+                        yield return new WaitForSeconds(Interval);
+                    } else
+                    {
+                        Elapsed();
+                        yield break;
+                    }
                 }
 
                 Current += Interval;
@@ -220,8 +271,9 @@ public class Utility : MonoBehaviour
             if (!Enabled) yield break;
         }
 
-        public Timer(float Seconds, ElapsedDelegate RunMethod)
+        public Timer(float Seconds, ElapsedDelegate RunMethod, bool Repeat = false)
         {
+            this.Repeat = Repeat;
             Limit = Seconds;
             Elapsed = RunMethod;
         }

@@ -1,9 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace Medical
 {
@@ -15,12 +12,12 @@ namespace Medical
             
             public override void RunEffect()
             {
-                CharacterHealth.Damage(Severity * Time.deltaTime, false);
+                CharacterHealth.Damage(Severity * Time.deltaTime, false, Weapon.DamageTypesEnum.Other);
             }
 
-            public override void EndEffect()
+            public override void EndEffect(bool CreateChildren = true)
             {
-                base.EndEffect();
+                base.EndEffect(CreateChildren);
             }
 
             protected override Sprite GetIcon()

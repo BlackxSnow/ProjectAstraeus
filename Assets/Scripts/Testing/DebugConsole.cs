@@ -42,10 +42,11 @@ public class DebugConsole : MonoBehaviour
         }
     }
 
-    public void Damage(string Target, float Amount, bool Critical)
+    public void Damage(string Target, float Amount, bool Critical = false, string DamageType = "Blunt")
     {
         Character TargetChar = EntityManager.Characters.Find(c => c.Name == Target);
-        TargetChar.EntityComponents.Health.Damage(Amount, Critical);
-        Debug.Log($"Dealt {Amount} damage to {Target}. Was it critical? {Critical}");
+        Weapon.DamageTypesEnum DamageTypeParsed = (Weapon.DamageTypesEnum)Enum.Parse(typeof(Weapon.DamageTypesEnum), DamageType);
+        TargetChar.EntityComponents.Health.Damage(Amount, Critical, DamageTypeParsed);
+        Debug.Log($"Dealt {Amount} damage to {Target} as {DamageType} damage. Critical?: {Critical}");
     }
 }

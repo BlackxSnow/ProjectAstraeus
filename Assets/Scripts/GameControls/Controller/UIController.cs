@@ -7,6 +7,7 @@ using UnityEngine.AddressableAssets;
 using TMPro;
 using Modules;
 using System.Threading.Tasks;
+using Nito.AsyncEx;
 
 public class UIController : MonoBehaviour
 {
@@ -22,6 +23,9 @@ public class UIController : MonoBehaviour
         ToolTipPrefab,
         ToolTippedIconPrefab,
         DropdownPrefab,
+        ProgressBarPrefab,
+        OrderButtonPrefab,
+        ContextMenuPrefab,
 
         InventoryPrefab,
         EquipmentPrefab,
@@ -41,6 +45,9 @@ public class UIController : MonoBehaviour
         "ToolTip",
         "ToolTippedIcon",
         "Dropdown",
+        "ProgressBar",
+        "OrderButton",
+        "ContextMenu",
 
         "InventoryUI",
         "EquipmentUI",
@@ -75,7 +82,7 @@ public class UIController : MonoBehaviour
         PinnedPanel = CanvasObject.transform.GetChild(1);
     }
 
-
+    public static AsyncAutoResetEvent DataLoaded = new AsyncAutoResetEvent(false);
     async void LoadAssets()
     {
         Task<IList<GameObject>> AssetTasks = Addressables.LoadAssetsAsync<GameObject>(AssetKeys, null, Addressables.MergeMode.Union).Task;
@@ -98,6 +105,8 @@ public class UIController : MonoBehaviour
             Debug.Log($"Loaded {(SpritesEnum)i} :: {Asset.name}");
             i++;
         }
+
+        DataLoaded.Set();
     }
 
     public enum LayoutTypes
@@ -396,5 +405,29 @@ public class UIController : MonoBehaviour
         Script.SetInfo(Title, Description, TargetObj);
 
         return ToolTipObject;
+    }
+
+    public static ProgressBar InstantiateProgressBar(GameObject parent, float current, float max, Color background, Color foreground)
+    {
+        GameObject Bar;
+        Bar = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.ProgressBarPrefab], CanvasObject.transform);
+        ProgressBar BarScript = Bar.GetComponent<ProgressBar>();
+        BarScript.Init(parent, current, max, background, foreground);
+
+        return BarScript;
+    }
+
+    public static GameObject InstantiateContextMenu(Vector2 position)
+    {
+        GameObject Instance = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.ContextMenuPrefab], position, Quaternion.identity, CanvasObject.transform);
+        return Instance;
+    }
+
+    public static GameObject InstantiateButton(Transform parent, out TextMeshProUGUI ButtonText, out Button UIButton)
+    {
+        GameObject ButtonInstance = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.OrderButtonPrefab], parent);
+        ButtonText = ButtonInstance.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        UIButton = ButtonInstance.GetComponent<Button>();
+        return ButtonInstance;
     }
 }

@@ -13,7 +13,7 @@ public class OrderEvents : MonoBehaviour
     public delegate void TalkOrder(Character character);
     public static event TalkOrder OnTalk;
 
-    public delegate void UseOrder(StaticEntity staticEntity);
+    public delegate void UseOrder(IUsable usableEntity);
     public static event UseOrder OnUse;
 
     public delegate void AttackOrder(Actor actor);
@@ -38,7 +38,7 @@ public class OrderEvents : MonoBehaviour
     }
     public static void Trade(Character character) => OnTrade?.Invoke(character);
     public static void Talk(Character character) => OnTalk?.Invoke(character);
-    public static void Use(StaticEntity staticEntity) => OnUse?.Invoke(staticEntity);
+    public static void Use(IUsable usableEntity) => OnUse?.Invoke(usableEntity);
     public static void Attack(Actor actor) => OnAttack?.Invoke(actor);
     public static void MeleeAttack(Actor actor) => OnMelee?.Invoke(actor);
     public static void Enter(ABiotic aBiotic) => OnEnter?.Invoke(aBiotic);

@@ -5,6 +5,7 @@ using UnityEngine.AI;
 using UnityEngine.UI;
 using TMPro;
 
+//TODO Rewrite using async instead of coroutines
 public class Actor : DynamicEntity, IOrderable, IDamageable
 {
     NavMeshAgent Agent;
@@ -73,7 +74,7 @@ public class Actor : DynamicEntity, IOrderable, IDamageable
 
     private bool ProximityCheck(GameObject Target)
     {
-        if (Vector3.Distance(this.transform.position, Target.transform.position) <= PickupDistance)
+        if (Vector3.Distance(transform.position, Target.transform.position) <= PickupDistance)
             return true;
         else
             return false;

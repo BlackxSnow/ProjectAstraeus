@@ -90,6 +90,7 @@ public class ItemTypes : MonoBehaviour
 
     public enum StatsEnum
     {
+        //Weapon Stats
         Damage,
         AttackSpeed,
         Accuracy,
@@ -97,11 +98,18 @@ public class ItemTypes : MonoBehaviour
         ArmourPiercing,
         Range,
 
+        //Defense and Utility Stats
         Armour,
         Power,
         PowerUse,
         Shield,
 
+        //Consumable Stats
+        Quantity,
+        MaxQuantity,
+        Quality,
+
+        //General Stats
         Size,
         Mass,
         Cost,

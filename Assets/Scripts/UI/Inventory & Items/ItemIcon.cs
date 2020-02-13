@@ -41,6 +41,12 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
     // Start is called before the first frame update
     void Start()
     {
+        if (TryGetComponent(out ItemContextMenu ItemMenu))
+        {
+            ItemMenu.RefItem = RefItem;
+            ItemMenu.Init();
+        }
+        
         RTransform = GetComponent<RectTransform>();
         ParentCanvasObj = UIController.CanvasObject;
         CanvasRect = ParentCanvasObj.GetComponent<RectTransform>();
@@ -88,17 +94,25 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
 
     public void OnPointerDown(PointerEventData data)
     {
-        AllowToolTip = false;
-        if (ToolTipObject) Destroy(ToolTipObject);
-        Darken(true);
-        Dragging = true;
-        SetFollowCursor();
-        SetSizeToGrid();
+        if (data.button == PointerEventData.InputButton.Left)
+        {
+            AllowToolTip = false;
+            if (ToolTipObject) Destroy(ToolTipObject);
+            Darken(true);
+            Dragging = true;
+            SetFollowCursor();
+            SetSizeToGrid();
+        }
+        else if (data.button == PointerEventData.InputButton.Right)
+        {
+
+        }
     }
 
     public void OnPointerUp(PointerEventData data)
     {
-        if (!Dragging) return;
+        
+        if (!Dragging || data.button != PointerEventData.InputButton.Left) return;
 
         List<RaycastResult> Results = new List<RaycastResult>();
         ParentGraphicRaycast.Raycast(data, Results);

@@ -63,13 +63,13 @@ public class DataManager : MonoBehaviour
     }
 
     #region Injuries
-    public void InitInjuries(DataStruct<Medical.Health.Injury> Data)
+    public void InitInjuries(DataStruct<Medical.Injury> Data)
     {
         Medical.Health.LoadedInjuries = Data.DataArray;
     }
     public void LoadInjuries()
     {
-        DataStruct<Medical.Health.Injury> Data = LoadArrayedData<Medical.Health.Injury>(InjuriesPath, out int FileCount);
+        DataStruct<Medical.Injury> Data = LoadArrayedData<Medical.Injury>(InjuriesPath, out int FileCount);
         InitInjuries(Data);
         Debug.Log($"Finished loading injuries; {FileCount} files and {Data.DataArray.Count} objects loaded");
     }

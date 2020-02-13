@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class Selection : MonoBehaviour
 {
+    public static bool AllowSelection = true;
     Rect RectSelect;
     Texture2D RectSelectTex;
     bool Selecting; //Is the user selecting?
@@ -39,18 +40,22 @@ public class Selection : MonoBehaviour
     void Update()
     {
         if (Cam != Camera.main) Cam = Camera.main;
-        if (Input.GetButtonDown("Click") && !EventSystem.current.IsPointerOverGameObject())
+        if (AllowSelection)
         {
-            Selecting = true;
-            MousePosInit = Input.mousePosition;
-            MousePosInit.y = Screen.height - Input.mousePosition.y;
-        } else if (Input.GetButtonUp("Click"))
-        {
-            if(!MultiSelected && !EventSystem.current.IsPointerOverGameObject()) SingleSelect();
-            Selecting = false;
-            if (MultiSelected) SetSelectionDisplay();
-            MultiSelected = false;
-            FinaliseSelection();
+            if (Input.GetButtonDown("Click") && !EventSystem.current.IsPointerOverGameObject())
+            {
+                Selecting = true;
+                MousePosInit = Input.mousePosition;
+                MousePosInit.y = Screen.height - Input.mousePosition.y;
+            }
+            else if (Input.GetButtonUp("Click"))
+            {
+                if (!MultiSelected && !EventSystem.current.IsPointerOverGameObject()) SingleSelect();
+                Selecting = false;
+                if (MultiSelected) SetSelectionDisplay();
+                MultiSelected = false;
+                FinaliseSelection();
+            }
         }
     }
 

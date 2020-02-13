@@ -49,12 +49,24 @@ MonoBehaviour:
     m_Address: ItemToolTip
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 77d747ef71088674abcbf5ed8390021d
+    m_Address: ContextMenu
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   - m_GUID: a0fc7e1eab0c10445a1be745b4b7a108
     m_Address: KeyValuePanel
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: a2ce212d6e9731948ac30a9806532db4
     m_Address: ModuleDisplayPanel
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: ae999a5402efac346a8e2183606b243f
+    m_Address: OrderButton
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: bad2f55d50c5ed24c8d428ec880dec63
+    m_Address: ProgressBar
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: cfd2be4c218d6d04ab5908e9d3275c1f
@@ -67,6 +79,10 @@ MonoBehaviour:
     m_SerializedLabels: []
   - m_GUID: e2ede8221adbea64caee37773318a84d
     m_Address: MedicalInfo
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: e3d7a6b6f530d16458400237a9c23a4f
+    m_Address: Cursor_Select
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: ef780915b5e55ef418cfab8dbeb2c8e9

@@ -2,11 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
-using UnityEngine.UI;
+using UnityAsync;
 
 public class KeyValueGroup : ScriptableObject
 {
+
     public struct FontSizes
     {
         public float Min;
@@ -41,12 +41,12 @@ public class KeyValueGroup : ScriptableObject
         GroupMembers.Clear();
     }
 
-    IEnumerator LoopRoutine()
+    async void LoopRoutine()
     {
         while (Running)
         {
             if (Dirty) UniformSize = Recalculate();
-            yield return new WaitForFixedUpdate();
+            await Await.NextUpdate();
         }
     }
 
@@ -63,7 +63,7 @@ public class KeyValueGroup : ScriptableObject
             Member.SetSize(UniformSize);
         }
     }
-    float Recalculate()
+    private float Recalculate()
     {
         float MinSize = 100;
         float[] SizeArray = new float[GroupMembers.Count];
@@ -95,7 +95,6 @@ public class KeyValueGroup : ScriptableObject
             Font.Min = MinFont;
             Font.Max = MaxFont;
             Running = true;
-            Controller.Control.StartCoroutineWrapper(LoopRoutine());
         }
     }
     public void Init()
@@ -103,7 +102,6 @@ public class KeyValueGroup : ScriptableObject
         if(!Running)
         {
             Running = true;
-            Controller.Control.StartCoroutineWrapper(LoopRoutine());
         }
     }
 }

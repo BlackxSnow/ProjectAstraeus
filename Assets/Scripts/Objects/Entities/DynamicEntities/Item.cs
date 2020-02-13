@@ -8,6 +8,24 @@ using static ItemTypes;
 
 public class Item : DynamicEntity
 {
+    [Serializable]
+    public class DebugClass
+    {
+        public Item item;
+        public bool DEBUG = false;
+        public Vector2Int DEBUG_SIZE = new Vector2Int(1, 1);
+        public float DEBUG_MASS = 1f;
+        public Resources DEBUG_COST = new Resources(1, 1, 1);
+
+        public void SetValues()
+        {
+            item.Stats.SetStat(StatsEnum.Size, DEBUG_SIZE);
+            item.Stats.SetStat(StatsEnum.Mass, DEBUG_MASS);
+            item.Stats.SetStat(StatsEnum.Cost, DEBUG_COST);
+        }
+    }
+    public DebugClass DebugValues;
+
     public BaseItemStats BaseStats = new BaseItemStats()
     {
         Stats = new Dictionary<StatsEnum, object>()
@@ -80,25 +98,26 @@ public class Item : DynamicEntity
             {
                 throw new ArgumentException(string.Format("Type {0} was passed to member of type {1}", Value.GetType(), Stats[Stat].GetType()));
             }
-            if (Operation != OperationEnum.None && !(Value is float))
+            if (Operation != OperationEnum.None && !(Value is float || Value is double || Value is int))
             {
                 throw new ArgumentException(string.Format("Numeric type was passing to SetStat() while Operation was not None"));
             }
-            if (Operation != OperationEnum.None && Value is float FVal)
+            if (Operation != OperationEnum.None && (Value is float || Value is double || Value is int))
             {
+                dynamic DVal = Value as dynamic;
                 switch (Operation)
                 {
                     case OperationEnum.Add:
-                        Stats[Stat] = (float)Stats[Stat] + FVal;
+                        Stats[Stat] = (T)Stats[Stat] + DVal;
                         return;
                     case OperationEnum.Subtract:
-                        Stats[Stat] = (float)Stats[Stat] - FVal;
+                        Stats[Stat] = (T)Stats[Stat] - DVal;
                         return;
                     case OperationEnum.Multiply:
-                        Stats[Stat] = (float)Stats[Stat] * FVal;
+                        Stats[Stat] = (T)Stats[Stat] * DVal;
                         return;
                     case OperationEnum.Divide:
-                        Stats[Stat] = (float)Stats[Stat] / FVal;
+                        Stats[Stat] = (T)Stats[Stat] / DVal;
                         return;
             }
         }
@@ -164,6 +183,7 @@ public class Item : DynamicEntity
 
     public string ItemName;
     public ItemStats Stats = new ItemStats();
+    public Inventory StoredIn;
 
     //Modular Parts
     public List<AdditionalModule> Modules = new List<AdditionalModule>();
@@ -177,6 +197,7 @@ public class Item : DynamicEntity
     {
         base.Init();
         EntityType = EntityTypes.Item;
+        if (DebugValues.DEBUG) DebugValues.SetValues();
     }
 
     protected override void Start()
@@ -186,7 +207,7 @@ public class Item : DynamicEntity
         EntityManager.RegisterItem(this);
     }
 
-    //Three functions for moving items from world to inventory and vice versa
+    //Functions for moving items from world to inventory and vice versa
     public void Pack()
     {
         rendererComponent.enabled = false;
@@ -201,17 +222,32 @@ public class Item : DynamicEntity
     {
         if(Target)  transform.position = Target.transform.position;
 
-        transform.SetParent(Target.transform);
+        transform.parent = Target?.transform;
     }
-
+    public void AddToInventory(Inventory Target)
+    {
+        Pack();
+        StoredIn = Target;
+        SetFollow(Target.gameObject);
+    }
+    public void RemoveFromInventory()
+    {
+        Unpack();
+        StoredIn = null;
+        SetFollow(null);
+    }
     public override Enum GetEntityType()
     {
         return Type;
     }
 
+    /// <summary>
+    /// Destroys the entity, deregisters it, and removes it from any storing inventory.
+    /// </summary>
     public void DestroyEntity()
     {
+        if (StoredIn) StoredIn.RemoveItem(this, true);
         EntityManager.UnregisterItem(this);
-        Destroy(this.gameObject);
+        Destroy(gameObject);
     }
 }

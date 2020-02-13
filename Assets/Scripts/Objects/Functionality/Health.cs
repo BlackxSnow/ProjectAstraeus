@@ -52,6 +52,7 @@ namespace Medical
 
         public List<Condition> ActiveConditions = new List<Condition>(); 
         public List<BodyPart> Body = new List<BodyPart>();
+        public List<Injury> Injuries = new List<Injury>();
         public List<PartFunctions> ValidFunctions = new List<PartFunctions>();
 
         public void Init()

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Character : Actor
+public class Character : Biotic
 {
     void InitialiseInheritedProperties()
     {

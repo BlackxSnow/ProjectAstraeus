@@ -85,6 +85,7 @@ GameObject:
   - component: {fileID: 4685317144132069048}
   - component: {fileID: 7620038721827517114}
   - component: {fileID: 4574608189011204475}
+  - component: {fileID: 7955073571460537680}
   m_Layer: 5
   m_Name: ItemIcon
   m_TagString: Untagged
@@ -165,6 +166,19 @@ MonoBehaviour:
   ItemSlotName: {fileID: 8675545466775899655}
   RefItem: {fileID: 0}
   ModifiedMousePosition: {x: 0, y: 0, z: 0}
+--- !u!114 &7955073571460537680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7813830514451032965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc2262c128c736e41910cc02f8e4506f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RefItem: {fileID: 0}
 --- !u!1 &8905281064127057713
 GameObject:
   m_ObjectHideFlags: 0

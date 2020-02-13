@@ -7,7 +7,7 @@ using TMPro;
 using UnityEngine.UI;
 using Medical.Conditions;
 
-public class MedicalDetailsHUD : MonoBehaviour
+public class MedicalDetailsHUD : MonoBehaviour, IDestroyHandler
 {
 
 
@@ -36,6 +36,9 @@ public class MedicalDetailsHUD : MonoBehaviour
         UpdateHealthBar();
     }
     int f = 5;
+
+    public bool DestructionMarked { get; set; }
+
     private void Update()
     {
         if (f > 0)
@@ -91,7 +94,7 @@ public class MedicalDetailsHUD : MonoBehaviour
         DisplayedInjuries.Clear();
         foreach (Medical.Health.BodyPart part in SelectedActor.EntityComponents.Health.Body)
         {
-            foreach (Medical.Health.Injury injury in part.Injuries)
+            foreach (Medical.Injury injury in part.Injuries)
             {
                 if (InjuriesPanel == null) return;
                 GameObject InjuryIcon = Instantiate(UIController.ObjectPrefabs[UIController.ObjectPrefabsEnum.ToolTippedIconPrefab], InjuriesPanel.transform);
@@ -152,5 +155,13 @@ public class MedicalDetailsHUD : MonoBehaviour
         int FinalCount = DisplayedConditions.Count;
         int ConditionCount = SelectedActor.EntityComponents.Health.ActiveConditions.Count;
         //Debug.Log($"{StartCount} => {PreservedCount} => {FinalCount} || {ConditionCount}");
+    }
+
+    public void Destroy()
+    {
+        SelectedActor.EntityComponents.Health.HealthChanged -= UpdateHealthBar;
+        SelectedActor.EntityComponents.Health.InjuriesChanged -= DisplayInjuries;
+        SelectedActor.EntityComponents.Health.ConditionsChanged -= DisplayConditions;
+        Destroy(gameObject);
     }
 }

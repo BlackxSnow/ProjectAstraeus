@@ -69,11 +69,7 @@ public class HUDController : MonoBehaviour
     List<GameObject> SelectionUIDetails = new List<GameObject>();
     public void DisplaySelectionUI(ISelectable Selection)
     {
-        foreach (GameObject obj in SelectionUIDetails)
-        {
-            Destroy(obj);
-        }
-        SelectionUIDetails.Clear();
+        ClearSelectionUI();
 
         DynamicEntity SelectedEntity = Selection as DynamicEntity;
         SelectHUD.InfoPanel.SetActive(true);
@@ -126,9 +122,17 @@ public class HUDController : MonoBehaviour
     {
         SelectHUD.InfoPanel.SetActive(false);
         if (SelectionUIDetails == null) return;
-        foreach (GameObject UIObject in SelectionUIDetails)
+        foreach (GameObject obj in SelectionUIDetails)
         {
-            Destroy(UIObject);
+            if (obj.TryGetComponent(out IDestroyHandler objScript))
+            {
+                objScript.Destroy();
+            }
+            else
+            {
+                Destroy(obj);
+            }
+
         }
         SelectionUIDetails.Clear();
         

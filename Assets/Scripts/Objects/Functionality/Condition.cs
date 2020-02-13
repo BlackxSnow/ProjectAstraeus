@@ -29,13 +29,13 @@ namespace Medical
             public virtual void EndEffect(bool CreateChilden = true)
             {
                 HealTimer.Stop();
-            if (ChildConditions != null && CreateChilden)
-            {
-                foreach (KeyValuePair<ConditionTypes, Health.ConditionStruct> condition in ChildConditions)
+                if (ChildConditions != null && CreateChilden)
                 {
-                    CharacterHealth.AddCondition(condition.Key, condition.Value);
+                    foreach (KeyValuePair<ConditionTypes, Health.ConditionStruct> condition in ChildConditions)
+                    {
+                        CharacterHealth.AddCondition(condition.Key, condition.Value);
+                    }
                 }
-            }
                 CharacterHealth.ActiveConditions.Remove(this);
                 CharacterHealth.RefreshConditions();
             }

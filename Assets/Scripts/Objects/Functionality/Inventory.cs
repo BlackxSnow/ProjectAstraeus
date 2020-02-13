@@ -29,8 +29,7 @@ public class Inventory : MonoBehaviour
             }
         }
         InventoryList.Add(item);
-        item.SetFollow(this.gameObject);
-        item.Pack();
+        item.AddToInventory(this);
         return true;
     }
     public bool AddItem(Item item) //Add to first available space instead of specified location
@@ -70,8 +69,7 @@ public class Inventory : MonoBehaviour
 
         if (Drop)
         {
-            item.SetFollow(null);
-            item.Unpack();
+            item.RemoveFromInventory();
         }
 
         return true;

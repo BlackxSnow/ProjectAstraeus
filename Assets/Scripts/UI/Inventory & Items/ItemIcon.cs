@@ -24,6 +24,7 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
     public InventoryInfoStruct InventoryInfo;
     public EquipmentInfoStruct EquipmentInfo;
 
+    public ProgressBar Quantitybar;
     RectTransform RTransform;
 
     GameObject ParentCanvasObj;
@@ -34,6 +35,8 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
 
     bool Dragging;
     bool FollowingCursor;
+
+    public bool DisplayQuantity = false;
 
     public Vector3 ModifiedMousePosition;
     Vector3 MouseOffset;
@@ -51,6 +54,13 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
         ParentCanvasObj = UIController.CanvasObject;
         CanvasRect = ParentCanvasObj.GetComponent<RectTransform>();
         ParentGraphicRaycast = ParentCanvasObj.GetComponent<GraphicRaycaster>();
+
+        if (RefItem.Stats.Stats.ContainsKey(ItemTypes.StatsEnum.Quantity))
+        {
+            DisplayQuantity = true;
+            Quantitybar.Init(RefItem.Stats.GetStat<int>(ItemTypes.StatsEnum.Quantity), RefItem.Stats.GetStat<int>(ItemTypes.StatsEnum.MaxQuantity), Color.grey, Color.green);
+        }
+        else Quantitybar.gameObject.SetActive(false);
 
         Utility.Timer.ElapsedDelegate del = ToolTipEvent;
         HoverTimer = new Utility.Timer(1, del);
@@ -71,6 +81,8 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
         {
             ItemSlotName.text = Equippable.Slot.ToString();
         }
+
+        if (DisplayQuantity) Quantitybar.UpdateBar(RefItem.Stats.GetStat<int>(ItemTypes.StatsEnum.Quantity));
     }
 
     void RemoveItem(Item TargetItem)
@@ -229,7 +241,7 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
             return false;
     }
 
-    void ToolTipEvent()
+    void ToolTipEvent(float _ = 0)
     {
         AllowToolTip = false;
         SpawnPosition = Input.mousePosition;

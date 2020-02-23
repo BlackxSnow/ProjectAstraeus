@@ -38,7 +38,7 @@ public class ContextMenu : MonoBehaviour
     }
     async void Init()
     {
-        await UIController.DataLoaded.WaitAsync();
+        await UIController.DataLoadedEvent.WaitAsync();
         ContextGUIInstance = UIController.InstantiateContextMenu(Vector2.zero);
     }
 

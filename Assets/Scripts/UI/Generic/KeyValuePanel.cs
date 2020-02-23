@@ -14,7 +14,6 @@ public class KeyValuePanel : TextKVGroup, IGroupableUI
     public Image Icon;
     public Sprite WarningIcons;
 
-    //Storing useful components rather than calling GetComponent<> multiple times
     public struct ChildData
     {
         public GameObject @Object;

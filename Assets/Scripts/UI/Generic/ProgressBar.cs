@@ -7,6 +7,7 @@ public class ProgressBar : MonoBehaviour, IDestroyHandler
 {
     GameObject TargetObject;
     float MaxAmount;
+    bool HoverOnTarget;
 
     [Serializable]
     public struct BarStruct
@@ -25,10 +26,18 @@ public class ProgressBar : MonoBehaviour, IDestroyHandler
         UIBar.Foreground.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, UIBar.Background.rect.width * current / MaxAmount);
     }
 
-    public void Init(GameObject parent, float current, float max, Color background, Color foreground)
+    public void Init(float current, float max, Color background, Color foreground, GameObject parent = null)
     {
+        if (parent)
+        {
+            TargetObject = parent;
+            HoverOnTarget = true;
+        }
+        else
+        {
+            HoverOnTarget = false;
+        }
         MaxAmount = max;
-        TargetObject = parent;
         UIBar.Foreground.GetComponent<Image>().color = foreground;
         UIBar.Background.GetComponent<Image>().color = background;
         UpdateBar(current);
@@ -36,7 +45,7 @@ public class ProgressBar : MonoBehaviour, IDestroyHandler
 
     private void Update()
     {
-        transform.position = Camera.main.WorldToScreenPoint(TargetObject.transform.position);
+        if(HoverOnTarget)   transform.position = Camera.main.WorldToScreenPoint(TargetObject.transform.position);
     }
 
     public void Destroy()

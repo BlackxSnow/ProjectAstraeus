@@ -21,6 +21,10 @@ MonoBehaviour:
     m_Address: ValueSlider
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 101fb8bc673d86841b6dc34a4cf35ba6
+    m_Address: InjuryIcon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   - m_GUID: 1dbba977907a45f4ca99e542f6756850
     m_Address: Dropdown
     m_ReadOnly: 0
@@ -69,10 +73,6 @@ MonoBehaviour:
     m_Address: ProgressBar
     m_ReadOnly: 0
     m_SerializedLabels: []
-  - m_GUID: cfd2be4c218d6d04ab5908e9d3275c1f
-    m_Address: Condition_Bleeding
-    m_ReadOnly: 0
-    m_SerializedLabels: []
   - m_GUID: d08944c2ae8e80a459afbad134931a79
     m_Address: ToolTip
     m_ReadOnly: 0
@@ -85,12 +85,24 @@ MonoBehaviour:
     m_Address: Cursor_Select
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: ea00b6009359151409b7d293b01d3a4d
+    m_Address: ConditionIcon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   - m_GUID: ef780915b5e55ef418cfab8dbeb2c8e9
     m_Address: InventoryUI
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: f9fcb5772e492334f860f10e13015ddd
+    m_Address: SelectionCircle
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   - m_GUID: fc310f9909d3caa48afd55f2e554b57a
     m_Address: EquipmentUI
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: fdeada54c18749a469bc16d1c07cb226
+    m_Address: Condition_Bleeding
     m_ReadOnly: 0
     m_SerializedLabels: []
   m_ReadOnly: 0

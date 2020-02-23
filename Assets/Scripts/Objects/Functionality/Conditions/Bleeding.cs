@@ -15,24 +15,21 @@ namespace Medical
                 CharacterHealth.Damage(Severity * Time.deltaTime, false, Weapon.DamageTypesEnum.Other);
             }
 
-            public override void EndEffect(bool CreateChildren = true)
+            public override void EndEffect()
             {
-                base.EndEffect(CreateChildren);
+                base.EndEffect();
             }
 
-            protected override Sprite GetIcon()
+            public override Sprite GetIcon()
             {
-                if(!IconBleeding)
-                {
+                if(!IconBleeding)   IconBleeding = UIController.LoadedSprites[UIController.SpritesEnum.Condition_Bleeding];
 
-                    IconBleeding = UIController.LoadedSprites[UIController.SpritesEnum.Condition_Bleeding];
-                }
                 return IconBleeding;
             }
 
-            public override void Init(Health.ConditionStruct Data, Health CharacterHealth)
+            public override void Init(ConditionData Data, Health CharacterHealth, Injury injury = null)
             {
-                base.Init(Data, CharacterHealth);
+                base.Init(Data, CharacterHealth, injury);
                 Icon = GetIcon();
             }
 

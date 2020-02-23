@@ -19,7 +19,7 @@ public class Actor : DynamicEntity, IOrderable, IDamageable
 
     public Species Race;
 
-    // Start is called before the first frame update
+
     protected override void Start()
     {
         base.Start();
@@ -35,12 +35,12 @@ public class Actor : DynamicEntity, IOrderable, IDamageable
         base.Awake();
     }
 
-    public void Move(Vector3 Destination, FlockController flockController, bool StopAll = true)
+    public void Move(Vector3 Destination, FlockController flockController, bool Interrupt = true)
     {
-        if (StopAll)
+        if (Interrupt)
             StopAllCoroutines();
 
-        MovementScript.SetDestination(Destination, flockController);
+        MovementScript.SetDestination(Destination, flockController, Interrupt);
     }
 
     public void Pickup(DynamicEntity Target)
@@ -101,7 +101,7 @@ public class Actor : DynamicEntity, IOrderable, IDamageable
     public override List<GameObject> InstantiateStatDisplay()
     {
         GameObject MedicalPanel = Instantiate(UIController.ObjectPrefabs[UIController.ObjectPrefabsEnum.MedicalDetailsPrefab], HUDController.HUDControl.SelectHUD.DetailsPanel.transform);
-        MedicalDetailsHUD MedicalPanelScript = MedicalPanel.GetComponent<MedicalDetailsHUD>();
+        UI.MedicalDetailsHUD MedicalPanelScript = MedicalPanel.GetComponent<UI.MedicalDetailsHUD>();
         MedicalPanelScript.SelectedActor = this;
         MedicalPanelScript.Init();
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System;
 using UnityEngine;
+using MoreLinq;
 
 public class DataManager : MonoBehaviour
 {
@@ -31,10 +32,10 @@ public class DataManager : MonoBehaviour
         if (File.Length != 1) throw new Exception($"{File.Length} files were found for search {FileName}");
 
         byte[] ImageBytes = System.IO.File.ReadAllBytes(Path.Combine(FolderPath, File[0].Name));
-        Texture2D Tex = new Texture2D(24,24);
+        Texture2D Tex = new Texture2D(24,24, TextureFormat.ARGB32, true);
         Tex.LoadImage(ImageBytes);
 
-        Sprite Result = Sprite.Create(Tex, new Rect(0, 0, 258, 258), new Vector2(0, 1));
+        Sprite Result = Sprite.Create(Tex, new Rect(0, 0, 128, 128), new Vector2(0, 1));
         return Result;
     }
 
@@ -66,6 +67,8 @@ public class DataManager : MonoBehaviour
     public void InitInjuries(DataStruct<Medical.Injury> Data)
     {
         Medical.Health.LoadedInjuries = Data.DataArray;
+        Medical.Injury.MaxSeverity = Medical.Health.LoadedInjuries.MaxBy(i => i.SeverityCost).First().SeverityCost;
+        Medical.Injury.MinSeverity = Medical.Health.LoadedInjuries.MinBy(i => i.SeverityCost).First().SeverityCost;
     }
     public void LoadInjuries()
     {

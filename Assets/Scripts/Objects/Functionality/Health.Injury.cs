@@ -57,7 +57,7 @@ namespace Medical
             int ChosenInjury = ValidInjuryIndices[IRoll];
 
 
-
+            //TODO Shift conditions from overridden injury to overriding injury
             if (LoadedInjuries[ChosenInjury].Overriding && ChosenPart.Injuries.Count != 0)
             {
                 InjuryCount -= ChosenPart.Injuries.Count;
@@ -71,12 +71,12 @@ namespace Medical
             Injury ClonedInjury = LoadedInjuries[ChosenInjury].Clone();
             ClonedInjury.Init(this, ChosenPart);
             ChosenPart.Injuries.Add(ClonedInjury);
-
+            ClonedInjury.Part = ChosenPart;
             InjuryCount++;
-            InjuryCostSum += LoadedInjuries[ChosenInjury].SeverityCost;
+            InjuryCostSum += ClonedInjury.SeverityCost;
 
             if (InjuriesChanged != null) InjuriesChanged.Invoke();
-            CheckConditions(LoadedInjuries[ChosenInjury]);
+            CheckConditions(ClonedInjury);
         }
 
         //TODO Kill character when all possible injuries are applied
@@ -145,34 +145,43 @@ namespace Medical
             }
             return ValidInjuryIndices;
         }
+        //TODO only roll for condition when its start time has passed
         private void CheckConditions(Injury injury)
         {
+            List<int> ActivatedConditions = new List<int>();
             bool Added = false;
-            foreach(KeyValuePair<Condition.ConditionTypes, ConditionStruct> kvp in injury.Conditions)
+            foreach(Condition.ConditionData condition in injury.Conditions)
             {
-                float Roll = UnityEngine.Random.value;
-                if (Roll <= kvp.Value.Chance)
+                if (condition.Activated || condition.StartTime > 1 - (injury.RemainingTime / injury.BaseHealTime)) continue;
+
+                Condition.ConditionData Parent = new Condition.ConditionData();
+                if (condition.ParentID != 0)
                 {
-                    AddCondition(kvp.Key, kvp.Value, false);
+                    try
+                    {
+                        Parent = injury.Conditions.Find(c => c.ID == condition.ParentID);
+                    } catch (ArgumentNullException e)
+                    {
+                        throw new Exception($"ParentID {condition.ParentID} does not exist in {injury.Name} conditions collection {e.Source}");
+                    }
+                }
+                if (Parent.Activated == false && condition.ParentID != 0) continue;
+
+                if (AddConditionWithRoll(condition, injury, false))
+                {
                     Added = true;
                 }
             }
+            
             if (ConditionsChanged != null && Added) ConditionsChanged.Invoke();
         }
 
-
         private void RunConditions()
         {
-            foreach (Condition condition in ActiveConditions)
+            foreach (Condition condition in GlobalConditions)
             {
                 condition.RunEffect();
             }
-        }
-
-        //TODO Add ability to remove injuries. Reduce InjuryCount and InjuryCostSum, Invoke InjuriesChanged
-        public void RemoveInjury(BodyPart Part, string InjuryName)
-        {
-            
         }
     }
 

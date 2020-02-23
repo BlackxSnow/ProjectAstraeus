@@ -27,11 +27,7 @@ namespace Medical
             }
             public BodyPart Clone()
             {
-                BodyPart Result = new BodyPart();
-                Result.Name = Name;
-                Result.InjuryChance = InjuryChance;
-                Result.SeverityCost = SeverityCost;
-                Result.Functions = new Dictionary<PartFunctions, float>(Functions);
+                BodyPart Result = (BodyPart)MemberwiseClone();
                 Result.Injuries = new List<Injury>(Injuries);
                 return Result;
             }

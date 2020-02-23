@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityAsync;
 
 public class DynamicEntity : Entity, ISelectable
 {
+    public IInterruptible ActionInterrupt;
     public bool Selected { get; set; }
     public bool ViewableOnly { get; set; }
     public bool Circled { get; set; }
@@ -16,12 +18,17 @@ public class DynamicEntity : Entity, ISelectable
 
     protected Collider colliderComponent;
 
+    public void InterruptCurrent()
+    {
+        if (ActionInterrupt == null) return;
+        ActionInterrupt.Interrupt();
+    }
+
     public override void Init()
     {
         base.Init();
-        SelectObj = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/SelectionCircle");
         ISelectablegameObject = gameObject;
-        SelectObjInstance = Instantiate(SelectObj, transform);
+        SelectObjInstance = Instantiate(UIController.ObjectPrefabs[UIController.ObjectPrefabsEnum.SelectionCirclePrefab], transform);
         SelectObjProjector = SelectObjInstance.GetComponent<Projector>();
         colliderComponent = GetComponent<Collider>();
         SelectObjUpdate();
@@ -55,7 +62,8 @@ public class DynamicEntity : Entity, ISelectable
 
     public void SelectControl()
     {
-        SelectObjUpdate();
+        if(Initialised) SelectObjUpdate();
+
         if (Selected && !Circled)
         {
             SelectObjInstance.SetActive(true);

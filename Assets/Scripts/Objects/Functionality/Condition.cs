@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using UnityEngine;
+using UnityAsync;
 
 namespace Medical
 {
@@ -8,6 +11,37 @@ namespace Medical
     {
         public class Condition
         {
+            public class ConditionData : ICloneable
+            {
+                public int ID; //Start at 1. Only used for ParentID restriction
+                public int ParentID; //0 == None, determines if a condition should only become active if its parent also did.
+                public string DisplayName;
+                public string ConditionType_S; //Relates to ConditionType enum
+                public float Chance;
+                public float Severity;
+                public bool GlobalCondition; //Is the condition specific to this injury, or across the whole body?
+                public float StartTime; //Flat seconds, or percentage of injury heal time before this condition is rolled
+                public float Duration; //Either flat second duration, or percentage of injury heal time depending on GlobalCondition value (Global conditions are in seconds)
+                public bool EndOnTend;
+
+                //For internal use
+                public ConditionTypes ConditionType;
+                public bool Activated;
+
+                [OnDeserialized]
+                public void OnDeserialised(StreamingContext context)
+                {
+                    Activated = false;
+                    ConditionType = (ConditionTypes)Enum.Parse(typeof(ConditionTypes), ConditionType_S);
+                }
+
+                public object Clone()
+                {
+                    object Clone = MemberwiseClone();
+                    return Clone;
+                }
+            }
+
             public enum ConditionTypes
             {
                 [Type(typeof(Bleeding))]
@@ -16,56 +50,76 @@ namespace Medical
 
             public Utility.Timer HealTimer;
             public Health CharacterHealth;
-            public float Severity;
-            public float Duration; //0 = until tended, duration in seconds
+            public float Severity { get; protected set; }
+            public float Duration { get; protected set; }
+            public float AbsoluteDuration { get; protected set; }
+            public float StartTime { get; protected set; }
             public Sprite Icon;
 
-            public string DisplayName;
-            public string Description;
+            public bool GlobalCondition { get; protected set; }
+            public Injury injury;
 
-            public Dictionary<ConditionTypes, Health.ConditionStruct> ChildConditions = new Dictionary<ConditionTypes, Health.ConditionStruct>();
+            public string DisplayName { get; protected set; }
+            public string Description { get; protected set; }
+            public bool EndOnTend { get; protected set; }
+            public static float HealInterval { get; } = 0.1f;
 
             public virtual void RunEffect() { }
-            public virtual void EndEffect(bool CreateChilden = true)
+            public async virtual void EndEffect()
             {
                 HealTimer.Stop();
-                if (ChildConditions != null && CreateChilden)
+                await Await.NextLateUpdate();
+                if (GlobalCondition)
                 {
-                    foreach (KeyValuePair<ConditionTypes, Health.ConditionStruct> condition in ChildConditions)
-                    {
-                        CharacterHealth.AddCondition(condition.Key, condition.Value);
-                    }
+                    CharacterHealth.GlobalConditions.Remove(this);
+                } else
+                {
+                    injury.ActiveConditions.Remove(this);
+                    CharacterHealth.AllConditions.Remove(this);
                 }
-                CharacterHealth.ActiveConditions.Remove(this);
+
                 CharacterHealth.RefreshConditions();
             }
 
-            protected virtual Sprite GetIcon()
+            public virtual Sprite GetIcon()
             {
                 return null;
             }
             public float RemainingTime;
-            public virtual void Init(Health.ConditionStruct Data, Health CharacterHealth)
+            public virtual void Init(ConditionData Data, Health CharacterHealth, Injury injury = null)
             {
                 DisplayName = Data.DisplayName;
                 Severity = Data.Severity;
                 Duration = Data.Duration;
-                RemainingTime = Duration;
-                ChildConditions = Data.ChildConditions;
+                StartTime = Data.StartTime;
+                this.injury = injury;
                 this.CharacterHealth = CharacterHealth;
+                GlobalCondition = Data.GlobalCondition;
+                EndOnTend = Data.EndOnTend;
 
-                if (RemainingTime == 0) return;
-                HealTimer = new Utility.Timer(1f, new Utility.Timer.ElapsedDelegate(AdvanceHeal), true);
+                if(GlobalCondition)
+                {
+                    RemainingTime = Duration;
+                    AbsoluteDuration = Duration;
+                }
+                else
+                {
+                    float ElapsedTimePercent = (injury.BaseHealTime - injury.RemainingTime) / injury.BaseHealTime;
+                    RemainingTime = (Duration - (ElapsedTimePercent - StartTime)) * injury.BaseHealTime;
+                    AbsoluteDuration = Duration * injury.BaseHealTime;
+                }
+
+                HealTimer = new Utility.Timer(HealInterval, new Utility.Timer.ElapsedDelegate(AdvanceHeal), true);
                 HealTimer.Start();
             }
 
-            public float EffectiveRemainingTime;
-            public virtual void AdvanceHeal()
+            public Utility.TimeSpan EffectiveRemainingTime = new Utility.TimeSpan();
+            public virtual void AdvanceHeal(float ActualInterval)
             {
                 float RestModifier = CharacterHealth.RestHealModifier;
-                float ModifiedTotal = 1f * RestModifier;
-                EffectiveRemainingTime = RemainingTime / ModifiedTotal;
+                float ModifiedTotal = ActualInterval * RestModifier;
                 RemainingTime -= ModifiedTotal;
+                EffectiveRemainingTime = Utility.TimeSpan.FromSeconds(RemainingTime / ModifiedTotal * ActualInterval);
                 if (RemainingTime <= 0f)
                 {
                     EndEffect();
@@ -73,25 +127,25 @@ namespace Medical
             }
             public string GetRemainingTime()
             {
-                Dictionary<string, float> Time = new Dictionary<string, float>()
-                {
-                    { "h", EffectiveRemainingTime / 60f / 60f },
-                    { "m", EffectiveRemainingTime / 60f },
-                    { "s", EffectiveRemainingTime }
-                };
-                KeyValuePair<string, float> SelectedTime = new KeyValuePair<string, float>();
-                foreach (KeyValuePair<string, float> kvp in Time)
-                {
-                    if (kvp.Value > 1)
-                    {
-                        SelectedTime = new KeyValuePair<string, float>(kvp.Key, Utility.RoundToNDecimals(kvp.Value, 1, Utility.RoundType.Ceil));
-                        break;
-                    }
-                }
-
-                string Result = $"{SelectedTime.Value}{SelectedTime.Key}";
+                KeyValuePair<string, float> TimeUnit = EffectiveRemainingTime.GetLargestUnit();
+                string Result = $"{Utility.RoundToNDecimals(TimeUnit.Value,1)}{TimeUnit.Key}";
                 return Result;
             }
+
+            public string GetDisplayName()
+            {
+                string Result;
+                if (GlobalCondition)
+                {
+                    Result = DisplayName;
+                }
+                else
+                {
+                    Result = $"{DisplayName} {injury.Part.Name}";
+                }
+                return Result;
+            }
+
             public Condition() { }
         } 
     }

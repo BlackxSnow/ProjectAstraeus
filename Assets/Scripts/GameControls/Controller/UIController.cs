@@ -26,12 +26,15 @@ public class UIController : MonoBehaviour
         ProgressBarPrefab,
         OrderButtonPrefab,
         ContextMenuPrefab,
+        SelectionCirclePrefab,
 
         InventoryPrefab,
         EquipmentPrefab,
         StatsPrefab,
 
-        MedicalDetailsPrefab
+        MedicalDetailsPrefab,
+        InjuryIconPrefab,
+        ConditionIconPrefab
     }
     public static string[] AssetKeys = new string[]
     {
@@ -48,12 +51,15 @@ public class UIController : MonoBehaviour
         "ProgressBar",
         "OrderButton",
         "ContextMenu",
+        "SelectionCircle",
 
         "InventoryUI",
         "EquipmentUI",
         "StatsUI",
 
-        "MedicalInfo"
+        "MedicalInfo",
+        "InjuryIcon",
+        "ConditionIcon"
     };
     public enum SpritesEnum
     {
@@ -82,7 +88,8 @@ public class UIController : MonoBehaviour
         PinnedPanel = CanvasObject.transform.GetChild(1);
     }
 
-    public static AsyncAutoResetEvent DataLoaded = new AsyncAutoResetEvent(false);
+    public static AsyncAutoResetEvent DataLoadedEvent = new AsyncAutoResetEvent(false);
+    public static bool DataLoaded = false;
     async void LoadAssets()
     {
         Task<IList<GameObject>> AssetTasks = Addressables.LoadAssetsAsync<GameObject>(AssetKeys, null, Addressables.MergeMode.Union).Task;
@@ -106,7 +113,8 @@ public class UIController : MonoBehaviour
             i++;
         }
 
-        DataLoaded.Set();
+        DataLoaded = true;
+        DataLoadedEvent.Set();
     }
 
     public enum LayoutTypes
@@ -412,7 +420,7 @@ public class UIController : MonoBehaviour
         GameObject Bar;
         Bar = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.ProgressBarPrefab], CanvasObject.transform);
         ProgressBar BarScript = Bar.GetComponent<ProgressBar>();
-        BarScript.Init(parent, current, max, background, foreground);
+        BarScript.Init(current, max, background, foreground, parent);
 
         return BarScript;
     }

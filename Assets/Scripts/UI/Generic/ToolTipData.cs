@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class ToolTipData : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class ToolTipData : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IDestroyHandler
 {
     public string TitleText;
     public string DescriptionText;
@@ -17,6 +17,14 @@ public class ToolTipData : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public delegate string UpdateValueDelegate();
     public UpdateValueDelegate UpdateValue;
+
+    public bool DestructionMarked { get; set; } = false;
+    public void Destroy()
+    {
+        if (HoverTimer != null) HoverTimer.Stop();
+        DestructionMarked = true;
+        Destroy(this);
+    }
 
     void Start()
     {
@@ -72,7 +80,7 @@ public class ToolTipData : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             return false;
     }
 
-    void ToolTipEvent()
+    void ToolTipEvent(float _ = 0)
     {
         AllowToolTip = false;
         SpawnPosition = Input.mousePosition;
@@ -82,7 +90,15 @@ public class ToolTipData : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     
     void UpdateToolTip()
     {
-        ToolTipScript.Title.text = $"{TitleText} ({UpdateValue()})";
+        string Val = UpdateValue();
+        if (int.TryParse(Val, out int i) && i == -1)
+        {
+            ToolTipScript.Title.text = $"{TitleText}";
+        }
+        else
+        {
+            ToolTipScript.Title.text = $"{TitleText} ({UpdateValue()})";
+        }
     }
 
     void CheckHover()

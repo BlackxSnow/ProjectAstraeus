@@ -3,6 +3,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading.Tasks;
+using Nito.AsyncEx;
+using UnityAsync;
 
 public class Utility : MonoBehaviour
 {
@@ -222,24 +225,109 @@ public class Utility : MonoBehaviour
         return Result;
     }
 
+    
+    public async static Task QueueRemovalFromList<T>(List<T> TargetList, T ToRemove, AsyncAutoResetEvent RunQueue, object LockObject)
+    {
+        await RunQueue.WaitAsync();
+        lock (LockObject)
+        {
+            TargetList.Remove(ToRemove);
+        }
+    }
+
+    public static List<T> CloneList<T>(IEnumerable<ICloneable> Original)
+    {
+        List<T> Result = new List<T>();
+        foreach(ICloneable obj in Original)
+        {
+            Result.Add((T)obj.Clone());
+        }
+        return Result;
+    }
+
+    public struct TimeSpan
+    {
+        private float days;
+        private float totalDays;
+        private float hours;
+        private float totalHours;
+        private float minutes;
+        private float totalMinutes;
+        private float seconds;
+        private float totalSeconds;
+        private float miliseconds;
+        private float totalMiliseconds;
+        public float Days { get => days; }
+
+        public float Hours { get => hours; }
+        public float Minutes { get => minutes; }
+        public float Seconds { get => seconds; }
+        public float Miliseconds { get => miliseconds; }
+
+        public static TimeSpan FromDays(float val) => FromSeconds(val * 24 * 60 * 60);
+        public static TimeSpan FromHours(float val) => FromSeconds(val * 60 * 60);
+        public static TimeSpan FromMinutes(float val) => FromSeconds(val * 60);
+        public static TimeSpan FromSeconds(float val)
+        {
+            TimeSpan Result = new TimeSpan();
+            float Remaining = val;
+
+            Result.totalDays = val / 86400;
+            Result.days = Mathf.Floor(Remaining / 86400);
+            Remaining -= Result.days * 86400;
+
+            Result.totalHours = val / 3600;
+            Result.hours = Mathf.Floor(Remaining / 3600);
+            Remaining -= Result.hours * 3600;
+
+            Result.totalMinutes = val / 60;
+            Result.minutes = Mathf.Floor(Remaining / 60);
+            Remaining -= Result.minutes * 60;
+
+            Result.totalSeconds = val;
+            Result.seconds = Mathf.Floor(Remaining);
+            Remaining -= Result.seconds;
+
+            Result.totalMiliseconds = val * 1000;
+            Result.miliseconds = Mathf.Floor(Remaining * 1000);
+
+            return Result;
+        }
+
+        public KeyValuePair<string, float> GetLargestUnit()
+        {
+            if (totalDays >= 1) return new KeyValuePair<string, float>("d", totalDays);
+            else if (totalHours >= 1) return new KeyValuePair<string, float>("h", totalHours);
+            else if (totalMinutes >= 1) return new KeyValuePair<string, float>("m", totalMinutes);
+            else if (totalSeconds >= 1) return new KeyValuePair<string, float>("s", totalSeconds);
+            else return new KeyValuePair<string, float>("ms", totalMiliseconds);
+        }
+    }
+
     public class Timer
     {
         //Limit in seconds
         public float Limit = 1f;
         public float Current = 0f;
         private float Interval;
+        private float LastTime;
         public bool Repeat;
 
-        public delegate void ElapsedDelegate();
+        public delegate void ElapsedDelegate(float ActualTime);
         public ElapsedDelegate Elapsed;
 
         public bool Enabled = false;
+
+        private float StartTime;
         public void Start()
         {
+            
             Current = 0f;
-            Interval = Mathf.Min(Limit / 5f, 1f);
+            Interval = Mathf.Min(Limit / 5f, 0.01f);
             Enabled = true;
-            Controller.Control.StartCoroutine(Counter());
+            LastTime = Time.time;
+            StartTime = Time.time;
+            Counter();
         }
         public void Stop()
         {
@@ -247,28 +335,15 @@ public class Utility : MonoBehaviour
             Current = 0f;
         }
 
-        IEnumerator Counter()
+        async void Counter()
         {
             while (Enabled)
             {
-                if (Current >= Limit)
-                {
-                    if (Repeat)
-                    {
-                        Elapsed();
-                        Current = 0;
-                        yield return new WaitForSeconds(Interval);
-                    } else
-                    {
-                        Elapsed();
-                        yield break;
-                    }
-                }
-
-                Current += Interval;
-                yield return new WaitForSeconds(Interval);
+                await new UnityEngine.WaitForSeconds(Limit);
+                Elapsed(Time.time - StartTime);
+                StartTime = Time.time;
+                if (!Repeat) break;
             }
-            if (!Enabled) yield break;
         }
 
         public Timer(float Seconds, ElapsedDelegate RunMethod, bool Repeat = false)

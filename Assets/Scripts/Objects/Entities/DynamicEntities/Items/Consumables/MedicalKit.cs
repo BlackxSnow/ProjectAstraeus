@@ -6,8 +6,16 @@ using System.Threading.Tasks;
 using System.Linq;
 using UnityAsync;
 
-public class MedicalKit : Consumable
+public class MedicalKit : Consumable, IInterruptible
 {
+    Task CurrentTask;
+    bool Interrupted = false;
+    public async void Interrupt()
+    {
+        Interrupted = true;
+        await CurrentTask;
+        Interrupted = false;
+    }
 
     public override void Init()
     {
@@ -19,26 +27,34 @@ public class MedicalKit : Consumable
     public async override void Use(Actor UsingActor)
     {
         ISelectable Selected = await TargetSelect.StartSelect();
+        
 
         if (Selected is Biotic Target)
         {
+            UsingActor.InterruptCurrent();
+            UsingActor.ActionInterrupt = this;
             Task MovementTask = UsingActor.EntityComponents.Movement.SetDestination(Target.transform.position, null);
             await Await.Until(() => MovementTask.IsCompleted).ConfigureAwait(this);
-            Heal(Target, UsingActor);
+            CurrentTask = Heal(Target, UsingActor);
         }
     }
 
-    private async void Heal(Biotic Target, Actor UsingActor)
+    private async Task Heal(Biotic Target, Actor UsingActor)
     {
         List<Medical.Injury> InjuriesBySeverity = Target.EntityComponents.Health.Injuries.OrderByDescending(injury => injury.SeverityCost).ToList();
         foreach (Medical.Injury injury in InjuriesBySeverity)
         {
+            if (injury.Tended) continue;
             if (Stats.GetStat<int>(ItemTypes.StatsEnum.Quantity) <= 0)
             {
                 DestroyEntity();
                 return;
             }
             await HealInstance(Target, UsingActor, injury, Mathf.Pow(injury.SeverityCost, 0.5f));
+            if (Interrupted)
+            {
+                return;
+            }
         }
     }
     
@@ -48,13 +64,18 @@ public class MedicalKit : Consumable
         float CurrentTime = 0;
         while (CurrentTime < time)
         {
+            if (Interrupted)
+            {
+                Bar.Destroy();
+                return;
+            }
             CurrentTime += Time.deltaTime;
             Bar.UpdateBar(CurrentTime);
             await Await.NextUpdate().ConfigureAwait(this);
         }
         //TODO Come up with good formula for quality
         Stats.SetStat(ItemTypes.StatsEnum.Quantity, 1, ItemStats.OperationEnum.Subtract);
-        float Quality = UsingActor.EntityComponents.Stats.Skills[StatsAndSkills.SkillsEnum.Medical].AdjustedLevel * Stats.GetStat<float>(ItemTypes.StatsEnum.Quality);
+        float Quality = (UsingActor.EntityComponents.Stats.Skills[StatsAndSkills.SkillsEnum.Medical].AdjustedLevel / 100) * Stats.GetStat<float>(ItemTypes.StatsEnum.Quality);
         injury.Tend(Quality);
         Bar.Destroy();
     }

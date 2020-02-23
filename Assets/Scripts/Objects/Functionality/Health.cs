@@ -17,26 +17,6 @@ namespace Medical
             Manipulation,
             Control
         }
-        public struct ConditionStruct
-        {
-            public string DisplayName;
-            public float Chance;
-            public float Severity;
-            public float Duration;
-
-            public Dictionary<string, ConditionStruct> ChildConditions_S;
-            public Dictionary<Condition.ConditionTypes, ConditionStruct> ChildConditions;
-            //Resolve enums and clear old dictionaries
-            [OnDeserialized]
-            public void OnDeserialised(StreamingContext context)
-            {
-                if (ChildConditions_S == null) return;
-
-                ChildConditions = Utility.DeserializeEnumCollection<Condition.ConditionTypes, ConditionStruct>(ChildConditions_S);
-                ChildConditions_S.Clear();
-
-            }
-        }
 
         public delegate void UpdateHandler();
         public event UpdateHandler HealthChanged;
@@ -50,7 +30,8 @@ namespace Medical
 
         public float RestHealModifier = 1.0f;
 
-        public List<Condition> ActiveConditions = new List<Condition>(); 
+        public List<Condition> GlobalConditions = new List<Condition>();
+        public List<Condition> AllConditions = new List<Condition>();
         public List<BodyPart> Body = new List<BodyPart>();
         public List<Injury> Injuries = new List<Injury>();
         public List<PartFunctions> ValidFunctions = new List<PartFunctions>();
@@ -94,16 +75,36 @@ namespace Medical
             }
         }
 
-        public void AddCondition(Condition.ConditionTypes TypeEnum, ConditionStruct Data, bool Refresh = true)
+        public void AddCondition(Condition.ConditionData Data, Injury injury, bool Refresh = true)
         {
-            Type ConditionType = TypeAttribute.GetStoredData(typeof(Condition.ConditionTypes), TypeEnum).Type;
+            Type ConditionType = TypeAttribute.GetStoredData(typeof(Condition.ConditionTypes), Data.ConditionType).Type;
             Condition Instance = (Condition)Activator.CreateInstance(ConditionType);
-            Instance.Init(Data, this);
-            ActiveConditions.Add(Instance);
+            Instance.Init(Data, this, injury);
+
+            if (Data.GlobalCondition)
+            {
+                GlobalConditions.Add(Instance);
+            }
+            else
+            {
+                injury.ActiveConditions.Add(Instance);
+            }
+            AllConditions.Add(Instance);
             if (ConditionsChanged != null && Refresh)
             {
                 ConditionsChanged.Invoke();
             }
+        }
+        public bool AddConditionWithRoll(Condition.ConditionData Data, Injury injury, bool Refresh = true)
+        {
+            float Roll = UnityEngine.Random.value;
+            if (Roll <= Data.Chance)
+            {
+                AddCondition(Data, injury, Refresh);
+                Data.Activated = true;
+                return true;
+            }
+            return false;
         }
     }
 

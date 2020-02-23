@@ -5,77 +5,95 @@
 		"Name": "Broken",
 		"InternalID": "Broken",
 		"Description": "Barely usable, and extremely painful!",
-		"IconFile": "Injury_Severe.png",
+		"AppliesToBone": true,
+		"IconFile": "Break.png",
 		"FunctionModifiers_S":
 		{ 
 			"Locomotion": 0.2,
 			"Manipulation": 0.2,
 			"Flight": 0.2
 		},
-		"Conditions_S":
-		{
-			"Bleeding":
+		"Conditions":
+		[
 			{
-				"DisplayName": "Moderately bleeding",
-				"Chance": 1.0,
-				"Severity": 0.5,
-				"Duration": 30,
-				"ChildConditions_S":
-				{
-					"Bleeding":
-					{
-						"DisplayName": "(Child) Lightly bleeding",
-						"Chance": 1.0,
-						"Severity": 0.25,
-						"Duration": 30
-					}
-				}
+			    "ID": 1,
+                "ParentID": 0,
+                "DisplayName": "B_Bleeding1",
+                "ConditionType_S": "Bleeding",
+                "Chance": 1,
+                "Severity": 0.2,
+                "GlobalCondition": false,
+                "StartTime": 0,
+                "Duration": 0.1,
+				"EndOnTend": true
+			},
+			{
+			    "ID": 2,
+                "ParentID": 1,
+                "DisplayName": "B_Bleeding2",
+                "ConditionType_S": "Bleeding",
+                "Chance": 1,
+                "Severity": 0.2,
+                "GlobalCondition": false,
+                "StartTime": 0.1,
+                "Duration": 0.1,
+				"EndOnTend": true
 			}
-		},
+		],
 		"DamageTypes_S": ["Blunt", "Explosive"],
+		"MaxTendFunctionality": 0.75,
+		"MaxTendHealMultiplier": 4,
 		"BaseHealTime": 120,
 		"SeverityCost": 13,
 		"Overriding": false
 	},
-		
+	
+	
 	{
-		"Name": "Destroyed",
-		"InternalID": "Destroyed",
-		"Description": "May as well not even exist. Utterly destroyed.",
-		"IconFile": "Injury_Severe.png",
+		"Name": "Fractured",
+		"InternalID": "Fractured",
+		"Description": "Painful, but still usable. Could worsen under strain.",
+		"AppliesToBone": true,
+		"IconFile": "Fracture.png",
 		"FunctionModifiers_S":
 		{ 
-			"Locomotion": 0,
-			"Manipulation": 0,
-			"Flight": 0,
-			"Vision": 0,
-			"Control": 0
+			"Locomotion": 0.5,
+			"Manipulation": 0.5,
+			"Flight": 0.5
 		},
-		"Conditions_S":
-		{
-			"Bleeding":
+		"Conditions":
+		[
 			{
-				"DisplayName": "Heavily bleeding",
-				"Chance": 1.0,
-				"Severity": 1,
-				"Duration": 3,
-				"ChildConditions_S":
-				{
-					"Bleeding":
-					{
-						"DisplayName": "(Child) Moderately bleeding",
-						"Chance": 1.0,
-						"Severity": 0.5,
-						"Duration": 3
-					}
-				}
+			    "ID": 1,
+                "ParentID": 0,
+                "DisplayName": "B_Bleeding1",
+                "ConditionType_S": "Bleeding",
+                "Chance": 1,
+                "Severity": 0.2,
+                "GlobalCondition": false,
+                "StartTime": 0,
+                "Duration": 0.1,
+				"EndOnTend": true
+			},
+			{
+			    "ID": 2,
+                "ParentID": 1,
+                "DisplayName": "B_Bleeding2",
+                "ConditionType_S": "Bleeding",
+                "Chance": 1,
+                "Severity": 0.2,
+                "GlobalCondition": false,
+                "StartTime": 0.1,
+                "Duration": 0.1,
+				"EndOnTend": true
 			}
-		},
-		"DamageTypes_S": ["Blunt", "Sharp", "Explosive"],
-		"BaseHealTime": 0,
-		"SeverityCost": 18,
-		"Overriding": true
+		],
+		"DamageTypes_S": ["Blunt", "Explosive"],
+		"MaxTendFunctionality": 0.75,
+		"MaxTendHealMultiplier": 4,
+		"BaseHealTime": 60,
+		"SeverityCost": 7,
+		"Overriding": false
 	}
-	
 ]
 }

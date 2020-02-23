@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityAsync;
 
 public class Entity : MonoBehaviour, IOwnable
 {
@@ -69,7 +70,7 @@ public class Entity : MonoBehaviour, IOwnable
         if (EntityComponents.Movement) EntityFlags |= EntityFlagsEnum.CanMove;
         if (EntityComponents.Health) EntityFlags |= EntityFlagsEnum.HasHealth;
     }
-    bool Initialised = false;
+    protected bool Initialised = false;
     public virtual void Init()
     {
         GetEntityComponents();
@@ -84,10 +85,11 @@ public class Entity : MonoBehaviour, IOwnable
     }
 
     // Start is called before the first frame update
-    protected virtual void Start()
+    protected async virtual void Start()
     {
         if (!Initialised)
         {
+            await Await.Until(() => UIController.DataLoaded);
             Init();
         }
     }

@@ -3,6 +3,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Threading;
 using UnityAsync;
 using UnityEngine;
 using UnityEngine.AI;
@@ -11,12 +12,13 @@ public class Movement : MonoBehaviour
 {
     NavMeshAgent Agent;
     Camera Cam;
-    Entity entity;
+    DynamicEntity entity;
 
     Texture2D Tex;
     Vector3 Destination;
     NavMeshPath DestinationPath;
 
+    CancellationTokenSource PathTokenSource = new CancellationTokenSource();
     public bool Arrived;
 
     FlockController Flock;
@@ -35,7 +37,7 @@ public class Movement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        entity = GetComponent<Entity>();
+        entity = GetComponent<DynamicEntity>();
         Agent = GetComponent<NavMeshAgent>();
         Cam = Camera.main;
 
@@ -72,9 +74,14 @@ public class Movement : MonoBehaviour
     /// <param name="Aim">The target location as a Vector3</param>
     /// <param name="flockController">The flocking controller if this character is in a flock; may be null</param>
     /// <returns>A task that completes upon reaching the destination</returns>
-    public Task SetDestination(Vector3 Aim, FlockController flockController)
+    public Task SetDestination(Vector3 Aim, FlockController flockController, bool InterruptAction = false)
     {
-        CancelInvoke(nameof(AdjustPath));
+        PathTokenSource.Cancel();
+        if(InterruptAction)
+        {
+            entity.InterruptCurrent();
+        }
+
         float PathingDelay = Mathf.Clamp(1 - PathResolution / 100, 0.1f, 1f);
         if (Flock)
         {
@@ -89,13 +96,13 @@ public class Movement : MonoBehaviour
 
         entity.animator.SetBool("Moving", true);
         return AdjustPath(PathingDelay);
-        //InvokeRepeating(nameof(AdjustPath), 0.1f, PathingDelay);
         
     }
 
     //Adjust waypoints according to flocking rules
     private async Task AdjustPath(float PathingDelay)
     {
+        PathTokenSource = new CancellationTokenSource();
         while (true)
         {
             if (Destination != null && Flock && Flock.FlockMembers.Count > 1)
@@ -117,7 +124,6 @@ public class Movement : MonoBehaviour
                         entity.animator.SetBool("Moving", false);
                         if (TestFlock())
                         {
-                            //CancelInvoke(nameof(AdjustPath));
                             Agent.ResetPath();
                             if (MovementFinished != null) MovementFinished.Invoke();
                             return;
@@ -143,6 +149,13 @@ public class Movement : MonoBehaviour
                 }
             }
             await Await.Seconds(PathingDelay).ConfigureAwait(this);
+            if(PathTokenSource.Token.IsCancellationRequested)
+            {
+                if (Flock != null) Flock.FlockMembers.Remove(this);
+                Agent.ResetPath();
+                entity.animator.SetBool("Moving", false);
+                return;
+            }
         }
     }
 

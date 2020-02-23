@@ -68,7 +68,7 @@ public class KeyValueGroup : ScriptableObject
         float MinSize = 100;
         float[] SizeArray = new float[GroupMembers.Count];
         int index = 0;
-        foreach(IGroupableUI KVP in GroupMembers)
+        foreach (IGroupableUI KVP in GroupMembers)
         {
             if (!(KVP as MonoBehaviour))
             {
@@ -77,6 +77,9 @@ public class KeyValueGroup : ScriptableObject
             SizeArray[index] = KVP.CalculateSize();
             index++;
         }
+
+        if (SizeArray.Length == 0) return 0f;
+
         int MinSizeIndex = Array.FindIndex(SizeArray, S => S == Mathf.Min(SizeArray));
         MinSize = SizeArray[MinSizeIndex];
         MinSize = Mathf.Clamp(MinSize, Font.Min, Font.Max);
@@ -88,20 +91,14 @@ public class KeyValueGroup : ScriptableObject
         return MinSize;
     }
 
-    public void Init(float MinFont, float MaxFont)
+    public void Init(float MinFont = 8f, float MaxFont = 72f)
     {
         if (!Running)
         {
             Font.Min = MinFont;
             Font.Max = MaxFont;
             Running = true;
-        }
-    }
-    public void Init()
-    {
-        if(!Running)
-        {
-            Running = true;
+            LoopRoutine();
         }
     }
 }

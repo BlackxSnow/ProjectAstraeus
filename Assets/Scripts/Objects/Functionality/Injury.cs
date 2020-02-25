@@ -90,6 +90,7 @@ namespace Medical
                 }
             }
             TestConditions();
+            RunConditions();
         }
         public void Tend(float quality)
         {
@@ -103,6 +104,22 @@ namespace Medical
                 }
             }
         }
+
+        public async void RunConditions()
+        {
+            while (true)
+            {
+                if (ActiveConditions.Count > 0)
+                {
+                    foreach (Condition condition in ActiveConditions)
+                    {
+                        condition.RunEffect();
+                    }
+                }
+                await Await.NextUpdate();
+            }
+        }
+
         public void AdvanceHeal(float ActualInterval)
         {
             float RestModifier = CharacterHealth.RestHealModifier;

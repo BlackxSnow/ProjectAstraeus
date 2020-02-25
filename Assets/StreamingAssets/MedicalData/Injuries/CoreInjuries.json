@@ -43,7 +43,7 @@
 		"DamageTypes_S": ["Blunt", "Explosive"],
 		"MaxTendFunctionality": 0.75,
 		"MaxTendHealMultiplier": 4,
-		"BaseHealTime": 120,
+		"BaseHealTime": 480,
 		"SeverityCost": 13,
 		"Overriding": false
 	},
@@ -91,7 +91,7 @@
 		"DamageTypes_S": ["Blunt", "Explosive"],
 		"MaxTendFunctionality": 0.75,
 		"MaxTendHealMultiplier": 4,
-		"BaseHealTime": 60,
+		"BaseHealTime": 240,
 		"SeverityCost": 7,
 		"Overriding": false
 	}

@@ -14,8 +14,6 @@ public class StatsAndSkills : MonoBehaviour
         public float Experience;
         float[] LevelThresholds;
 
-        public int AdjustedLevel;
-
         public string Description { get; }
         public string[] XPGainActivities { get; }
         public KeyValuePair<string, string>[] AffectedActivities { get; }
@@ -25,11 +23,16 @@ public class StatsAndSkills : MonoBehaviour
             Experience += Amount;
             if (Experience >= LevelThresholds[Level + 1])
             {
-#warning Add Injuries hook
                 Level++;
                 Experience -= LevelThresholds[Level];
             }
         }
+
+        public int GetAdjustedLevel()
+        {
+            return Level;
+        }
+
         public StatSkill(string Description, string[] XPGainActivities, KeyValuePair<string,string>[] AffectedActivities, bool Enabled = true)
         {
             this.Description = Description;

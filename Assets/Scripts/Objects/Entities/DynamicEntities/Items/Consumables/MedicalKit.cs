@@ -75,7 +75,8 @@ public class MedicalKit : Consumable, IInterruptible
         }
         //TODO Come up with good formula for quality
         Stats.SetStat(ItemTypes.StatsEnum.Quantity, 1, ItemStats.OperationEnum.Subtract);
-        float Quality = (UsingActor.EntityComponents.Stats.Skills[StatsAndSkills.SkillsEnum.Medical].AdjustedLevel / 100) * Stats.GetStat<float>(ItemTypes.StatsEnum.Quality);
+        float Quality = Mathf.Clamp01(UnityEngine.Random.Range(0.1f, 200) * (UsingActor.EntityComponents.Stats.Skills[StatsAndSkills.SkillsEnum.Medical].GetAdjustedLevel() / 100f) * Stats.GetStat<float>(ItemTypes.StatsEnum.Quality));
+        UsingActor.EntityComponents.Stats.Skills[StatsAndSkills.SkillsEnum.Medical].AddXP(injury.SeverityCost);
         injury.Tend(Quality);
         Bar.Destroy();
     }

@@ -12,7 +12,7 @@ public class Movement : MonoBehaviour
 {
     NavMeshAgent Agent;
     Camera Cam;
-    DynamicEntity entity;
+    Actor ParentActor;
 
     Texture2D Tex;
     Vector3 Destination;
@@ -37,7 +37,7 @@ public class Movement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        entity = GetComponent<DynamicEntity>();
+        ParentActor = GetComponent<Actor>();
         Agent = GetComponent<NavMeshAgent>();
         Cam = Camera.main;
 
@@ -48,7 +48,7 @@ public class Movement : MonoBehaviour
     bool HasRun = false;
     private void Update()
     {
-        if (entity.EntityFlags.HasFlag(Entity.EntityFlagsEnum.HasStats) && !HasRun)
+        if (ParentActor.EntityFlags.HasFlag(Entity.EntityFlagsEnum.HasStats) && !HasRun)
         {
             SetMoveSpeed();
             HasRun = true;
@@ -59,14 +59,82 @@ public class Movement : MonoBehaviour
     {
         while (true)
         {
-            if (entity.animator.GetBool("Moving"))
+            if (ParentActor.animator.GetBool("Moving"))
             {
-                entity.EntityComponents.Stats.AddXP(StatsAndSkills.SkillsEnum.Athletics, 2500);
+                ParentActor.EntityComponents.Stats.AddXP(StatsAndSkills.SkillsEnum.Athletics, 25);
             }
-            Agent.speed = entity.BaseEntityStats.MovementSpeed * (1f + (entity.EntityComponents.Stats.GetSkillInfo(StatsAndSkills.SkillsEnum.Athletics).Level / 100f * 2.0f));
+            Agent.speed = ParentActor.BaseEntityStats.MovementSpeed * (1f + (ParentActor.EntityComponents.Stats.GetSkillInfo(StatsAndSkills.SkillsEnum.Athletics).Level / 100f * 2.0f));
             await Await.Seconds(0.25f).ConfigureAwait(this);
         }
     }
+
+    public void StopMove()
+    {
+        Arrived = true;
+        ParentActor.animator.SetBool("Moving", false);
+        Agent.velocity = Vector3.zero;
+        Agent.ResetPath();
+    }
+
+    /// <summary>
+    /// Moves an actor within distance of aim
+    /// </summary>
+    /// <param name="target">The target location as Vector3</param>
+    /// <param name="distance">The maximum distance from the aim</param>
+    /// <param name="flockController">The flocking controller if this character is in a flock; may be null</param>
+    /// <param name="interruptAction">Interrupts the current task/action of the actor</param>
+    /// <returns>A task that indicates whether the move was successful</returns>
+    public async Task<bool> MoveWithin(Vector3 target, float distance, FlockController flockController, CancellationToken token)
+    {
+        bool Completed = false;
+        while(!Completed)
+        {
+            Vector3 positionDiff = transform.position - target;
+            positionDiff.y = Mathf.Pow(positionDiff.y, 2);
+            float ModifiedDistance = positionDiff.magnitude;
+            if (ModifiedDistance < distance)
+            {
+                StopMove();
+                return true;
+            }
+            else if (token.IsCancellationRequested)
+            {
+                StopMove();
+                return false;
+            }
+
+            Task<bool> destinationTask = SetDestination(target, flockController, token, false);
+            await destinationTask;
+            Completed = destinationTask.Result;
+        }
+        
+        return true;
+    }
+    public async Task<bool> MoveWithin(GameObject Target, float distance, FlockController flockController, CancellationToken token)
+    {
+        bool Completed = false;
+
+        while (!Completed)
+        {
+            Vector3 positionDiff = transform.position - Target.transform.position;
+            positionDiff.y = Mathf.Pow(positionDiff.y, 2);
+            float ModifiedDistance = positionDiff.magnitude;
+            if (ModifiedDistance < distance)
+            {
+                StopMove();
+                return true;
+            }
+            else if (token.IsCancellationRequested)
+            {
+                StopMove();
+                return false;
+            }
+            await SetDestination(Target.transform.position, flockController, token, false);
+        }
+
+        return false;
+    }
+
     //TODO Implement move within function
     /// <summary>
     /// Sets the destination of the character's movement AI
@@ -74,14 +142,35 @@ public class Movement : MonoBehaviour
     /// <param name="Aim">The target location as a Vector3</param>
     /// <param name="flockController">The flocking controller if this character is in a flock; may be null</param>
     /// <returns>A task that completes upon reaching the destination</returns>
-    public Task SetDestination(Vector3 Aim, FlockController flockController, bool InterruptAction = false)
+    public async Task<bool> SetDestination(Vector3 Aim, FlockController flockController, CancellationToken token, bool loop = true)
     {
-        PathTokenSource.Cancel();
-        if(InterruptAction)
-        {
-            entity.InterruptCurrent();
-        }
+        float PathingDelay = SetDestination_Setup(Aim, flockController);
 
+        bool Completed = false;
+
+
+        while (!Completed)
+        {
+            Completed = AdjustPath();
+            try
+            {
+                await Task.Delay(Mathf.RoundToInt(PathingDelay * 1000f), token);
+            }
+            catch (TaskCanceledException e) { }
+
+            if (!loop) return Completed;
+            else if (token.IsCancellationRequested)
+            {
+                StopMove();
+                return false;
+            }
+        } 
+
+        return Completed;
+    }
+
+    private float SetDestination_Setup(Vector3 Aim, FlockController flockController)
+    {
         float PathingDelay = Mathf.Clamp(1 - PathResolution / 100, 0.1f, 1f);
         if (Flock)
         {
@@ -93,72 +182,63 @@ public class Movement : MonoBehaviour
         Destination = Agent.destination;
         DestinationPath = Agent.path;
         Arrived = false;
-
-        entity.animator.SetBool("Moving", true);
-        return AdjustPath(PathingDelay);
-        
+        ParentActor.animator.SetBool("Moving", true);
+        return PathingDelay;
     }
 
     //Adjust waypoints according to flocking rules
-    private async Task AdjustPath(float PathingDelay)
+    private bool AdjustPath()
     {
-        PathTokenSource = new CancellationTokenSource();
-        while (true)
+        if (Destination != null && Flock && Flock.FlockMembers.Count > 1)
         {
-            if (Destination != null && Flock && Flock.FlockMembers.Count > 1)
+            return AdjustPath_Flock();
+        }
+        else if (Destination != null)
+        {
+            if (Vector3.Distance(transform.position, Destination) < 0.25)
             {
-                NavMesh.CalculatePath(transform.position, Destination, NavMesh.AllAreas, DestinationPath);
-                Vector3 Adjusted;
-
-                if (DestinationPath.corners.Length > 1)
-                {
-                    if (Vector3.Distance(transform.position, DestinationPath.corners[1]) > 2 && Flock)
-                    {
-                        //Adjust first corner
-                        Adjusted = CalculateAdjustment(DestinationPath.corners[1]);
-                        Agent.SetDestination(Adjusted);
-                    }
-                    else if (Vector3.Distance(transform.position, Destination) < Mathf.Pow(boids, 1 / 3) * DistanceScale)
-                    {
-                        Arrived = true;
-                        entity.animator.SetBool("Moving", false);
-                        if (TestFlock())
-                        {
-                            Agent.ResetPath();
-                            if (MovementFinished != null) MovementFinished.Invoke();
-                            return;
-                        }
-                    }
-                    else if (DestinationPath.corners.Length > 2 && Flock)
-                    {
-                        //Adjust second corner
-                        Adjusted = CalculateAdjustment(DestinationPath.corners[2]);
-                        Agent.SetDestination(Adjusted);
-                    }
-                }
-            }
-            else if (Destination != null)
-            {
-                if (Vector3.Distance(transform.position, Destination) < 0.25)
-                {
-                    Arrived = true;
-                    entity.animator.SetBool("Moving", false);
-                    //CancelInvoke(nameof(AdjustPath));
-                    Agent.ResetPath();
-                    return;
-                }
-            }
-            await Await.Seconds(PathingDelay).ConfigureAwait(this);
-            if(PathTokenSource.Token.IsCancellationRequested)
-            {
-                if (Flock != null) Flock.FlockMembers.Remove(this);
-                Agent.ResetPath();
-                entity.animator.SetBool("Moving", false);
-                return;
+                StopMove();
+                return true;
             }
         }
+        return false;
     }
 
+    private bool AdjustPath_Flock()
+    {
+        NavMesh.CalculatePath(transform.position, Destination, NavMesh.AllAreas, DestinationPath);
+        Vector3 Adjusted;
+
+        if (DestinationPath.corners.Length > 1)
+        {
+            if (Vector3.Distance(transform.position, DestinationPath.corners[1]) > 2 && Flock)
+            {
+                //Adjust first corner
+                Adjusted = CalculateAdjustment(DestinationPath.corners[1]);
+                Agent.SetDestination(Adjusted);
+            }
+            else if (Vector3.Distance(transform.position, Destination) < Mathf.Pow(boids, 1 / 3) * DistanceScale)
+            {
+                Arrived = true;
+                ParentActor.animator.SetBool("Moving", false);
+                if (TestFlock())
+                {
+                    Agent.ResetPath();
+                    if (MovementFinished != null) MovementFinished.Invoke();
+                    return true;
+                }
+                else return false;
+            }
+            else if (DestinationPath.corners.Length > 2 && Flock)
+            {
+                //Adjust second corner
+                Adjusted = CalculateAdjustment(DestinationPath.corners[2]);
+                Agent.SetDestination(Adjusted);
+                return false;
+            }
+        }
+        throw new System.Exception($"AdjustPath_Flock did not return");
+    }
     private Vector3 CalculateAdjustment(Vector3 point)
     {
         Vector3 pos = transform.position;

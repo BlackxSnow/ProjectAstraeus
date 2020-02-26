@@ -18,12 +18,6 @@ public class DynamicEntity : Entity, ISelectable
 
     protected Collider colliderComponent;
 
-    public void InterruptCurrent()
-    {
-        if (ActionInterrupt == null) return;
-        ActionInterrupt.Interrupt();
-    }
-
     public override void Init()
     {
         base.Init();

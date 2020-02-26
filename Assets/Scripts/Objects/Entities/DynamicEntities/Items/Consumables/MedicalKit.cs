@@ -5,16 +5,15 @@ using System;
 using System.Threading.Tasks;
 using System.Linq;
 using UnityAsync;
+using System.Threading;
 
 public class MedicalKit : Consumable, IInterruptible
 {
-    Task CurrentTask;
-    bool Interrupted = false;
-    public async void Interrupt()
+    CancellationTokenSource tokenSource;
+
+    public void Interrupt()
     {
-        Interrupted = true;
-        await CurrentTask;
-        Interrupted = false;
+        tokenSource.Cancel();
     }
 
     public override void Init()
@@ -27,19 +26,23 @@ public class MedicalKit : Consumable, IInterruptible
     public async override void Use(Actor UsingActor)
     {
         ISelectable Selected = await TargetSelect.StartSelect();
-        
 
         if (Selected is Biotic Target)
         {
-            UsingActor.InterruptCurrent();
+            UsingActor.Interrupt();
+            CancellationToken token = UsingActor.TokenSource.Token;
             UsingActor.ActionInterrupt = this;
-            Task MovementTask = UsingActor.EntityComponents.Movement.SetDestination(Target.transform.position, null);
-            await Await.Until(() => MovementTask.IsCompleted).ConfigureAwait(this);
-            CurrentTask = Heal(Target, UsingActor);
+            Collider col = Target.GetComponent<Collider>();
+            float boundsSize = Mathf.Max(col.bounds.size.x, col.bounds.size.z);
+            Task<bool> MovementTask = UsingActor.EntityComponents.Movement.MoveWithin(Target.gameObject, boundsSize * 2f, null, token);
+            await MovementTask;
+            if (token.IsCancellationRequested || !MovementTask.Result) return;
+            
+            _ = Heal(Target, UsingActor, boundsSize * 2f, token);
         }
     }
 
-    private async Task Heal(Biotic Target, Actor UsingActor)
+    private async Task Heal(Biotic Target, Actor UsingActor, float maxDistance, CancellationToken token)
     {
         List<Medical.Injury> InjuriesBySeverity = Target.EntityComponents.Health.Injuries.OrderByDescending(injury => injury.SeverityCost).ToList();
         foreach (Medical.Injury injury in InjuriesBySeverity)
@@ -50,21 +53,21 @@ public class MedicalKit : Consumable, IInterruptible
                 DestroyEntity();
                 return;
             }
-            await HealInstance(Target, UsingActor, injury, Mathf.Pow(injury.SeverityCost, 0.5f));
-            if (Interrupted)
+            await HealInstance(Target, UsingActor, injury, Mathf.Pow(injury.SeverityCost, 0.5f), maxDistance, token);
+            if (token.IsCancellationRequested || Vector3.Distance(UsingActor.transform.position, Target.transform.position) > maxDistance * 1.2f)
             {
                 return;
             }
         }
     }
-    
-    private async Task HealInstance(Biotic Target, Actor UsingActor, Medical.Injury injury, float time)
+
+    private async Task HealInstance(Biotic Target, Actor UsingActor, Medical.Injury injury, float time, float maxDistance, CancellationToken token)
     {
         ProgressBar Bar = UIController.InstantiateProgressBar(Target.gameObject, 0, time, Color.grey, Color.green);
         float CurrentTime = 0;
         while (CurrentTime < time)
         {
-            if (Interrupted)
+            if (token.IsCancellationRequested || Vector3.Distance(UsingActor.transform.position, Target.transform.position) > maxDistance * 1.2f)
             {
                 Bar.Destroy();
                 return;
@@ -76,7 +79,7 @@ public class MedicalKit : Consumable, IInterruptible
         //TODO Come up with good formula for quality
         Stats.SetStat(ItemTypes.StatsEnum.Quantity, 1, ItemStats.OperationEnum.Subtract);
         float Quality = Mathf.Clamp01(UnityEngine.Random.Range(0.1f, 200) * (UsingActor.EntityComponents.Stats.Skills[StatsAndSkills.SkillsEnum.Medical].GetAdjustedLevel() / 100f) * Stats.GetStat<float>(ItemTypes.StatsEnum.Quality));
-        UsingActor.EntityComponents.Stats.Skills[StatsAndSkills.SkillsEnum.Medical].AddXP(injury.SeverityCost);
+        UsingActor.EntityComponents.Stats.Skills[StatsAndSkills.SkillsEnum.Medical].AddXP(injury.SeverityCost * 100);
         injury.Tend(Quality);
         Bar.Destroy();
     }

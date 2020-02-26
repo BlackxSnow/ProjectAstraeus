@@ -4,11 +4,13 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 using TMPro;
+using System.Threading;
+using System.Threading.Tasks;
 
 //TODO Rewrite using async instead of coroutines
-public class Actor : DynamicEntity, IOrderable, IDamageable
+public class Actor : DynamicEntity, IOrderable, IDamageable, IInterruptible
 {
-    NavMeshAgent Agent;
+    public CancellationTokenSource TokenSource { get; private set; } = new CancellationTokenSource();
     bool Subscribed;
 
     Inventory InventoryScript;
@@ -23,7 +25,6 @@ public class Actor : DynamicEntity, IOrderable, IDamageable
     protected override void Start()
     {
         base.Start();
-        Agent = GetComponent<NavMeshAgent>();
         MovementScript = GetComponent<Movement>();
         InventoryScript = GetComponent<Inventory>();
 
@@ -35,41 +36,34 @@ public class Actor : DynamicEntity, IOrderable, IDamageable
         base.Awake();
     }
 
-    public void Move(Vector3 Destination, FlockController flockController, bool Interrupt = true)
+    public void Interrupt()
     {
-        if (Interrupt)
-            StopAllCoroutines();
+        TokenSource.Cancel();
+        TokenSource = new CancellationTokenSource();
+    }
 
-        MovementScript.SetDestination(Destination, flockController, Interrupt);
+    public void Move(Vector3 Destination, FlockController flockController, bool interrupt = true)
+    {
+        if (interrupt) Interrupt();
+
+        _ = MovementScript.SetDestination(Destination, flockController, TokenSource.Token);
     }
 
     public void Pickup(DynamicEntity Target)
     {
-        StopAllCoroutines();
-        StartCoroutine(PickupRoutine(Target));
+        Interrupt();
+        PickupObject(Target);
     }
 
     //Behaviour to retrieve items
-    IEnumerator PickupRoutine(DynamicEntity Target)
+    private async void PickupObject(DynamicEntity Target)
     {
-        bool Moved = false;
-        bool Finished = false;
-        while(!Finished)
-        {
-            if (ProximityCheck(Target.gameObject))
-            {
-                if (Target is Item)
-                    InventoryScript.AddItem(Target as Item);
-                Finished = true;
-            }
-            else if (!Moved)
-            {
-                Move(Target.transform.position, null, false);
-                Moved = true;
-            }
+        Task<bool> MoveTask = EntityComponents.Movement.MoveWithin(Target.gameObject, PickupDistance, null, TokenSource.Token);
+        await MoveTask;
+        if (!MoveTask.Result) return;
 
-            yield return new WaitForSeconds(0.1f);
-        }
+        if (Target is Item) InventoryScript.AddItem(Target as Item);
+
     }
 
     private bool ProximityCheck(GameObject Target)

@@ -20,8 +20,6 @@ public class EquipmentSlot : MonoBehaviour
     public Vector2Int MaxSize;
     public Equipment.Slots Slot;
 
-    public GameObject ItemIconPrefab;
-
     bool Initialised = false;
     private void Start()
     {
@@ -33,7 +31,6 @@ public class EquipmentSlot : MonoBehaviour
         ItemSlotRect = ItemSlot.GetComponent<RectTransform>();
         SetSize(MaxSize, ItemSlotRect, ContainerRectTransform);
         MaxSizeText.text = string.Format("{0}", MaxSize);
-        ItemIconPrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/UI/Inventory & Items/ItemIcon");
         Initialised = true;
     }
     Rect LastSize;
@@ -71,7 +68,7 @@ public class EquipmentSlot : MonoBehaviour
         Item EquippedItem = ParentUI.RefEquipment.Equipped[(int)Slot];
         if (EquippedItem)
         {
-            GameObject ItemIconInstance = Instantiate(ItemIconPrefab, ItemSlot.transform);
+            GameObject ItemIconInstance = Instantiate(UIController.ObjectPrefabs[UIController.ObjectPrefabsEnum.ItemIconPrefab], ItemSlot.transform);
             ActiveItemIcon = ItemIconInstance;
 
             ItemIcon ItemIconScript = ItemIconInstance.GetComponent<ItemIcon>();

@@ -16,7 +16,7 @@ public class OrderEvents : MonoBehaviour
     public delegate void UseOrder(IUsable usableEntity);
     public static event UseOrder OnUse;
 
-    public delegate void AttackOrder(Actor actor);
+    public delegate void AttackOrder(IDamageable target);
     public static event AttackOrder OnAttack;
 
     public delegate void MeleeAttackOrder(Actor actor);
@@ -39,7 +39,7 @@ public class OrderEvents : MonoBehaviour
     public static void Trade(Character character) => OnTrade?.Invoke(character);
     public static void Talk(Character character) => OnTalk?.Invoke(character);
     public static void Use(IUsable usableEntity) => OnUse?.Invoke(usableEntity);
-    public static void Attack(Actor actor) => OnAttack?.Invoke(actor);
+    public static void Attack(IDamageable target) => OnAttack?.Invoke(target);
     public static void MeleeAttack(Actor actor) => OnMelee?.Invoke(actor);
     public static void Enter(ABiotic aBiotic) => OnEnter?.Invoke(aBiotic);
     public static void PickUp(DynamicEntity dynamicEntity) => OnPickup?.Invoke(dynamicEntity);

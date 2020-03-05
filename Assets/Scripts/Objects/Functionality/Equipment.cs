@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Equipment : MonoBehaviour
 {
@@ -20,18 +21,24 @@ public class Equipment : MonoBehaviour
         Feet,
         Back,
         Weapon,
+        SecondaryWeapon,
         None
     }
-    public EquippableItem[] Equipped = new EquippableItem[6];
+    public EquippableItem[] Equipped;
+
+    private void Awake()
+    {
+        Equipped = new EquippableItem[8];
+    }
 
     public bool EquipItem(EquippableItem RefItem, EquipmentSlot UISlot)
     {
         Slots Slot = UISlot.Slot;
-        if (RefItem.Slot != Slot || Slot == Slots.None)
+        if (!RefItem.ValidSlots.Contains(Slot) || Slot == Slots.None)
         {
-            throw new ArgumentException(string.Format("Item's slot and parameter slot differ or slot is none (item slot: '{0}', slot parameter: '{1}'", RefItem.Slot, Slot));
+            throw new ArgumentException(string.Format("Item's slot and parameter slot differ or slot is none (item slot: '{0}', slot parameter: '{1}'", RefItem.ValidSlots[0], Slot));
         }
-        if (Equipped[(int)Slot] == RefItem)
+        if (Equipped[(int)Slot] != null && Equipped[(int)Slot] == RefItem)
         {
             UISlot.RenderItem();
             return false;

@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Modules;
 using static ItemTypes;
-
+using System.Threading;
 
 public class Weapon : EquippableItem
 {
+    public const float BaseAttackTime = 2.0f;
     public enum DamageTypesEnum
     {
         Blunt,
@@ -35,7 +36,12 @@ public class Weapon : EquippableItem
             },
 
         };
-        Slot = Equipment.Slots.Weapon;
+        ValidSlots = new Equipment.Slots[] { Equipment.Slots.Weapon, Equipment.Slots.SecondaryWeapon };
+    }
+
+    public virtual async void AttackOrder(Actor User, IDamageable Target, CancellationToken token)
+    {
+        
     }
 
     public override List<GameObject> InstantiateStatKVPs(bool Cost, out List<GameObject> CombinedKVPLists, Transform Parent, KeyValueGroup Group = null)

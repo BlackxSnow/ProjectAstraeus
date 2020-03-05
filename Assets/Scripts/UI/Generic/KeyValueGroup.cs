@@ -45,8 +45,10 @@ public class KeyValueGroup : ScriptableObject
     {
         while (Running)
         {
-            if (Dirty) UniformSize = Recalculate();
-            await Await.NextUpdate();
+            await Await.Until(() => Dirty);
+            UniformSize = Recalculate();
+            //if (Dirty) UniformSize = Recalculate();
+            //await Await.NextUpdate();
         }
     }
 

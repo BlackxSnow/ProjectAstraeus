@@ -1,20 +1,28 @@
-﻿using System.Collections;
+﻿using System.Threading;
 using System.Collections.Generic;
 using System.IO;
 using System;
 using UnityEngine;
 using MoreLinq;
+using Nito.AsyncEx;
 
 public class DataManager : MonoBehaviour
 {
-    public static string InjuryIconsPath = "Graphics/Sprites/Medical/Injuries";
-    public static string InjuriesPath = "MedicalData/Injuries";
-    public static string SpeciesPath = "Species";
+    public static AsyncManualResetEvent DataLoaded = new AsyncManualResetEvent();
+
+    public const string InjuryIconsPath = "Graphics/Sprites/Medical/Injuries";
+    public const string InjuriesPath = "MedicalData/Injuries";
+    public const string SkillsPath = "SkillsData";
+    public const string SpeciesPath = "Species";
+
 
     public void LoadObjectData()
     {
+        ItemTypes.LoadData();
         LoadInjuries();
+        LoadSkills();
         LoadSpecies();
+        DataLoaded.Set();
     }
 
     [Serializable]
@@ -75,6 +83,22 @@ public class DataManager : MonoBehaviour
         DataStruct<Medical.Injury> Data = LoadArrayedData<Medical.Injury>(InjuriesPath, out int FileCount);
         InitInjuries(Data);
         Debug.Log($"Finished loading injuries; {FileCount} files and {Data.DataArray.Count} objects loaded");
+    }
+    #endregion
+
+    #region Skills
+    public void InitSkills(DataStruct<StatsAndSkills.Skill> Data)
+    {
+        foreach(StatsAndSkills.Skill skill in Data.DataArray)
+        {
+            StatsAndSkills.LoadedSkills.Add(skill.SkillName, skill);
+        }
+    }
+    public void LoadSkills()
+    {
+        DataStruct<StatsAndSkills.Skill> Data = LoadArrayedData<StatsAndSkills.Skill>(SkillsPath, out int FileCount);
+        InitSkills(Data);
+        Debug.Log($"Finished loading skills; {FileCount} files and {Data.DataArray.Count} objects loaded");
     }
     #endregion
 

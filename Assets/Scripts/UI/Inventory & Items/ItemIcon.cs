@@ -61,9 +61,6 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
             Quantitybar.Init(RefItem.Stats.GetStat<int>(ItemTypes.StatsEnum.Quantity), RefItem.Stats.GetStat<int>(ItemTypes.StatsEnum.MaxQuantity), Color.grey, Color.green);
         }
         else Quantitybar.gameObject.SetActive(false);
-
-        Utility.Timer.ElapsedDelegate del = ToolTipEvent;
-        HoverTimer = new Utility.Timer(1, del);
     }
 
     void Update()
@@ -75,14 +72,14 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
 
             RTransform.anchoredPosition = ModifiedMousePosition - MouseOffset;
         }
-        CheckHover();
 
-        if (RefItem is EquippableItem Equippable && ItemSlotName.text != Equippable.Slot.ToString())
+        if (RefItem is EquippableItem Equippable && ItemSlotName.text != Equippable.ValidSlots[0].ToString())
         {
-            ItemSlotName.text = Equippable.Slot.ToString();
+            ItemSlotName.text = Equippable.ValidSlots[0].ToString();
         }
 
         if (DisplayQuantity) Quantitybar.UpdateBar(RefItem.Stats.GetStat<int>(ItemTypes.StatsEnum.Quantity));
+        ToolTipUpdate();
     }
 
     void RemoveItem(Item TargetItem)
@@ -108,8 +105,7 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
     {
         if (data.button == PointerEventData.InputButton.Left)
         {
-            AllowToolTip = false;
-            if (ToolTipObject) Destroy(ToolTipObject);
+            ToolTipEnabled = false;
             Darken(true);
             Dragging = true;
             SetFollowCursor();
@@ -135,6 +131,7 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
         //InventoryInfo.UIContainer.RenderItems();
         Dragging = false;
         Darken(false);
+        ToolTipEnabled = true;
     }
 
     void EquipmentCheck(List<RaycastResult> Results)
@@ -206,61 +203,29 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
 
     //ToolTips
     GameObject ToolTipObject;
-    bool MouseOver = false;
-    Utility.Timer HoverTimer;
-    bool AllowToolTip = true;
+    Vector3 ToolTipOffset = new Vector3(20, 0, 0);
+    bool ToolTipEnabled = true;
+    void ToolTipUpdate()
+    {
+        if (!ToolTipEnabled && ToolTipObject)
+            Destroy(ToolTipObject);
+
+        if (ToolTipObject)
+            ToolTipObject.transform.position = Input.mousePosition + ToolTipOffset;
+    }
+
     public void OnPointerEnter(PointerEventData data)
     {
-        MouseOver = true;
+        if (!ToolTipObject)
+        {
+            ToolTipObject = UIController.InstantiateItemToolTip(RefItem);
+            ToolTipObject.transform.position = Input.mousePosition + ToolTipOffset;
+        }
     }
     public void OnPointerExit(PointerEventData data)
     {
-        MouseOver = false;
-    }
-
-    Vector3 LastMousePosition;
-    Vector3 SpawnPosition;
-    bool HasMouseMoved(float Threshold = 5.0f)
-    {
-        if(Vector3.Distance(Input.mousePosition, LastMousePosition) < Threshold)
-        {
-            LastMousePosition = Input.mousePosition;
-            return false;
-        } else
-        {
-            LastMousePosition = Input.mousePosition;
-            return true;
-        }
-    }
-
-    bool IsMouseBeyondDistance(float Threshold = 10.0f)
-    {
-        if (Vector3.Distance(Input.mousePosition, SpawnPosition) > Threshold)
-            return true;
-        else
-            return false;
-    }
-
-    void ToolTipEvent(float _ = 0)
-    {
-        AllowToolTip = false;
-        SpawnPosition = Input.mousePosition;
-        ToolTipObject = UIController.InstantiateItemToolTip(RefItem);
-    }
-
-    void CheckHover()
-    {
-        if (ToolTipObject && IsMouseBeyondDistance())
-        {
+        if (ToolTipObject)
             Destroy(ToolTipObject);
-            AllowToolTip = true;
-        }
-
-        if (MouseOver && AllowToolTip && !HasMouseMoved() && !HoverTimer.Enabled && !ToolTipObject)
-        {
-            HoverTimer.Start();
-        } else if((!MouseOver || HasMouseMoved() || !AllowToolTip) && HoverTimer.Enabled)
-            HoverTimer.Stop();
     }
 
 }

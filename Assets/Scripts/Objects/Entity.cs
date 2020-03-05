@@ -31,11 +31,20 @@ public class Entity : MonoBehaviour, IOwnable
 
     public struct EntityComponentsStruct
     {
-        public Inventory @Inventory;
-        public Equipment @Equipment;
-        public StatsAndSkills @Stats;
-        public Movement @Movement;
-        public Medical.Health @Health;
+        public Inventory @Inventory { get; private set; }
+        public Equipment @Equipment { get; private set; }
+        public StatsAndSkills @Stats { get; private set; }
+        public Movement @Movement { get; private set; }
+        public Medical.Health @Health { get; private set; }
+
+        public EntityComponentsStruct(Inventory inv, Equipment equip, StatsAndSkills stats, Movement move, Medical.Health health)
+        {
+            Inventory = inv;
+            Equipment = equip;
+            Stats = stats;
+            Movement = move;
+            Health = health;
+        }
     }
 
     public int FactionID { get; set; }
@@ -59,11 +68,7 @@ public class Entity : MonoBehaviour, IOwnable
 
     public virtual void GetEntityComponents()
     {
-        EntityComponents.Inventory = GetComponent<Inventory>();
-        EntityComponents.Equipment = GetComponent<Equipment>();
-        EntityComponents.Stats = GetComponent<StatsAndSkills>();
-        EntityComponents.Movement = GetComponent<Movement>();
-        EntityComponents.Health = GetComponent<Medical.Health>();
+        EntityComponents = new EntityComponentsStruct(GetComponent<Inventory>(), GetComponent<Equipment>(), GetComponent<StatsAndSkills>(), GetComponent<Movement>(), GetComponent<Medical.Health>());
         if (EntityComponents.Inventory) EntityFlags |= EntityFlagsEnum.HasInventory;
         if (EntityComponents.Equipment) EntityFlags |= EntityFlagsEnum.CanEquip;
         if (EntityComponents.Stats) EntityFlags |= EntityFlagsEnum.HasStats;
@@ -78,10 +83,18 @@ public class Entity : MonoBehaviour, IOwnable
         animator = GetComponent<Animator>();
         if (Name == "") Name = name;
         FactionID = 0;//Mathf.RoundToInt(Random.value * (FactionManager.Factions.Count - 1));
-        rendererComponent = gameObject.GetComponentInChildren<Renderer>();
+        rendererComponent = transform.Find("Mesh").GetComponent<Renderer>();
         if (rendererComponent)
             rendererComponent.material.color = FactionManager.Factions[FactionID].FactionColour; //Debug; Visually shows faction colour
         Initialised = true;
+    }
+
+    public virtual void ChangeFaction(int ID)
+    {
+        FactionID = ID;
+        rendererComponent = transform.Find("Mesh").GetComponent<Renderer>();
+        if (rendererComponent)
+            rendererComponent.material.color = FactionManager.Factions[FactionID].FactionColour; //Debug; Visually shows faction colour
     }
 
     // Start is called before the first frame update

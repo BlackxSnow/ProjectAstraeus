@@ -29,7 +29,7 @@ public class Torso : Armour
                 ModulesEnum.Shield
             }
         };
-        Slot = Equipment.Slots.Torso;
+        ValidSlots = new Equipment.Slots[] { Equipment.Slots.Torso };
     }
 
     public override bool FindSubtype()

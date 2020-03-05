@@ -21,6 +21,10 @@ MonoBehaviour:
     m_Address: ValueSlider
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 0f5f00b4267e33245b4e94f067e74930
+    m_Address: ItemBase
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   - m_GUID: 101fb8bc673d86841b6dc34a4cf35ba6
     m_Address: InjuryIcon
     m_ReadOnly: 0
@@ -55,6 +59,10 @@ MonoBehaviour:
     m_SerializedLabels: []
   - m_GUID: 77d747ef71088674abcbf5ed8390021d
     m_Address: ContextMenu
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 7824bd3b290a51848957db3b0f973a20
+    m_Address: ItemIcon
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: a0fc7e1eab0c10445a1be745b4b7a108

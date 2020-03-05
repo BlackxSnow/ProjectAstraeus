@@ -20,6 +20,9 @@ public class DebugConsole : MonoBehaviour
             case "Damage":
                 Damage(CommandWords[1], float.Parse(CommandWords[2]), bool.Parse(CommandWords[3]));
                 break;
+            case "SetFaction":
+                SetFaction(CommandWords[1], int.Parse(CommandWords[2]));
+                break;
         }
     }
     public void ParseCommand(TextMeshProUGUI CommandText)
@@ -48,5 +51,11 @@ public class DebugConsole : MonoBehaviour
         Weapon.DamageTypesEnum DamageTypeParsed = (Weapon.DamageTypesEnum)Enum.Parse(typeof(Weapon.DamageTypesEnum), DamageType);
         TargetChar.EntityComponents.Health.Damage(Amount, Critical, DamageTypeParsed);
         Debug.Log($"Dealt {Amount} damage to {Target} as {DamageType} damage. Critical?: {Critical}");
+    }
+    
+    public void SetFaction(string Target, int ID)
+    {
+        Character TargetChar = EntityManager.Characters.Find(c => c.Name == Target);
+        TargetChar.ChangeFaction(ID);
     }
 }

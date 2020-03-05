@@ -197,7 +197,7 @@ public class Item : DynamicEntity
     {
         base.Init();
         EntityType = EntityTypes.Item;
-        if (DebugValues.DEBUG) DebugValues.SetValues();
+        if (DebugValues != null && DebugValues.DEBUG) DebugValues.SetValues();
     }
 
     protected override void Start()

@@ -1,6 +1,4 @@
 ﻿//Possible improvement: Reduce impact of Alignment when boids enter/near the acceptable destination radius
-
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
@@ -63,6 +61,7 @@ public class Movement : MonoBehaviour
             {
                 ParentActor.EntityComponents.Stats.AddXP(StatsAndSkills.SkillsEnum.Athletics, 25);
             }
+            await DataManager.DataLoaded.WaitAsync();
             Agent.speed = ParentActor.BaseEntityStats.MovementSpeed * (1f + (ParentActor.EntityComponents.Stats.GetSkillInfo(StatsAndSkills.SkillsEnum.Athletics).Level / 100f * 2.0f));
             await Await.Seconds(0.25f).ConfigureAwait(this);
         }
@@ -82,7 +81,6 @@ public class Movement : MonoBehaviour
     /// <param name="target">The target location as Vector3</param>
     /// <param name="distance">The maximum distance from the aim</param>
     /// <param name="flockController">The flocking controller if this character is in a flock; may be null</param>
-    /// <param name="interruptAction">Interrupts the current task/action of the actor</param>
     /// <returns>A task that indicates whether the move was successful</returns>
     public async Task<bool> MoveWithin(Vector3 target, float distance, FlockController flockController, CancellationToken token)
     {
@@ -117,7 +115,7 @@ public class Movement : MonoBehaviour
         while (!Completed)
         {
             Vector3 positionDiff = transform.position - Target.transform.position;
-            positionDiff.y = Mathf.Pow(positionDiff.y, 2);
+            positionDiff.y = Mathf.Abs(positionDiff.y * 2);
             float ModifiedDistance = positionDiff.magnitude;
             if (ModifiedDistance < distance)
             {
@@ -156,7 +154,7 @@ public class Movement : MonoBehaviour
             {
                 await Task.Delay(Mathf.RoundToInt(PathingDelay * 1000f), token);
             }
-            catch (TaskCanceledException e) { }
+            catch (TaskCanceledException) { }
 
             if (!loop) return Completed;
             else if (token.IsCancellationRequested)

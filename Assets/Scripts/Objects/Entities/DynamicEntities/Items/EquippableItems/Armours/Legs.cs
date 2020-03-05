@@ -29,7 +29,7 @@ public class Legs : Armour
                 ModulesEnum.Shield
             }
         };
-        Slot = Equipment.Slots.Legs;
+        ValidSlots = new Equipment.Slots[] { Equipment.Slots.Legs };
     }
     public override bool FindSubtype()
     {

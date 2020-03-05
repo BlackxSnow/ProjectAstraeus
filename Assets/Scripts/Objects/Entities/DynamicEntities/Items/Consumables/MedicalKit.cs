@@ -9,7 +9,7 @@ using System.Threading;
 
 public class MedicalKit : Consumable, IInterruptible
 {
-    CancellationTokenSource tokenSource;
+    CancellationTokenSource tokenSource = new CancellationTokenSource();
 
     public void Interrupt()
     {

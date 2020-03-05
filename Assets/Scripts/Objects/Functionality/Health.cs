@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Medical.Conditions;
-using System.Runtime.Serialization;
+using System.Linq;
 
 namespace Medical
 {
@@ -73,6 +73,35 @@ namespace Medical
                 float Severity = UnityEngine.Random.Range(0, 10) + Mathf.Log(Mathf.Max(Amount,1),2) + (InjuryCostSum / 10);
                 AddInjury(Severity, DamageType);
             }
+        }
+
+        public KeyValuePair<PartFunctions, float>[] GetPartFunctions(params PartFunctions[] functions)
+        {
+            KeyValuePair<PartFunctions, float>[] result = new KeyValuePair<PartFunctions, float>[functions.Length];
+            int i = 0;
+            float totalControl = 0;
+            foreach(BodyPart part in Body.Where(p => p.Functions.ContainsKey(PartFunctions.Control)))
+            {
+                totalControl += part.GetAdjustedFunction(PartFunctions.Control);
+            }
+
+            foreach(PartFunctions function in functions)
+            {
+                float functionAmount = 0;
+
+                foreach(BodyPart part in Body.Where(p => p.Functions.ContainsKey(function)))
+                {
+                    part.Init(this);
+                    functionAmount += part.GetAdjustedFunction(function);
+                }
+
+                if (function != PartFunctions.Control)
+                    functionAmount *= totalControl;
+
+                result[i] = new KeyValuePair<PartFunctions, float>(function, functionAmount);
+                i++;
+            }
+            return result;
         }
 
         public void AddCondition(Condition.ConditionData Data, Injury injury, bool Refresh = true)

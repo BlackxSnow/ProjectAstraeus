@@ -7,7 +7,7 @@ using static Modules.AdditionalModule;
 
 public class EquippableItem : Item
 {
-    public Equipment.Slots Slot;
+    public Equipment.Slots[] ValidSlots;
     public ItemTypes.SubTypes Subtype;
 
     public ItemTypes.BonusInfoStruct BonusInfo;
@@ -38,7 +38,7 @@ public class EquippableItem : Item
                 {
                     StatMods[Stat.Key] = 0f;
                 }
-                StatMods[Stat.Key] += (float)Stat.Value.Value - 1f;
+                StatMods[Stat.Key] += (float)Stat.Value.Value;
             }
         }
         foreach (KeyValuePair<StatsEnum, float> StatMod in StatMods)

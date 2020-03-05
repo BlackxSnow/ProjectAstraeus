@@ -19,6 +19,8 @@ namespace Medical
 
             public List<Injury> Injuries;
 
+            private Health Owner;
+
             [OnDeserialized]
             public void OnDeserialised(StreamingContext context)
             {
@@ -29,6 +31,24 @@ namespace Medical
             {
                 BodyPart Result = (BodyPart)MemberwiseClone();
                 Result.Injuries = new List<Injury>(Injuries);
+                return Result;
+            }
+
+            public void Init(Health owner)
+            {
+                Owner = owner;
+            }
+
+            public float GetAdjustedFunction(PartFunctions function)
+            {
+                float Result = Functions[function];
+
+                foreach(Injury injury in Injuries)
+                {
+                    if (injury.FunctionModifiers.TryGetValue(function, out float value))
+                        Result *= value;
+                }
+
                 return Result;
             }
         }

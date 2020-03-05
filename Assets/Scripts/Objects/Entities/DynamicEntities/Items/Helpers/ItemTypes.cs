@@ -4,11 +4,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using Modules;
 using Items;
+using UnityEngine.AddressableAssets;
+using System.Threading.Tasks;
 using static StatsAndSkills;
 
 public class ItemTypes : MonoBehaviour
 {
-    public static GameObject ItemBasePrefab = UnityEngine.Resources.Load<GameObject>("Prefabs/Objects/Generic/ItemBase");
+    public static GameObject ItemBasePrefab;
+
+    public static async void LoadData()
+    {
+        Task<GameObject> AssetTask = Addressables.LoadAssetAsync<GameObject>("ItemBase").Task;
+        await AssetTask;
+        ItemBasePrefab = AssetTask.Result;
+    }
 
     public struct BonusInfoStruct
     {

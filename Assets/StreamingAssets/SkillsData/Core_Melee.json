@@ -1,0 +1,105 @@
+{
+"DataArray":
+[
+	{
+		"SkillName": "Swords",
+		"SkillType": "Melee",
+		"Description": "smacc sword",
+		"SubTypes": ["Sword", "Dagger"],
+		"SecondaryTypeCoefficient": 0.2,
+		"XPGainActivities": ["Sword combat"],
+		"AffectedActivities": 
+		[
+			{"Key": "Sword damage", "Value": "High"}, 
+			{"Key": "Sword attack speed", "Value": "High"}, 
+			{"Key": "Sword accuracy", "Value": "High"}, 
+			{"Key": "Sword block chance", "Value": "High"}, 
+			{"Key": "Dagger stats", "Value": "Low"}
+		],
+		"StatImpacts":
+		[
+			{
+				"Key": "Damage",
+				"Value":
+				[
+					{
+						"Key": "Strength",
+						"Value":
+						{
+							"NegativeModifierMax": 0.5,
+							"PositiveModifierMax": 2.0,
+							"Threshold": 0.5
+						}
+					},
+					{
+						"Key": "Dexterity",
+						"Value":
+						{
+							"NegativeModifierMax": 0.9,
+							"PositiveModifierMax": 1.11,
+							"Threshold": 0.5
+						}
+					}
+				]
+			},
+			{
+				"Key": "Speed",
+				"Value":
+				[
+					{
+						"Key": "Strength",
+						"Value":
+						{
+							"NegativeModifierMax": 0.9,
+							"PositiveModifierMax": 1.11,
+							"Threshold": 0.2
+						}
+					},
+					{
+						"Key": "Dexterity",
+						"Value":
+						{
+							"NegativeModifierMax": 0.5,
+							"PositiveModifierMax": 2.0,
+							"Threshold": 0.5
+						}
+					}
+				]
+			},
+			{
+				"Key": "HitChance",
+				"Value":
+				[
+					{
+						"Key": "Strength",
+						"Value":
+						{
+							"NegativeModifierMax": 0.9,
+							"PositiveModifierMax": 1.11,
+							"Threshold": 0.2
+						}
+					},
+					{
+						"Key": "Dexterity",
+						"Value":
+						{
+							"NegativeModifierMax": 0.7,
+							"PositiveModifierMax": 1.42,
+							"Threshold": 0.4
+						}
+					},
+					{
+						"Key": "Perception",
+						"Value":
+						{
+							"NegativeModifierMax": 0.8,
+							"PositiveModifierMax": 1.25,
+							"Threshold": 0.3
+						}
+					}
+				]
+			}
+		]
+	}
+]
+}

@@ -31,7 +31,7 @@ public class Head : Armour
             }
         };
         //Stats.Stats = new Dictionary<StatsEnum, object>(BaseStats.Stats);
-        Slot = Equipment.Slots.Head;
+        ValidSlots = new Equipment.Slots[] { Equipment.Slots.Head };
     }
 
     public override bool FindSubtype()

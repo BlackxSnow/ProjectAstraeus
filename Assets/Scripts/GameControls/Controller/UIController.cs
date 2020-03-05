@@ -27,6 +27,7 @@ public class UIController : MonoBehaviour
         OrderButtonPrefab,
         ContextMenuPrefab,
         SelectionCirclePrefab,
+        ItemIconPrefab,
 
         InventoryPrefab,
         EquipmentPrefab,
@@ -52,6 +53,7 @@ public class UIController : MonoBehaviour
         "OrderButton",
         "ContextMenu",
         "SelectionCircle",
+        "ItemIcon",
 
         "InventoryUI",
         "EquipmentUI",

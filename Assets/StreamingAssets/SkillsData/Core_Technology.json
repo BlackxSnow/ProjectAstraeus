@@ -1,0 +1,21 @@
+{
+"DataArray":
+[
+	{
+		"SkillName": "Medical",
+		"SkillType": "Technology",
+		"Description": "Proficiency at patching all types of wounds, as well as performing surgeries.",
+		"XPGainActivities": ["Healing wounds", "Performing surgery"],
+		"AffectedActivities": 
+		[
+		{"Key": "Tend quality", "Value": "High"}, 
+		{"Key": "Tend speed", "Value": "High"},
+		{"Key": "Operation success", "Value": "High"},
+		{"Key": "Operation speed", "Value": "High"}
+		],
+		"StatImpacts":
+		[
+		]
+	}
+]
+}

@@ -1,0 +1,67 @@
+{
+"DataArray":
+[
+	{
+		"SkillName": "Athletics",
+		"SkillType": "Movement",
+		"Description": "The ability to run and swim. Great for extending your lifespan a few seconds when the heavy weapons jam.",
+		"XPGainActivities": ["Running", "Moving while encumbered"],
+		"AffectedActivities": 
+		[
+			{"Key": "Movement speed", "Value": "High"}, 
+			{"Key": "Carry weight", "Value": "High"}, 
+		],
+		"StatImpacts":
+		[
+			{
+				"Key": "Speed",
+				"Value":
+				[
+					{
+						"Key": "Endurance",
+						"Value":
+						{
+							"NegativeModifierMax": 0.33,
+							"PositiveModifierMax": 3.0,
+							"Threshold": 0.5
+						}
+					},
+					{
+						"Key": "Dexterity",
+						"Value":
+						{
+							"NegativeModifierMax": 0.8,
+							"PositiveModifierMax": 1.25,
+							"Threshold": 0.3
+						}
+					}
+				]
+			},
+			{
+				"Key": "Carry Weight",
+				"Value":
+				[
+					{
+						"Key": "Strength",
+						"Value":
+						{
+							"NegativeModifierMax": 0.33,
+							"PositiveModifierMax": 3.0,
+							"Threshold": 0.5
+						}
+					},
+					{
+						"Key": "Endurance",
+						"Value":
+						{
+							"NegativeModifierMax": 0.8,
+							"PositiveModifierMax": 1.25,
+							"Threshold": 0.3
+						}
+					},
+				]
+			}
+		]
+	}
+]
+}

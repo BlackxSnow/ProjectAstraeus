@@ -42,12 +42,69 @@ public class Actor : DynamicEntity, IOrderable, IDamageable, IInterruptible
         TokenSource = new CancellationTokenSource();
     }
 
+    public void Damage(float amount, bool critical, Weapon.DamageTypesEnum damageType)
+    {
+        EntityComponents.Health.Damage(amount, critical, damageType);
+    }
+
+    public void Block(Actor attacker)
+    {
+
+    }
+
+    public void Dodge(Actor attacker)
+    {
+
+    }
+
     public void Move(Vector3 Destination, FlockController flockController, bool interrupt = true)
     {
         if (interrupt) Interrupt();
 
         _ = MovementScript.SetDestination(Destination, flockController, TokenSource.Token);
     }
+
+    public void Attack(IDamageable Target)
+    {
+        CancellationToken token = TokenSource.Token;
+        if (EntityComponents.Equipment)
+        {
+            Weapon currentWeapon = EntityComponents.Equipment.Equipped?[(int)Equipment.Slots.Weapon] as Weapon;
+            if (currentWeapon)
+            {
+                currentWeapon.AttackOrder(this, Target, token);
+                UnarmedAttack(Target, token);
+            }
+        }
+        else UnarmedAttack(Target, token);
+    }
+
+    private async void UnarmedAttack(IDamageable Target, CancellationToken token)
+    {
+
+    }
+
+    const int DefenceCoefficient = 10;
+    public float GetDodgeDefence()
+    {
+        float result = 0;
+        if(EntityComponents.Stats)
+        {
+            result += 1 + (EntityComponents.Stats.Skills[StatsAndSkills.SkillsEnum.Dodge].GetAdjustedLevel() / DefenceCoefficient);
+        }
+        return result;
+    }
+
+    public float GetBlockDefence()
+    {
+        float result = 0;
+        if (EntityComponents.Stats)
+        {
+            result +=  1 + (EntityComponents.Stats.Skills[StatsAndSkills.SkillsEnum.Block].GetAdjustedLevel() / DefenceCoefficient);
+        }
+        return result;
+    }
+
 
     public void Pickup(DynamicEntity Target)
     {
@@ -82,11 +139,13 @@ public class Actor : DynamicEntity, IOrderable, IDamageable, IInterruptible
         {
             OrderEvents.OnMove += Move;
             OrderEvents.OnPickup += Pickup;
+            OrderEvents.OnAttack += Attack;
             Subscribed = true;
         } else if (!Selected && Subscribed)
         {
             OrderEvents.OnMove -= Move;
             OrderEvents.OnPickup -= Pickup;
+            OrderEvents.OnAttack -= Attack;
             Subscribed = false;
         }
     }

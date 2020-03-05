@@ -984,7 +984,6 @@ MonoBehaviour:
   TextOffset: 40
   MaxSize: {x: 6, y: 6}
   Slot: 0
-  ItemIconPrefab: {fileID: 0}
 --- !u!1 &8965031225469053930
 GameObject:
   m_ObjectHideFlags: 0
@@ -1082,7 +1081,6 @@ MonoBehaviour:
   TextOffset: 20
   MaxSize: {x: 12, y: 18}
   Slot: 5
-  ItemIconPrefab: {fileID: 0}
 --- !u!1 &8965031225479159162
 GameObject:
   m_ObjectHideFlags: 0
@@ -2098,7 +2096,6 @@ MonoBehaviour:
   TextOffset: 40
   MaxSize: {x: 6, y: 6}
   Slot: 4
-  ItemIconPrefab: {fileID: 0}
 --- !u!1 &8965031225970117191
 GameObject:
   m_ObjectHideFlags: 0
@@ -2351,7 +2348,6 @@ MonoBehaviour:
   TextOffset: 40
   MaxSize: {x: 12, y: 6}
   Slot: 2
-  ItemIconPrefab: {fileID: 0}
 --- !u!1 &8965031226067328795
 GameObject:
   m_ObjectHideFlags: 0
@@ -3444,8 +3440,7 @@ MonoBehaviour:
   ParentUI: {fileID: 6843136954174853335}
   TextOffset: 20
   MaxSize: {x: 7, y: 3}
-  Slot: 6
-  ItemIconPrefab: {fileID: 0}
+  Slot: 7
 --- !u!1 &8965031226694327942
 GameObject:
   m_ObjectHideFlags: 0
@@ -3926,7 +3921,6 @@ MonoBehaviour:
   TextOffset: 20
   MaxSize: {x: 12, y: 18}
   Slot: 1
-  ItemIconPrefab: {fileID: 0}
 --- !u!1 &8965031226898911483
 GameObject:
   m_ObjectHideFlags: 0
@@ -4325,7 +4319,6 @@ MonoBehaviour:
   TextOffset: 20
   MaxSize: {x: 20, y: 4}
   Slot: 6
-  ItemIconPrefab: {fileID: 0}
 --- !u!1 &8965031227105921881
 GameObject:
   m_ObjectHideFlags: 0
@@ -4888,7 +4881,6 @@ MonoBehaviour:
   TextOffset: 20
   MaxSize: {x: 12, y: 18}
   Slot: 3
-  ItemIconPrefab: {fileID: 0}
 --- !u!1 &9121988353480313612
 GameObject:
   m_ObjectHideFlags: 0

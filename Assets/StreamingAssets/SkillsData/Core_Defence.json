@@ -1,0 +1,129 @@
+{
+"DataArray":
+[
+	{
+		"SkillName": "Block",
+		"SkillType": "Defence",
+		"Description": "The ability to block and deflect attacks. It is not recommended to try blocking bullets, however.",
+		"XPGainActivities": ["Blocking attacks"],
+		"AffectedActivities": 
+		[
+			{"Key": "Block chance", "Value": "High"},
+			{"Key": "Block recovery", "Value": "High"}
+		],
+		"StatImpacts":
+		[
+			{
+				"Key": "Chance",
+				"Value":
+				[
+					{
+						"Key": "Strength",
+						"Value":
+						{
+							"NegativeModifierMax": 0.8,
+							"PositiveModifierMax": 1.25,
+							"Threshold": 0.3
+						}
+					},
+					{
+						"Key": "Dexterity",
+						"Value":
+						{
+							"NegativeModifierMax": 0.5,
+							"PositiveModifierMax": 2.0,
+							"Threshold": 0.5
+						}
+					}
+				]
+			},
+			{
+				"Key": "Recovery",
+				"Value":
+				[
+					{
+						"Key": "Endurance",
+						"Value":
+						{
+							"NegativeModifierMax": 0.7,
+							"PositiveModifierMax": 1.42,
+							"Threshold": 0.4
+						}
+					},
+					{
+						"Key": "Dexterity",
+						"Value":
+						{
+							"NegativeModifierMax": 0.7,
+							"PositiveModifierMax": 1.42,
+							"Threshold": 0.4
+						}
+					}
+				]
+			}
+		]
+	},
+	{
+		"SkillName": "Dodge",
+		"SkillType": "Defence",
+		"Description": "The ability to duck and dodge out of the way of harm. Works against bullets too if you're good enough.",
+		"XPGainActivities": ["Dodging attacks"],
+		"AffectedActivities": 
+		[
+			{"Key": "Dodge chance", "Value": "High"},
+			{"Key": "Dodge recovery", "Value": "High"}
+		],
+		"StatImpacts":
+		[
+			{
+				"Key": "Chance",
+				"Value":
+				[
+					{
+						"Key": "Strength",
+						"Value":
+						{
+							"NegativeModifierMax": 0.8,
+							"PositiveModifierMax": 1.25,
+							"Threshold": 0.3
+						}
+					},
+					{
+						"Key": "Dexterity",
+						"Value":
+						{
+							"NegativeModifierMax": 0.5,
+							"PositiveModifierMax": 2.0,
+							"Threshold": 0.5
+						}
+					}
+				]
+			},
+			{
+				"Key": "Recovery",
+				"Value":
+				[
+					{
+						"Key": "Endurance",
+						"Value":
+						{
+							"NegativeModifierMax": 0.7,
+							"PositiveModifierMax": 1.42,
+							"Threshold": 0.4
+						}
+					},
+					{
+						"Key": "Dexterity",
+						"Value":
+						{
+							"NegativeModifierMax": 0.7,
+							"PositiveModifierMax": 1.42,
+							"Threshold": 0.4
+						}
+					}
+				]
+			}
+		]
+	}
+]
+}

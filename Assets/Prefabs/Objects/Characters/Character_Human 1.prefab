@@ -76,6 +76,7 @@ SkinnedMeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -458,6 +459,7 @@ GameObject:
   - component: {fileID: 5684461933013317915}
   - component: {fileID: 79237715686437983}
   - component: {fileID: 5505215850058350228}
+  - component: {fileID: 4724587825631222492}
   m_Layer: 0
   m_Name: Character_Human 1
   m_TagString: Untagged
@@ -552,7 +554,9 @@ MonoBehaviour:
   EntityType: 0
   EntityFlags: 0
   animator: {fileID: 0}
-  SelectObj: {fileID: 1572354535519592, guid: f9fcb5772e492334f860f10e13015ddd, type: 3}
+  Race:
+    Name: 
+  CommittedAttack: 0
 --- !u!114 &5513016352001619766
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -612,6 +616,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ada0e460290b7b8429804b6b2c657302, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4724587825631222492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1081972892166003317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3ad869c9cbe8d341a289ae63801cebc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1203782279189018283

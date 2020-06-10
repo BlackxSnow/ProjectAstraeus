@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityAsync;
+using System.Threading.Tasks;
 
 public class DynamicEntity : Entity, ISelectable
 {
@@ -22,20 +23,19 @@ public class DynamicEntity : Entity, ISelectable
     {
         base.Init();
         ISelectablegameObject = gameObject;
+        EntityManager.RegisterSelectable(this);
+        InitAsync();
+    }
+
+    protected async override void InitAsync()
+    {
+        await UIController.DataLoadedEvent.WaitAsync();
         SelectObjInstance = Instantiate(UIController.ObjectPrefabs[UIController.ObjectPrefabsEnum.SelectionCirclePrefab], transform);
         SelectObjProjector = SelectObjInstance.GetComponent<Projector>();
         colliderComponent = GetComponent<Collider>();
         SelectObjUpdate();
-        base.Start();
-        EntityManager.RegisterSelectable(this);
-        if (FactionID != 0)
-        {
-            ViewableOnly = true;
-        }
-        else
-        {
-            ViewableOnly = false;
-        }
+        ViewableOnly = FactionID != 0 ? true : false;
+        base.InitAsync();
     }
 
     protected override void Start()
@@ -56,7 +56,7 @@ public class DynamicEntity : Entity, ISelectable
 
     public void SelectControl()
     {
-        if(Initialised) SelectObjUpdate();
+        if(Initialised.IsSet) SelectObjUpdate();
 
         if (Selected && !Circled)
         {

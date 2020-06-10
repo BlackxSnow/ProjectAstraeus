@@ -76,7 +76,7 @@ public class ContextMenu : MonoBehaviour
                     break;
                 case ContextButtons.Attack:
                     ButtonText.text = "Attack";
-                    UIButton.onClick.AddListener(delegate { OrderEvents.Attack(ObjEntity as IDamageable); });
+                    UIButton.onClick.AddListener(delegate { OrderEvents.Attack(ObjEntity as IDamageable, false); });
                     break;
                 case ContextButtons.MeleeAttack:
                     ButtonText.text = "Melee Attack";
@@ -96,7 +96,7 @@ public class ContextMenu : MonoBehaviour
                     break;
                 case ContextButtons.ForceAttack:
                     ButtonText.text = "Force Attack";
-                    UIButton.onClick.AddListener(delegate { OrderEvents.Attack(ObjEntity as Actor); });
+                    UIButton.onClick.AddListener(delegate { OrderEvents.Attack(ObjEntity as Actor, false); });
                     break;
                 default:
                     break;

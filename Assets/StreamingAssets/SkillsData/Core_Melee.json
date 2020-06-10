@@ -2,6 +2,104 @@
 "DataArray":
 [
 	{
+		"SkillName": "Unarmed",
+		"SkillType": "Melee",
+		"Description": "smacc fist",
+		"XPGainActivities": ["Fisticuffs"],
+		"AffectedActivities": 
+		[
+			{"Key": "Unarmed damage", "Value": "High"}, 
+			{"Key": "Unarmed damage attack speed", "Value": "High"}, 
+			{"Key": "Unarmed damage accuracy", "Value": "High"}, 
+			{"Key": "Unarmed damage block chance", "Value": "High"}
+		],
+		"StatImpacts":
+		[
+			{
+				"Key": "Damage",
+				"Value":
+				[
+					{
+						"Key": "Strength",
+						"Value":
+						{
+							"NegativeModifierMax": 0.33,
+							"PositiveModifierMax": 3.0,
+							"Threshold": 0.5
+						}
+					},
+					{
+						"Key": "Dexterity",
+						"Value":
+						{
+							"NegativeModifierMax": 0.9,
+							"PositiveModifierMax": 1.11,
+							"Threshold": 0.5
+						}
+					}
+				]
+			},
+			{
+				"Key": "Speed",
+				"Value":
+				[
+					{
+						"Key": "Strength",
+						"Value":
+						{
+							"NegativeModifierMax": 0.9,
+							"PositiveModifierMax": 1.11,
+							"Threshold": 0.2
+						}
+					},
+					{
+						"Key": "Dexterity",
+						"Value":
+						{
+							"NegativeModifierMax": 0.5,
+							"PositiveModifierMax": 2.0,
+							"Threshold": 0.5
+						}
+					}
+				]
+			},
+			{
+				"Key": "HitChance",
+				"Value":
+				[
+					{
+						"Key": "Strength",
+						"Value":
+						{
+							"NegativeModifierMax": 0.9,
+							"PositiveModifierMax": 1.11,
+							"Threshold": 0.2
+						}
+					},
+					{
+						"Key": "Dexterity",
+						"Value":
+						{
+							"NegativeModifierMax": 0.7,
+							"PositiveModifierMax": 1.42,
+							"Threshold": 0.4
+						}
+					},
+					{
+						"Key": "Perception",
+						"Value":
+						{
+							"NegativeModifierMax": 0.8,
+							"PositiveModifierMax": 1.25,
+							"Threshold": 0.3
+						}
+					}
+				]
+			}
+		]
+	},
+	
+	{
 		"SkillName": "Swords",
 		"SkillType": "Melee",
 		"Description": "smacc sword",

@@ -55,13 +55,14 @@ public class Movement : MonoBehaviour
 
     private async void SetMoveSpeed()
     {
+        await ParentActor.EntityComponents.Stats.Initialised.WaitAsync();
         while (true)
         {
             if (ParentActor.animator.GetBool("Moving"))
             {
                 ParentActor.EntityComponents.Stats.AddXP(StatsAndSkills.SkillsEnum.Athletics, 25);
             }
-            await DataManager.DataLoaded.WaitAsync();
+            
             Agent.speed = ParentActor.BaseEntityStats.MovementSpeed * (1f + (ParentActor.EntityComponents.Stats.GetSkillInfo(StatsAndSkills.SkillsEnum.Athletics).Level / 100f * 2.0f));
             await Await.Seconds(0.25f).ConfigureAwait(this);
         }
@@ -73,6 +74,32 @@ public class Movement : MonoBehaviour
         ParentActor.animator.SetBool("Moving", false);
         Agent.velocity = Vector3.zero;
         Agent.ResetPath();
+    }
+
+    public async Task RotateTowards(Transform target)
+    {
+        Vector3 startDirection = transform.rotation.eulerAngles;
+        Quaternion startRotation = transform.rotation;
+        startDirection.y = 0;
+        const float rotSpeed = 5.0f;
+        float time = 0;
+        bool completed = false;
+        while (!completed)
+        {
+            Vector3 targetDirection = (target.position - transform.position).normalized;
+            //targetDirection.y = 0;
+            Quaternion targetRotation = new Quaternion();
+            //targetRotation.SetFromToRotation(startDirection, targetDirection);
+            targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
+            transform.rotation = Quaternion.Slerp(startRotation, targetRotation, time);
+            
+            if (time >= 1f)
+                completed = true;
+
+            time += Time.deltaTime * rotSpeed;
+            await Await.NextUpdate();
+        }
+
     }
 
     /// <summary>

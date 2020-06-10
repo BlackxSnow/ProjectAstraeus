@@ -90,8 +90,7 @@ public class UIController : MonoBehaviour
         PinnedPanel = CanvasObject.transform.GetChild(1);
     }
 
-    public static AsyncAutoResetEvent DataLoadedEvent = new AsyncAutoResetEvent(false);
-    public static bool DataLoaded = false;
+    public static AsyncManualResetEvent DataLoadedEvent = new AsyncManualResetEvent();
     async void LoadAssets()
     {
         Task<IList<GameObject>> AssetTasks = Addressables.LoadAssetsAsync<GameObject>(AssetKeys, null, Addressables.MergeMode.Union).Task;
@@ -115,7 +114,6 @@ public class UIController : MonoBehaviour
             i++;
         }
 
-        DataLoaded = true;
         DataLoadedEvent.Set();
     }
 

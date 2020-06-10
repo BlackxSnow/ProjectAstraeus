@@ -105,6 +105,10 @@ MonoBehaviour:
     m_Address: SelectionCircle
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: fa017822e8687b846977fd2afa92b9fb
+    m_Address: ItemMesh_Sword
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   - m_GUID: fc310f9909d3caa48afd55f2e554b57a
     m_Address: EquipmentUI
     m_ReadOnly: 0

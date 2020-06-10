@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityAsync;
+using System.Threading.Tasks;
+using Nito.AsyncEx;
 
 public class Entity : MonoBehaviour, IOwnable
 {
@@ -36,14 +38,16 @@ public class Entity : MonoBehaviour, IOwnable
         public StatsAndSkills @Stats { get; private set; }
         public Movement @Movement { get; private set; }
         public Medical.Health @Health { get; private set; }
+        public IKBehaviour IKController { get; private set; }
 
-        public EntityComponentsStruct(Inventory inv, Equipment equip, StatsAndSkills stats, Movement move, Medical.Health health)
+        public EntityComponentsStruct(Inventory inv, Equipment equip, StatsAndSkills stats, Movement move, Medical.Health health, IKBehaviour ikController)
         {
             Inventory = inv;
             Equipment = equip;
             Stats = stats;
             Movement = move;
             Health = health;
+            IKController = ikController;
         }
     }
 
@@ -68,25 +72,33 @@ public class Entity : MonoBehaviour, IOwnable
 
     public virtual void GetEntityComponents()
     {
-        EntityComponents = new EntityComponentsStruct(GetComponent<Inventory>(), GetComponent<Equipment>(), GetComponent<StatsAndSkills>(), GetComponent<Movement>(), GetComponent<Medical.Health>());
+        EntityComponents = new EntityComponentsStruct(GetComponent<Inventory>(), GetComponent<Equipment>(), GetComponent<StatsAndSkills>(), GetComponent<Movement>(), GetComponent<Medical.Health>(), GetComponent<IKBehaviour>());
         if (EntityComponents.Inventory) EntityFlags |= EntityFlagsEnum.HasInventory;
         if (EntityComponents.Equipment) EntityFlags |= EntityFlagsEnum.CanEquip;
         if (EntityComponents.Stats) EntityFlags |= EntityFlagsEnum.HasStats;
         if (EntityComponents.Movement) EntityFlags |= EntityFlagsEnum.CanMove;
         if (EntityComponents.Health) EntityFlags |= EntityFlagsEnum.HasHealth;
     }
-    protected bool Initialised = false;
+    public AsyncManualResetEvent Initialised = new AsyncManualResetEvent();
+    protected AsyncManualResetEvent Initialising = new AsyncManualResetEvent();
     public virtual void Init()
     {
+        Initialising.Set();
         GetEntityComponents();
 
         animator = GetComponent<Animator>();
         if (Name == "") Name = name;
         FactionID = 0;//Mathf.RoundToInt(Random.value * (FactionManager.Factions.Count - 1));
         rendererComponent = transform.Find("Mesh").GetComponent<Renderer>();
+        InitAsync();
+    }
+
+    protected async virtual void InitAsync()
+    {
+        await DataManager.DataLoaded.WaitAsync();
         if (rendererComponent)
             rendererComponent.material.color = FactionManager.Factions[FactionID].FactionColour; //Debug; Visually shows faction colour
-        Initialised = true;
+        Initialised.Set();
     }
 
     public virtual void ChangeFaction(int ID)
@@ -98,11 +110,10 @@ public class Entity : MonoBehaviour, IOwnable
     }
 
     // Start is called before the first frame update
-    protected async virtual void Start()
+    protected virtual void Start()
     {
-        if (!Initialised)
+        if (!Initialising.IsSet)
         {
-            await Await.Until(() => UIController.DataLoaded);
             Init();
         }
     }

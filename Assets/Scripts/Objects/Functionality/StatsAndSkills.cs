@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Nito.AsyncEx;
 
 public class StatsAndSkills : MonoBehaviour
 {
@@ -130,9 +131,12 @@ public class StatsAndSkills : MonoBehaviour
 
     }
 
+    public AsyncManualResetEvent Initialised = new AsyncManualResetEvent();
+
     private void Awake()
     {
-        Init();
+        if(!Initialised.IsSet)
+            Init();
     }
 
     public async void Init()
@@ -144,6 +148,7 @@ public class StatsAndSkills : MonoBehaviour
 
             Skills.Add(kvp.Key, clone);
         }
+        Initialised.Set();
     }
 
     public StatSkill GetSkillInfo(Enum StatSkillEnum)
@@ -207,6 +212,7 @@ public class StatsAndSkills : MonoBehaviour
 
     public enum SkillsEnum
     {
+        Unarmed,
         Swords,
         Polearms,
         Quarterstaffs,

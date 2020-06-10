@@ -34,9 +34,26 @@ namespace Items
             };
         }
 
-        //TODO Animate
-        public override async void AttackOrder(Actor user, IDamageable target, CancellationToken token)
+        public override async void AttackOrder(Actor user, IDamageable target, CancellationToken token, bool isReaction)
         {
+            AttackData attackData = new AttackData
+            {
+                SpeedFunctions = new Dictionary<Health.PartFunctions, float>
+                {
+                    { Health.PartFunctions.Manipulation, 1.0f }
+                },
+                HitFunctions = new Dictionary<Health.PartFunctions, float>
+                {
+                    { Health.PartFunctions.Manipulation, 1.5f },
+                    { Health.PartFunctions.Vision, 1.0f }
+                },
+
+                DamageFunctions = new Dictionary<Health.PartFunctions, float>
+                {
+                    { Health.PartFunctions.Manipulation, 2.0f }
+                }
+            };
+
             CancellationTokenSource attackTokenSource = new CancellationTokenSource();
             Task AttackTask = null;
             bool Enabled = true;
@@ -51,15 +68,13 @@ namespace Items
                 {
                     attackTokenSource.Cancel();
                     attackTokenSource = new CancellationTokenSource();
-                    MonoBehaviour TMB = target as MonoBehaviour;
-                    GameObject TGO = TMB.gameObject;
-                    await user.EntityComponents.Movement.MoveWithin(TGO, Range, null, token);
+                    await user.EntityComponents.Movement.MoveWithin((target as MonoBehaviour).gameObject, Range, null, token);
                 }
                 else
                 {
                     if (AttackTask == null || AttackTask.IsCanceled || AttackTask.IsCompleted)
                     {
-                        AttackTask = AttackInstance(user, target, attackTokenSource.Token);
+                        AttackTask = AttackInstance(user, target, attackData, attackTokenSource.Token);
                         await AttackTask;
                     }
                     await Await.NextUpdate();
@@ -67,102 +82,7 @@ namespace Items
             }
         }
 
-        private async Task AttackInstance(Actor user, IDamageable target, CancellationToken token)
-        {
-            Dictionary<Health.PartFunctions, float> speedFunctions = new Dictionary<Health.PartFunctions, float>
-            {
-                { Health.PartFunctions.Manipulation, 1.0f }
-            };
-            Dictionary<Health.PartFunctions, float> hitFunctions = new Dictionary<Health.PartFunctions, float>
-            {
-                { Health.PartFunctions.Manipulation, 1.5f },
-                { Health.PartFunctions.Vision, 1.0f }
-            };
 
-            Dictionary<Health.PartFunctions, float> damageFunctions = new Dictionary<Health.PartFunctions, float>
-            {
-                { Health.PartFunctions.Manipulation, 2.0f }
-            };
-
-            //Get associated skills for the action
-            const float skillImpactCoefficient = 10;
-            StatsAndSkills.Skill[] ItemSkills = user.EntityComponents.Stats.GetItemSkills(Subtype);
-
-            float primarySpeedImpact = 1 + ItemSkills[0].GetAdjustedLevel("Speed") / skillImpactCoefficient;
-            float secondarySpeedImpact =  1 + ItemSkills[1].GetAdjustedLevel("Speed") / skillImpactCoefficient * ItemSkills[1].SecondaryTypeCoefficient;
-            float attackTime = BaseAttackTime / (Stats.GetStat<float>(StatsEnum.AttackSpeed) * primarySpeedImpact * secondarySpeedImpact);
-
-            //Get total modifier for functionality. If all related limbs are fine, this should be 1.
-            KeyValuePair<Health.PartFunctions, float>[] speedFunctionalities = user.EntityComponents.Health.GetPartFunctions(speedFunctions.Keys.ToArray());
-            float totalSpeedFunctionality = 1;
-            for (int i = 0; i < speedFunctionalities.Length; i++)
-            {
-                float statImpact = speedFunctions[speedFunctionalities[i].Key];
-                totalSpeedFunctionality *= Mathf.Pow(speedFunctionalities[i].Value, statImpact);
-            }
-            
-            //Wait for attackTime
-            try
-            {
-                await Task.Delay(Mathf.RoundToInt(attackTime * 1000f), token);
-            }
-            catch (TaskCanceledException) { }
-
-            if (token.IsCancellationRequested)
-                return;
-
-            //Get total modifier for functionality. If all related limbs are fine, this should be 1.
-            KeyValuePair<Health.PartFunctions, float>[] hitFunctionalities = user.EntityComponents.Health.GetPartFunctions(hitFunctions.Keys.ToArray());
-            float totalHitFunctionality = 1;
-            for (int i = 0; i < hitFunctionalities.Length; i++)
-            {
-                float statImpact = hitFunctions[hitFunctionalities[i].Key];
-                totalHitFunctionality *= Mathf.Pow(hitFunctionalities[i].Value, statImpact);
-            }
-
-            //Get the relevant skill impacts for the action
-            float primaryHitImpact = 1 + ItemSkills[0].GetAdjustedLevel("HitChance") / skillImpactCoefficient;
-            float secondaryHitImpact = 1 + ItemSkills[1].GetAdjustedLevel("HitChance") / skillImpactCoefficient * ItemSkills[1].SecondaryTypeCoefficient;
-
-
-            //Finalise the hit chances
-            float userAttack = primaryHitImpact * secondaryHitImpact;
-            float dodgeHitChance = 0.5f * (userAttack / target.GetDodgeDefence());
-            float blockHitChance = 0.5f * (userAttack / target.GetBlockDefence());
-            
-            if(Random.value > dodgeHitChance)
-            {
-                target.Dodge(user);
-                return;
-            }
-            if(Random.value > blockHitChance)
-            {
-                target.Block(user);
-                return;
-            }
-
-
-            float criticalChance = 0.5f;
-            bool critical = Random.value <= criticalChance;
-
-            //Get total relevant body functionality
-            //Get total relevant stat bonuses from StatsAndSkills.cs
-            //Get total relevant skill bonuses
-            KeyValuePair<Health.PartFunctions, float>[] damageFunctionalities = user.EntityComponents.Health.GetPartFunctions(damageFunctions.Keys.ToArray());
-            float totalDamageFunctionality = 1;
-            for(int i = 0; i < damageFunctionalities.Length; i++)
-            {
-                float statImpact = damageFunctions[damageFunctionalities[i].Key];
-                totalDamageFunctionality *= Mathf.Pow(damageFunctionalities[i].Value, statImpact);
-            }
-
-            float primaryDamageImpact = 1 + (ItemSkills[0].GetAdjustedLevel("Damage") / skillImpactCoefficient);
-            float secondaryDamageImpact = 1 + ItemSkills[1].GetAdjustedLevel("Damage") / skillImpactCoefficient * ItemSkills[1].SecondaryTypeCoefficient;
-
-            float damage = Random.Range(0.75f, 1.25f) * (Stats.GetStat<float>(StatsEnum.Damage) * totalDamageFunctionality * primaryDamageImpact * secondaryDamageImpact);
-
-            target.Damage(damage, critical, DamageTypesEnum.Sharp);
-        }
 
         public override List<GameObject> InstantiateStatKVPs(bool Cost, out List<GameObject> CombinedKVPLists, Transform Parent, KeyValueGroup Group = null) 
         {

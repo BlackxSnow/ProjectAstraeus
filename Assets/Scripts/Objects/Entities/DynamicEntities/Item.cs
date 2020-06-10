@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Modules;
 using static ItemTypes;
-
+using System.Threading.Tasks;
 
 public class Item : DynamicEntity
 {

@@ -70,7 +70,7 @@ namespace Medical
 
             if (Critical)
             {
-                float Severity = UnityEngine.Random.Range(0, 10) + Mathf.Log(Mathf.Max(Amount,1),2) + (InjuryCostSum / 10);
+                float Severity = UnityEngine.Random.Range(0.75f, 1.25f) * 3f * Mathf.Log(Mathf.Pow(Amount, 1.3f) / 5f + 1f, 2f) + (InjuryCostSum / 10f);
                 AddInjury(Severity, DamageType);
             }
         }

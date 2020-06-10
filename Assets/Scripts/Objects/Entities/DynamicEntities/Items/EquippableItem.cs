@@ -4,13 +4,16 @@ using UnityEngine;
 using Modules;
 using static ItemTypes;
 using static Modules.AdditionalModule;
+using System.Threading.Tasks;
 
 public class EquippableItem : Item
 {
-    public Equipment.Slots[] ValidSlots;
-    public ItemTypes.SubTypes Subtype;
+    public Transform Anchor;
 
-    public ItemTypes.BonusInfoStruct BonusInfo;
+    public Equipment.Slots[] ValidSlots;
+    public SubTypes Subtype;
+
+    public BonusInfoStruct BonusInfo;
     public override void Init()
     {
         base.Init();

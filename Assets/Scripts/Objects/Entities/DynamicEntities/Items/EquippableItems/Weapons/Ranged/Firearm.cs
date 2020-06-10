@@ -5,6 +5,7 @@ using System.Linq;
 using Modules;
 using static ItemTypes;
 using static Modules.AdditionalModule;
+using System.Threading.Tasks;
 
 public class Firearm : Ranged
 {

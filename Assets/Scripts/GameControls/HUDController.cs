@@ -27,8 +27,16 @@ public class HUDController : MonoBehaviour
             public Button Stats;
         }
         public ButtonsStruct Buttons;
+        [System.Serializable]
+        public struct StanceUIStruct
+        {
+            public GameObject Panel;
+            public Button Aggressive;
+            public Button Defensive;
+            public Button Flee;
+        }
+        public StanceUIStruct StanceUI;
 
-        
     }
     public SelectInfo SelectHUD;
 
@@ -84,6 +92,8 @@ public class HUDController : MonoBehaviour
         {
             SelectionUIDetails = Selection.InstantiateStatDisplay();
         }
+
+        DisplayStanceButtons(Selection);
         DisplaySelectionButtons(Selection);
         
     }
@@ -118,6 +128,26 @@ public class HUDController : MonoBehaviour
             SelectHUD.Buttons.Stats.gameObject.SetActive(true);
         }
     }
+
+    void DisplayStanceButtons(ISelectable Selection)
+    {
+
+        SelectHUD.StanceUI.Panel.SetActive(false);
+        SelectHUD.StanceUI.Aggressive.onClick.RemoveAllListeners();
+        SelectHUD.StanceUI.Defensive.onClick.RemoveAllListeners();
+        SelectHUD.StanceUI.Flee.onClick.RemoveAllListeners();
+
+        Actor SelectedActor = Selection as Actor;
+
+        if (!Selection.ViewableOnly && SelectedActor)
+        {
+            SelectHUD.StanceUI.Panel.SetActive(true);
+            SelectHUD.StanceUI.Aggressive.onClick.AddListener(delegate { SelectedActor.ChangeStance(Actor.CombatStances.Aggressive); });
+            SelectHUD.StanceUI.Defensive.onClick.AddListener(delegate { SelectedActor.ChangeStance(Actor.CombatStances.Defensive); });
+            SelectHUD.StanceUI.Flee.onClick.AddListener(delegate { SelectedActor.ChangeStance(Actor.CombatStances.Flee); });
+        }
+    }
+
     public void ClearSelectionUI()
     {
         SelectHUD.InfoPanel.SetActive(false);

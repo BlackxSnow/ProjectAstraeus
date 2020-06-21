@@ -4,6 +4,6 @@ using UnityEngine;
 
 public interface IOrderable
 {
-    public StateMachine.AIStateMachine StateMachine { get; }
+    AI.AIStateMachine StateMachine { get; }
     void Move(Vector3 Destination, FlockController flockController, bool StopAll);
 }

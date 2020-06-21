@@ -33,8 +33,8 @@ public class OrderEvents : MonoBehaviour
 
     public static void Move(Vector3 destination)
     {
-        FlockController flockController = ScriptableObject.CreateInstance<FlockController>();
-        OnMove?.Invoke(destination, flockController);
+        FlockController flock = new FlockController();
+        OnMove?.Invoke(destination, flock);
     }
     public static void Trade(Character character) => OnTrade?.Invoke(character);
     public static void Talk(Character character) => OnTalk?.Invoke(character);

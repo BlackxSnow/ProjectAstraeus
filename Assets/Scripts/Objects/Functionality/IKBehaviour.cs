@@ -15,8 +15,8 @@ public class IKBehaviour : MonoBehaviour
         ThisActor = GetComponent<Actor>();
     }
 
-    private Actor Attacker;
-    public async Task BlockIK(Actor attacker)
+    private Entity Attacker;
+    public async Task BlockIK(Entity attacker)
     {
         Attacker = attacker;
         BlockWeight = 1f;

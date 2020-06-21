@@ -5,6 +5,7 @@ using System;
 using UnityAsync;
 using System.Threading.Tasks;
 using Nito.AsyncEx;
+using UnityEngine.AI;
 
 public class Entity : MonoBehaviour, IOwnable
 {
@@ -51,6 +52,8 @@ public class Entity : MonoBehaviour, IOwnable
         }
     }
 
+    public AI.AIStateMachine StateMachine { get; protected set; }
+
     public int FactionID { get; set; }
 
     public string Name;
@@ -63,6 +66,7 @@ public class Entity : MonoBehaviour, IOwnable
     };
 
     public Animator animator;
+    public NavMeshAgent Agent;
     protected Renderer rendererComponent;
 
     public virtual Enum GetEntityType()
@@ -85,7 +89,7 @@ public class Entity : MonoBehaviour, IOwnable
     {
         Initialising.Set();
         GetEntityComponents();
-
+        Agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         if (Name == "") Name = name;
         FactionID = 0;//Mathf.RoundToInt(Random.value * (FactionManager.Factions.Count - 1));

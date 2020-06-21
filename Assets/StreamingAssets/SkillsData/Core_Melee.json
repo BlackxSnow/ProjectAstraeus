@@ -4,14 +4,14 @@
 	{
 		"SkillName": "Unarmed",
 		"SkillType": "Melee",
-		"Description": "smacc fist",
+		"Description": "smacc",
 		"XPGainActivities": ["Fisticuffs"],
 		"AffectedActivities": 
 		[
 			{"Key": "Unarmed damage", "Value": "High"}, 
-			{"Key": "Unarmed damage attack speed", "Value": "High"}, 
-			{"Key": "Unarmed damage accuracy", "Value": "High"}, 
-			{"Key": "Unarmed damage block chance", "Value": "High"}
+			{"Key": "Unarmed attack speed", "Value": "High"}, 
+			{"Key": "Unarmed accuracy", "Value": "High"}, 
+			{"Key": "Unarmed block chance", "Value": "High"}
 		],
 		"StatImpacts":
 		[

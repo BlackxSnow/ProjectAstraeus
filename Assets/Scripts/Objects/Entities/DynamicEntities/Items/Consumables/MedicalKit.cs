@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using UnityAsync;
 using System.Threading;
+using AI.States;
 
 public class MedicalKit : Consumable, IInterruptible
 {
@@ -23,20 +24,24 @@ public class MedicalKit : Consumable, IInterruptible
     }
 
     //TODO Continue action after movement is finished
+    //TODO refactor to state system
     public async override void Use(Actor UsingActor)
     {
         ISelectable Selected = await TargetSelect.StartSelect();
 
         if (Selected is Biotic Target)
         {
-            UsingActor.Interrupt();
+            UsingActor.StateMachine.ClearStates();
             CancellationToken token = UsingActor.TokenSource.Token;
             UsingActor.ActionInterrupt = this;
             Collider col = Target.GetComponent<Collider>();
             float boundsSize = Mathf.Max(col.bounds.size.x, col.bounds.size.z);
-            Task<bool> MovementTask = UsingActor.EntityComponents.Movement.MoveWithin(Target.gameObject, boundsSize * 2f, null, token);
-            await MovementTask;
-            if (token.IsCancellationRequested || !MovementTask.Result) return;
+
+            MoveWithin moveState = new MoveWithin(this, null, Target.gameObject, boundsSize * 2f, null);
+            moveState.Token = token;
+            UsingActor.StateMachine.SetState(moveState);
+            await moveState.StateCompleted.WaitAsync();
+            if (token.IsCancellationRequested || !moveState.Succeeded) return;
             
             _ = Heal(Target, UsingActor, boundsSize * 2f, token);
         }

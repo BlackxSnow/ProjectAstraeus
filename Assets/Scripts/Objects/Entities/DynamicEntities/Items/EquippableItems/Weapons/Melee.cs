@@ -9,6 +9,7 @@ using Medical;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityAsync;
+using AI.States;
 
 namespace Items
 {
@@ -32,11 +33,8 @@ namespace Items
             {
                 ModulesEnum.Handle
             };
-        }
 
-        public override async void AttackOrder(Actor user, IDamageable target, CancellationToken token, bool isReaction)
-        {
-            AttackData attackData = new AttackData
+            AttackFunctions = new AttackData
             {
                 SpeedFunctions = new Dictionary<Health.PartFunctions, float>
                 {
@@ -53,34 +51,40 @@ namespace Items
                     { Health.PartFunctions.Manipulation, 2.0f }
                 }
             };
-
-            CancellationTokenSource attackTokenSource = new CancellationTokenSource();
-            Task AttackTask = null;
-            bool Enabled = true;
-            while(Enabled)
-            {
-                float Range = Stats.GetStat<float>(StatsEnum.Range);
-
-                if (token.IsCancellationRequested)
-                    return;
-
-                if (Vector3.Distance(user.transform.position, (target as MonoBehaviour).transform.position) >= Range)
-                {
-                    attackTokenSource.Cancel();
-                    attackTokenSource = new CancellationTokenSource();
-                    await user.EntityComponents.Movement.MoveWithin((target as MonoBehaviour).gameObject, Range, null, token);
-                }
-                else
-                {
-                    if (AttackTask == null || AttackTask.IsCanceled || AttackTask.IsCompleted)
-                    {
-                        AttackTask = AttackInstance(user, target, attackData, attackTokenSource.Token);
-                        await AttackTask;
-                    }
-                    await Await.NextUpdate();
-                }
-            }
         }
+
+        //public override async void AttackOrder(Actor user, IDamageable target, CancellationToken token, bool isReaction)
+        //{
+        //    CancellationTokenSource attackTokenSource = new CancellationTokenSource();
+        //    Task AttackTask = null;
+        //    bool Enabled = true;
+        //    while(Enabled)
+        //    {
+        //        float Range = Stats.GetStat<float>(StatsEnum.Range);
+
+        //        if (token.IsCancellationRequested)
+        //            return;
+
+        //        if (Vector3.Distance(user.transform.position, (target as MonoBehaviour).transform.position) >= Range)
+        //        {
+        //            attackTokenSource.Cancel();
+        //            attackTokenSource = new CancellationTokenSource();
+        //            MoveWithin moveState = new MoveWithin(this, null, (target as MonoBehaviour).gameObject, Range, null);
+        //            moveState.Token = token;
+        //            user.StateMachine.SetState(moveState);
+        //            await moveState.StateCompleted.WaitAsync();
+        //        }
+        //        else
+        //        {
+        //            if (AttackTask == null || AttackTask.IsCanceled || AttackTask.IsCompleted)
+        //            {
+        //                AttackTask = AttackInstance(user, target, attackData, attackTokenSource.Token);
+        //                await AttackTask;
+        //            }
+        //            await Await.NextUpdate();
+        //        }
+        //    }
+        //}
 
 
 

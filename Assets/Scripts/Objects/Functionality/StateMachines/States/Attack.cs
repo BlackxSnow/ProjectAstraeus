@@ -17,7 +17,8 @@ namespace AI.States
 	{
         public IDamageable Target;
         protected CancellationTokenSource waitTokenSource;
-
+        public delegate void AttackEventHandler(Entity attacker, Entity defender, Weapon weapon, bool blocked, bool critical, params KeyValuePair<Weapon.DamageTypesEnum, float>[] damages);
+        public static event AttackEventHandler AttackEvent;
 
         public Attack(Entity ai,  Del callback, IDamageable target) : base(ai, callback)
 		{
@@ -46,7 +47,7 @@ namespace AI.States
                     waitTokenSource = CancellationTokenSource.CreateLinkedTokenSource(BehaviourTokenSource.Token);
                     behaviourToken.ThrowIfCancellationRequested();
 
-                    GetStats(out float range, out float attackSpeed, out float damage, out StatsAndSkills.Skill[] skills, out Weapon.AttackData attackFunctions, out Weapon.DamageTypesEnum damageType);
+                    GetStats(out float range, out float attackSpeed, out float damage, out StatsAndSkills.Skill[] skills, out Weapon.AttackData attackFunctions, out Weapon.DamageTypesEnum damageType, out Weapon weapon);
                     if(!ProximityCheck(range))
                     {
                         EntitySelf.animator.SetBool("MeleeStance", false);
@@ -59,7 +60,7 @@ namespace AI.States
                     //TODO If ranged weapon, find cover
 
                     //Get associated skills for the action
-                    const float BaseAttackTime = 1.0f;
+                    const float BaseAttackTime = 2.0f;
                     const float skillImpactCoefficient = 10;
 
                     float primarySpeedImpact = 1 + skills[0].GetAdjustedLevel("Speed") / skillImpactCoefficient;
@@ -99,11 +100,13 @@ namespace AI.States
 
                     if (EntitySelf is Actor actor)
                     {
-                        if (Target.GetDodge(userAttack, actor))
+                        if (Target.GetDodge(userAttack, actor) || Target.GetBlock(userAttack, actor))
+                        {
+                            AttackEvent?.Invoke(EntitySelf, Target as Entity, weapon, true, false);
                             continue;
+                        }
 
-                        if (Target.GetBlock(userAttack, actor))
-                            continue; 
+
                     }
 
                     //TODO adjust critical chance based on skills and weapon
@@ -127,6 +130,7 @@ namespace AI.States
                     float totalDamage = UnityEngine.Random.Range(0.75f, 1.25f) * (damage * totalDamageFunctionality * primaryDamageImpact * secondaryDamageImpact);
 
                     Target.Damage(damage, critical, damageType);
+                    AttackEvent?.Invoke(EntitySelf, Target as Entity, weapon, false, critical, new KeyValuePair<Weapon.DamageTypesEnum, float>(damageType, damage));
                 }
                 catch (OperationCanceledException)
                 {
@@ -153,13 +157,14 @@ namespace AI.States
             base.EndState();
         }
 
-        protected void GetStats(out float range, out float attackSpeed, out float damage, out StatsAndSkills.Skill[] skills, out Weapon.AttackData attackFunctions, out Weapon.DamageTypesEnum damageType)
+        protected void GetStats(out float range, out float attackSpeed, out float damage, out StatsAndSkills.Skill[] skills, out Weapon.AttackData attackFunctions, out Weapon.DamageTypesEnum damageType, out Weapon weapon)
         {
             EquippableItem item = EntitySelf.EntityComponents.Equipment.Equipped?[(int)Equipment.Slots.Weapon];
             if(item == null) item = EntitySelf.EntityComponents.Equipment.Equipped?[(int)Equipment.Slots.SecondaryWeapon];
 
-            if (item && item is Weapon weapon)
+            if (item && item is Weapon w)
             {
+                weapon = w;
                 range = weapon.Stats.GetStat<float>(ItemTypes.StatsEnum.Range);
                 attackSpeed = weapon.Stats.GetStat<float>(ItemTypes.StatsEnum.AttackSpeed);
                 damage = weapon.Stats.GetStat<float>(ItemTypes.StatsEnum.Damage);
@@ -170,6 +175,7 @@ namespace AI.States
             }
             else
             {
+                weapon = null;
                 range = (EntitySelf as Actor).UnarmedData.Range;
                 attackSpeed = (EntitySelf as Actor).UnarmedData.AttackSpeed;
                 damage = (EntitySelf as Actor).UnarmedData.Damage;

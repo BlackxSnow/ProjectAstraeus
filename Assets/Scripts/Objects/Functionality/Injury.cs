@@ -58,7 +58,7 @@ namespace Medical
         public BodyPart Part;
         public List<Condition> ActiveConditions = new List<Condition>();
         public List<KeyValuePair<float, int>> ConditionStartTimes = new List<KeyValuePair<float, int>>();
-        private Utility.Timer HealTimer;
+        private Utility.Async.Timer HealTimer;
         private static float HealInterval = 0.1f;
 
         public Injury Clone()
@@ -67,7 +67,7 @@ namespace Medical
             Result.ActiveConditions = new List<Condition>();
             Result.ConditionStartTimes = new List<KeyValuePair<float, int>>();
             Result.HealTimer = null;
-            Result.Conditions = Utility.CloneList<Condition.ConditionData>(Conditions);
+            Result.Conditions = Utility.Collections.CloneList<Condition.ConditionData>(Conditions);
             return Result;
         }
         public void Init(Health ParentHealth, BodyPart ParentPart)
@@ -79,7 +79,7 @@ namespace Medical
 
             if (BaseHealTime > 0)
             {
-                HealTimer = new Utility.Timer(HealInterval, new Utility.Timer.ElapsedDelegate(AdvanceHeal), true);
+                HealTimer = new Utility.Async.Timer(HealInterval, new Utility.Async.Timer.ElapsedDelegate(AdvanceHeal), true);
                 HealTimer.Start();
             }
             foreach (Condition.ConditionData condition in Conditions)
@@ -178,7 +178,7 @@ namespace Medical
             {
                 if (kvp.Value > 1)
                 {
-                    SelectedTime = new KeyValuePair<string, float>(kvp.Key, Utility.RoundToNDecimals(kvp.Value, 1, Utility.RoundType.Ceil));
+                    SelectedTime = new KeyValuePair<string, float>(kvp.Key, Utility.Math.RoundToNDecimals(kvp.Value, 1, Utility.Math.RoundType.Ceil));
                     break;
                 }
             }
@@ -209,10 +209,10 @@ namespace Medical
             Icon = DataManager.LoadSprite(IconFile, DataManager.InjuryIconsPath);
             RemainingTime = BaseHealTime;
 
-            FunctionModifiers = Utility.DeserializeEnumCollection<PartFunctions, float>(FunctionModifiers_S);
+            FunctionModifiers = Utility.Collections.DeserializeEnumCollection<PartFunctions, float>(FunctionModifiers_S);
             FunctionModifiers_S.Clear();
 
-            DamageTypes = Utility.DeserializeEnumCollection<Weapon.DamageTypesEnum>(DamageTypes_S);
+            DamageTypes = Utility.Collections.DeserializeEnumCollection<Weapon.DamageTypesEnum>(DamageTypes_S);
             DamageTypes_S.Clear();
         }
     }

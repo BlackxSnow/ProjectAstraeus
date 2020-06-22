@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
 
-public class Consumable : Item, IUsable
+public abstract class Consumable : Item, IUsable
 {
     public override void Init()
     {
@@ -11,8 +11,8 @@ public class Consumable : Item, IUsable
         Stats.AddStat(ItemTypes.StatsEnum.Quantity, 5);
         Stats.AddStat(ItemTypes.StatsEnum.MaxQuantity, 5);
     }
-    public virtual void Use(Actor UsingActor)
-    {
+    public abstract void Use(Actor user);
 
-    }
+    public abstract bool Act(Entity user, Entity target, object iteratedOn);
+    public abstract bool GetNextIteration(Entity target, out object iterateOn, out float time);
 }

@@ -72,7 +72,7 @@ namespace UI
             float MaxHP = RefHealth.MaxHitPoints;
             float CurrHP = RefHealth.HitPoints;
 
-            HealthBar.Text.text = $"{Utility.RoundToNDecimals(CurrHP, 1)} / {MaxHP}";
+            HealthBar.Text.text = $"{Utility.Math.RoundToNDecimals(CurrHP, 1)} / {MaxHP}";
             HealthBar.Foreground.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, HealthBar.Background.rect.width * CurrHP / MaxHP);
         }
 

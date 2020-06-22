@@ -25,7 +25,7 @@ public class Diplomacy : Window
         {
             if (_KVP.Key == ID)
             {
-                Gradient gradient = Utility.CreateGradient(Color.green);
+                Gradient gradient = Utility.Colour.CreateGradient(Color.green);
                 UIController.KVPData Data = new UIController.KVPData(FactionManager.Factions[_KVP.Key].Name, "SELF", RelationsPanel)
                 {
                     gradient = gradient
@@ -34,7 +34,7 @@ public class Diplomacy : Window
             }
             else
             {
-                Gradient gradient = Utility.CreateGradient(Color.red, Color.white, Color.green);
+                Gradient gradient = Utility.Colour.CreateGradient(Color.red, Color.white, Color.green);
                 UIController.KVPData Data = new UIController.KVPData(FactionManager.Factions[_KVP.Key].Name, FactionManager.Factions[ID].GetRelations(_KVP.Key), RelationsPanel)
                 {
                     gradient = gradient,

@@ -237,7 +237,7 @@ public class UIController : MonoBehaviour
         {
             if (Data.Min != Data.Max)
             {
-                color = Data.gradient.Evaluate(Utility.FindValueMinMax(Data.Min, Data.Max, Data.Value));
+                color = Data.gradient.Evaluate(Utility.Math.FindValueMinMax(Data.Min, Data.Max, Data.Value));
             }
             else
             {
@@ -248,7 +248,7 @@ public class UIController : MonoBehaviour
 
         if (Data.Value is float || Data.Value is double)
         {
-            Result = Utility.RoundToNDecimals(Data.Value, Data.Rounding);
+            Result = Utility.Math.RoundToNDecimals(Data.Value, Data.Rounding);
         }
 
         KeyText.text = string.Format("{0}", Data.Key);

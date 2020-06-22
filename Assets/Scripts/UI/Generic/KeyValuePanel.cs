@@ -143,7 +143,7 @@ public class KeyValuePanel : TextKVGroup, IGroupableUI
         {
             return string.Format("{0}", RefModule.GetStat<Firearm.FireModes>(StatsEnum.FireMode));
         }
-        return string.Format("{0}", Utility.RoundToNDecimals(RefModule.GetStat<float>((StatsEnum)ValueEnum), 1));
+        return string.Format("{0}", Utility.Math.RoundToNDecimals(RefModule.GetStat<float>((StatsEnum)ValueEnum), 1));
     }
     public static string GetItemStat(AdditionalModule RefModule, Item RefItem, StatsAndSkills RefStats, Enum ValueEnum)
     {
@@ -160,7 +160,7 @@ public class KeyValuePanel : TextKVGroup, IGroupableUI
             SubTypes Subtype = ((EquippableItem)RefItem).Subtype;
             return Subtype.ToString();
         }
-        return string.Format("{0}", Utility.RoundToNDecimals(RefItem.Stats.GetStat<float>((StatsEnum)ValueEnum), 1));
+        return string.Format("{0}", Utility.Math.RoundToNDecimals(RefItem.Stats.GetStat<float>((StatsEnum)ValueEnum), 1));
     }
     public static string GetStat(AdditionalModule RefModule, Item RefItem, StatsAndSkills RefStats, Enum StatEnum) => string.Format("{0}", RefStats.Stats[(StatsAndSkills.StatsEnum)StatEnum]);
     public static string GetSkill(AdditionalModule RefModule, Item RefItem, StatsAndSkills RefStats, Enum SkillEnum) => string.Format("{0}", RefStats.Skills[(StatsAndSkills.SkillsEnum)SkillEnum]);

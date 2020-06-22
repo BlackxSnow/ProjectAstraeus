@@ -20,7 +20,7 @@ public class KeyValueList : MonoBehaviour
         if(lastcount != ContentPanel.transform.childCount)
         {
             //SetContentSize();
-            KVPs = Utility.GetChildren(ContentPanel.transform);
+            KVPs = Utility.Misc.GetChildren(ContentPanel.transform);
             lastcount = ContentPanel.transform.childCount;
         }
     }

@@ -48,7 +48,7 @@ namespace Medical
                 Bleeding
             }
 
-            public Utility.Timer HealTimer;
+            public Utility.Async.Timer HealTimer;
             public Health CharacterHealth;
             public float Severity { get; protected set; }
             public float Duration { get; protected set; }
@@ -109,17 +109,17 @@ namespace Medical
                     AbsoluteDuration = Duration * injury.BaseHealTime;
                 }
 
-                HealTimer = new Utility.Timer(HealInterval, new Utility.Timer.ElapsedDelegate(AdvanceHeal), true);
+                HealTimer = new Utility.Async.Timer(HealInterval, new Utility.Async.Timer.ElapsedDelegate(AdvanceHeal), true);
                 HealTimer.Start();
             }
 
-            public Utility.TimeSpan EffectiveRemainingTime = new Utility.TimeSpan();
+            public Utility.Misc.TimeSpan EffectiveRemainingTime = new Utility.Misc.TimeSpan();
             public virtual void AdvanceHeal(float ActualInterval)
             {
                 float RestModifier = CharacterHealth.RestHealModifier;
                 float ModifiedTotal = ActualInterval * RestModifier;
                 RemainingTime -= ModifiedTotal;
-                EffectiveRemainingTime = Utility.TimeSpan.FromSeconds(RemainingTime / ModifiedTotal * ActualInterval);
+                EffectiveRemainingTime = Utility.Misc.TimeSpan.FromSeconds(RemainingTime / ModifiedTotal * ActualInterval);
                 if (RemainingTime <= 0f)
                 {
                     EndEffect();
@@ -128,7 +128,7 @@ namespace Medical
             public string GetRemainingTime()
             {
                 KeyValuePair<string, float> TimeUnit = EffectiveRemainingTime.GetLargestUnit();
-                string Result = $"{Utility.RoundToNDecimals(TimeUnit.Value,1)}{TimeUnit.Key}";
+                string Result = $"{Utility.Math.RoundToNDecimals(TimeUnit.Value,1)}{TimeUnit.Key}";
                 return Result;
             }
 

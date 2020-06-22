@@ -63,7 +63,7 @@ public class DataManager : MonoBehaviour
             DataStruct<T> LoadedData = Newtonsoft.Json.JsonConvert.DeserializeObject<DataStruct<T>>(JsonData);
             //DataStruct<T> LoadedData = JsonUtility.FromJson<DataStruct<T>>(JsonData);
 
-            AllLoadedData.DataArray = Utility.CombineLists(AllLoadedData.DataArray, LoadedData.DataArray);
+            AllLoadedData.DataArray = Utility.Collections.CombineLists(AllLoadedData.DataArray, LoadedData.DataArray);
 
             Debug.Log($"Loaded '{Files[i].Name}'! {LoadedData.DataArray.Count} object(s) were loaded.");
         }

@@ -9,10 +9,10 @@ namespace DevTools
     public class StateMachineInfo : MonoBehaviour
     {
         private TextMeshProUGUI QueueText;
-        Utility.Timer UpdateTimer;
+        Utility.Async.Timer UpdateTimer;
         void Start()
         {
-            UpdateTimer = new Utility.Timer(0.05f, delegate { UpdateInfo(); }, true);
+            UpdateTimer = new Utility.Async.Timer(0.05f, delegate { UpdateInfo(); }, true);
             UpdateTimer.Start();
             QueueText = GetComponentInChildren<TextMeshProUGUI>();
         }

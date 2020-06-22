@@ -87,7 +87,7 @@ public class HUDController : MonoBehaviour
         if(Selection is Item)
         {
             SelectionUIDetails = (Selection as Item).InstantiateStatKVPs(false, out List<GameObject> KVPLists, SelectHUD.DetailsPanel.transform);
-            Utility.CombineLists(SelectionUIDetails, KVPLists);
+            Utility.Collections.CombineLists(SelectionUIDetails, KVPLists);
         } else
         {
             SelectionUIDetails = Selection.InstantiateStatDisplay();

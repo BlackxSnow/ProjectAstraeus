@@ -77,6 +77,16 @@ namespace AI.States
             Distance = distance;
         }
 
+        public static MoveWithin MoveState(Entity self, GameObject target, float range, CancellationToken token)
+        {
+            MoveWithin moveWithin = new MoveWithin(self, null, target, range, null)
+            {
+                Token = token
+            };
+            moveWithin.StartState();
+            return moveWithin;
+        }
+
         public override object Clone()
         {
             return new MoveWithin(EntitySelf, Callback, Target, Distance, Flock) { Token = Token };

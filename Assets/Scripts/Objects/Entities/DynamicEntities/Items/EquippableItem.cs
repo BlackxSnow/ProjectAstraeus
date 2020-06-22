@@ -80,8 +80,8 @@ public class EquippableItem : Item
 
         List<GameObject> BaseKVPs = base.InstantiateStatKVPs(Cost, out List<GameObject> BaseKVPLists, Parent, Group);
 
-        List<GameObject> CombinedKVPs = Utility.CombineLists(KVPs, BaseKVPs);
-        CombinedKVPLists = Utility.CombineLists(KVPLists, BaseKVPLists);
+        List<GameObject> CombinedKVPs = Utility.Collections.CombineLists(KVPs, BaseKVPs);
+        CombinedKVPLists = Utility.Collections.CombineLists(KVPLists, BaseKVPLists);
 
         return CombinedKVPs;
     }

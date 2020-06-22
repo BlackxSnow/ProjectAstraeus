@@ -24,7 +24,7 @@ namespace Medical
             [OnDeserialized]
             public void OnDeserialised(StreamingContext context)
             {
-                Functions = Utility.DeserializeEnumCollection<PartFunctions, float>(Functions_S);
+                Functions = Utility.Collections.DeserializeEnumCollection<PartFunctions, float>(Functions_S);
                 Injuries = new List<Injury>();
             }
             public BodyPart Clone()

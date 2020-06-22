@@ -20,10 +20,11 @@ public class ProgressBar : MonoBehaviour, IDestroyHandler
 
     public bool DestructionMarked { get; set; }
 
-    public void UpdateBar(float current)
+    public void UpdateBar(float current, bool percentage)
     {
-        UIBar.Text.text = $"{Utility.RoundToNDecimals(current, 1)} / {Utility.RoundToNDecimals(MaxAmount, 1)}";
-        UIBar.Foreground.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, UIBar.Background.rect.width * current / MaxAmount);
+        float currentAdjusted = percentage ? current : current / MaxAmount;
+        UIBar.Text.text = $"{Utility.Math.RoundToNDecimals(currentAdjusted * MaxAmount, 1)} / {Utility.Math.RoundToNDecimals(MaxAmount, 1)}";
+        UIBar.Foreground.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, UIBar.Background.rect.width * currentAdjusted);
     }
 
     public void Init(float current, float max, Color background, Color foreground, GameObject parent = null)
@@ -40,7 +41,7 @@ public class ProgressBar : MonoBehaviour, IDestroyHandler
         MaxAmount = max;
         UIBar.Foreground.GetComponent<Image>().color = foreground;
         UIBar.Background.GetComponent<Image>().color = background;
-        UpdateBar(current);
+        UpdateBar(current, false);
     }
 
     private void Update()

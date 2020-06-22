@@ -68,7 +68,7 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
         if (FollowingCursor)
         {
             //Convert mouse position (Which is in screen resolution units) to canvas position (1920 * 1080)
-            ModifiedMousePosition = Utility.ScreenToCanvasSpace(Utility.FlipY(Input.mousePosition), CanvasRect);
+            ModifiedMousePosition = Utility.Vector.ScreenToCanvasSpace(Utility.Vector.FlipY(Input.mousePosition), CanvasRect);
 
             RTransform.anchoredPosition = ModifiedMousePosition - MouseOffset;
         }
@@ -78,7 +78,7 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
             ItemSlotName.text = Equippable.ValidSlots[0].ToString();
         }
 
-        if (DisplayQuantity) Quantitybar.UpdateBar(RefItem.Stats.GetStat<int>(ItemTypes.StatsEnum.Quantity));
+        if (DisplayQuantity) Quantitybar.UpdateBar(RefItem.Stats.GetStat<int>(ItemTypes.StatsEnum.Quantity), false);
         ToolTipUpdate();
     }
 
@@ -171,7 +171,7 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
 
             //Calculate the relative mouseup position to the GridPanel
             Vector2 RelativeDropPosition = new Vector2(Input.mousePosition.x - CornersArray[1].x, Input.mousePosition.y - CornersArray[1].y);
-            Vector2 DropScreenSpace = Utility.ScreenToCanvasSpace(RelativeDropPosition, CanvasRect);
+            Vector2 DropScreenSpace = Utility.Vector.ScreenToCanvasSpace(RelativeDropPosition, CanvasRect);
             Vector2 DropOffset = new Vector2(DropScreenSpace.x - MouseOffset.x, DropScreenSpace.y + MouseOffset.y);
             Vector2Int DropInventoryLocation = new Vector2Int(Mathf.RoundToInt(DropOffset.x / InventoryUI.GridSize), Mathf.RoundToInt(DropOffset.y / InventoryUI.GridSize));
 
@@ -196,7 +196,7 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
     private void SetFollowCursor()
     {
         RTransform.SetParent(ParentCanvasObj.transform);
-        ModifiedMousePosition = Utility.ScreenToCanvasSpace(Utility.FlipY(Input.mousePosition), CanvasRect);
+        ModifiedMousePosition = Utility.Vector.ScreenToCanvasSpace(Utility.Vector.FlipY(Input.mousePosition), CanvasRect);
         MouseOffset = new Vector3(ModifiedMousePosition.x - RTransform.anchoredPosition.x, ModifiedMousePosition.y - RTransform.anchoredPosition.y, 0);
         FollowingCursor = true;
     }

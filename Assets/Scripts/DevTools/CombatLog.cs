@@ -45,7 +45,7 @@ namespace DevTools
             else
             {
                 string blockColor;
-                if (defender.FactionID != 0)
+                if (defender.FactionID == 0)
                     blockColor = "#00FF00";
                 else
                     blockColor = "#FF0000";

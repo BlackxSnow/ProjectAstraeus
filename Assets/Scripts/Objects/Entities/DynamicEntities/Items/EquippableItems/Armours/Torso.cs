@@ -50,7 +50,7 @@ public class Torso : Armour
         };
         float Mass = Stats.GetStat<float>(StatsEnum.Mass);
 
-        Subtype = ThresholdTypes[Utility.GetThreshold(Mass, MassThreshold)];
+        Subtype = ThresholdTypes[Utility.Math.GetThreshold(Mass, MassThreshold)];
         if (Subtype != OldType) return true; else return false;
     }
 }

@@ -22,6 +22,7 @@ namespace AI
         /// <param name="state">The new target AIState.</param>
         public void SetState(AIState state)
         {
+            //TODO: if shift is held, AddState(state) insteaad
             StateQueue.Clear();
             StateQueue.AddLast(state);
             TokenSource.Cancel();

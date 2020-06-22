@@ -51,7 +51,7 @@ namespace AI.States
                     if(!ProximityCheck(range))
                     {
                         EntitySelf.animator.SetBool("MeleeStance", false);
-                        SubState = MoveState(range, behaviourToken);
+                        SubState = MoveWithin.MoveState(EntitySelf, (Target as MonoBehaviour).gameObject, range, behaviourToken);
                         await SubState.StateCompleted.WaitAsync();
                         SubState = null;
                     }
@@ -221,16 +221,6 @@ namespace AI.States
             }
         }
 
-
-        protected MoveWithin MoveState(float range, CancellationToken token)
-        {
-            MoveWithin moveWithin = new MoveWithin(EntitySelf, null, (Target as MonoBehaviour).gameObject, range, null)
-            {
-                Token = token
-            };
-            moveWithin.StartState();
-            return moveWithin;
-        }
         protected RotateTowards RotateState(Transform target, CancellationToken token)
         {
             RotateTowards rotateTowards = new RotateTowards(EntitySelf, null, (Target as MonoBehaviour).transform)

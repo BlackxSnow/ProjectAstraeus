@@ -71,8 +71,8 @@ public class Equipment : MonoBehaviour
 
     static VectorResults CompareVectorSizes(Vector2 Max, Vector2 Compared)
     {
-         Utility.RearrangeVector(Max, out Vector2 MaxRearranged);
-         VectorResults ComparedResult = Utility.RearrangeVector(Compared, out Vector2 ComparedRearranged);
+         Utility.Vector.RearrangeVector(Max, out Vector2 MaxRearranged);
+         VectorResults ComparedResult = Utility.Vector.RearrangeVector(Compared, out Vector2 ComparedRearranged);
         
         if(ComparedRearranged.x > MaxRearranged.x || ComparedRearranged.y > MaxRearranged.y)
         {

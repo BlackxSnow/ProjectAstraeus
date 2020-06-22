@@ -77,7 +77,7 @@ public class Window : MonoBehaviour, IDraggable, IResizable, IDragHandler, IEndD
         {
             Vector3 MouseDifference = Input.mousePosition - InitialPosition;
             Vector2 ConstrainedSize;
-            Vector2 MouseDifferenceCanvas = Utility.ScreenToCanvasSpace(MouseDifference, CanvasRect);
+            Vector2 MouseDifferenceCanvas = Utility.Vector.ScreenToCanvasSpace(MouseDifference, CanvasRect);
             ConstrainedSize.x = Mathf.Max(InitialWindowSize.x + MouseDifferenceCanvas.x, MinSize.x);
             ConstrainedSize.y = Mathf.Max(InitialWindowSize.y + MouseDifferenceCanvas.y, MinSize.y);
             WindowRect.sizeDelta = ConstrainedSize;

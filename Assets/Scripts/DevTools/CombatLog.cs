@@ -32,8 +32,8 @@ namespace DevTools
                 int i = 0;
                 foreach (KeyValuePair<Weapon.DamageTypesEnum, float> damage in damages)
                 {
-                    string comma = i > 0 ? "," : "";
-                    damageText += $"{comma} {damage.Value} {damage.Key}";
+                    string comma = i > 0 ? ", " : "";
+                    damageText += $"{comma}{damage.Value} {damage.Key}";
                     i++;
                 }
                 if (critical) 

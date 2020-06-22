@@ -241,8 +241,10 @@ namespace AI.States
                 {
                     dodge.Token = Token;
                 }
-                dodge.StartState();
-                await dodge.StateCompleted.WaitAsync();
+                SubState = dodge;
+                SubState.StartState();
+                await SubState.StateCompleted.WaitAsync();
+                SubState = null;
                 StateBehaviour(BehaviourTokenSource.Token);
             }
         }
@@ -257,8 +259,10 @@ namespace AI.States
                 {
                     block.Token = Token;
                 }
-                block.StartState();
-                await block.StateCompleted.WaitAsync();
+                SubState = block;
+                SubState.StartState();
+                await SubState.StateCompleted.WaitAsync();
+                SubState = null;
                 StateBehaviour(BehaviourTokenSource.Token);
             }
         }

@@ -5,6 +5,7 @@ using Modules;
 using static Modules.AdditionalModule;
 using static ItemTypes;
 using System.Threading.Tasks;
+using UI.Control;
 
 public class Armour : EquippableItem
 {
@@ -43,24 +44,24 @@ public class Armour : EquippableItem
     {
         List<GameObject> KVPs = new List<GameObject>();
         List<GameObject> KVPLists = new List<GameObject>();
-        List<UIController.KVPData> KVPDatas = new List<UIController.KVPData>();
+        List<CreateUI.KVPData> KVPDatas = new List<CreateUI.KVPData>();
 
-        KVPDatas.Add(new UIController.KVPData(StatsEnum.Armour.ToString(), Stats.GetStat<float>(StatsEnum.Armour), Parent, 1));
-        KVPDatas.Add(new UIController.KVPData(StatsEnum.Shield.ToString(), Stats.GetStat<float>(StatsEnum.Shield), Parent, 1));
-        KVPDatas.Add(new UIController.KVPData(StatsEnum.Power.ToString(), Stats.GetStat<float>(StatsEnum.Power), Parent, 1));
-        KVPDatas.Add(new UIController.KVPData(StatsEnum.PowerUse.ToString(), Stats.GetStat<float>(StatsEnum.PowerUse), Parent, 1));
+        KVPDatas.Add(new CreateUI.KVPData(StatsEnum.Armour.ToString(), Stats.GetStat<float>(StatsEnum.Armour), Parent, 1));
+        KVPDatas.Add(new CreateUI.KVPData(StatsEnum.Shield.ToString(), Stats.GetStat<float>(StatsEnum.Shield), Parent, 1));
+        KVPDatas.Add(new CreateUI.KVPData(StatsEnum.Power.ToString(), Stats.GetStat<float>(StatsEnum.Power), Parent, 1));
+        KVPDatas.Add(new CreateUI.KVPData(StatsEnum.PowerUse.ToString(), Stats.GetStat<float>(StatsEnum.PowerUse), Parent, 1));
 
         KVPDatas[0].ValueEnum = StatsEnum.Armour;
         KVPDatas[1].ValueEnum = StatsEnum.Shield;
         KVPDatas[2].ValueEnum = StatsEnum.Power;
         KVPDatas[3].ValueEnum = StatsEnum.PowerUse;
 
-        foreach (UIController.KVPData Data in KVPDatas)
+        foreach (CreateUI.KVPData Data in KVPDatas)
         {
             Data.RefItem = this;
             Data.ValueDelegate = KeyValuePanel.GetItemStat;
             Data.Group = Group;
-            KVPs.Add(UIController.InstantiateKVP(Data));
+            KVPs.Add(CreateUI.Info.KeyValuePanel(Data));
         }
 
         List<GameObject> BaseKVPs = base.InstantiateStatKVPs(Cost, out List<GameObject> BaseKVPLists, Parent, Group);

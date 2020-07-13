@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UI.Control;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -40,7 +41,7 @@ public class ToolTipData : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     {
         if (!ToolTipObject)
         {
-            ToolTipObject = UIController.InstantiateToolTip($"{TitleText} ({UpdateValue()})", DescriptionText, gameObject);
+            ToolTipObject = CreateUI.Info.ToolTip($"{TitleText} ({UpdateValue()})", DescriptionText, gameObject);
             ToolTipScript = ToolTipObject.GetComponent<ToolTip>();
             UpdateToolTip();
         }

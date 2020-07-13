@@ -5,6 +5,7 @@ using UnityEngine;
 using Modules;
 using static ItemTypes;
 using System.Threading.Tasks;
+using UI.Control;
 
 public class Item : DynamicEntity
 {
@@ -135,47 +136,47 @@ public class Item : DynamicEntity
     {
         List<GameObject> KVPs = new List<GameObject>();
         KVPLists = new List<GameObject>();
-        List<UIController.KVPData> KVPDatas = new List<UIController.KVPData>();
+        List<CreateUI.KVPData> KVPDatas = new List<CreateUI.KVPData>();
 
-        UIController.KVPData TypeData = new UIController.KVPData("Item Type", Type, Parent)
+        CreateUI.KVPData TypeData = new CreateUI.KVPData("Item Type", Type, Parent)
         {
             Group = Group
         };
 
-        KVPDatas.Add(new UIController.KVPData("Size", Stats.GetStat<Vector2Int>(StatsEnum.Size), Parent));
-        KVPDatas.Add(new UIController.KVPData("Mass", Stats.GetStat<float>(StatsEnum.Mass), Parent));
+        KVPDatas.Add(new CreateUI.KVPData("Size", Stats.GetStat<Vector2Int>(StatsEnum.Size), Parent));
+        KVPDatas.Add(new CreateUI.KVPData("Mass", Stats.GetStat<float>(StatsEnum.Mass), Parent));
 
         KVPDatas[0].ValueEnum = StatsEnum.Size;
         KVPDatas[1].ValueEnum = StatsEnum.Mass;
 
-        foreach (UIController.KVPData Data in KVPDatas)
+        foreach (CreateUI.KVPData Data in KVPDatas)
         {
             Data.RefItem = this;
             Data.ValueDelegate = KeyValuePanel.GetItemStat;
             Data.Group = Group;
-            KVPs.Add(UIController.InstantiateKVP(Data));
+            KVPs.Add(CreateUI.Info.KeyValuePanel(Data));
         }
-        KVPs.Add(UIController.InstantiateKVP(TypeData));
+        KVPs.Add(CreateUI.Info.KeyValuePanel(TypeData));
 
 
         if (Cost)
         {
-            UIController.KVPData[] CostData = new UIController.KVPData[Resources.ResourceCount];
-            CostData[0] = new UIController.KVPData("Iron", Stats.GetStat<Resources>(StatsEnum.Cost)[Resources.ResourceList.Iron], null);
-            CostData[1] = new UIController.KVPData("Copper", Stats.GetStat<Resources>(StatsEnum.Cost)[Resources.ResourceList.Copper], null);
-            CostData[2] = new UIController.KVPData("Alloy", Stats.GetStat<Resources>(StatsEnum.Cost)[Resources.ResourceList.Alloy], null);
+            CreateUI.KVPData[] CostData = new CreateUI.KVPData[Resources.ResourceCount];
+            CostData[0] = new CreateUI.KVPData("Iron", Stats.GetStat<Resources>(StatsEnum.Cost)[Resources.ResourceList.Iron], null);
+            CostData[1] = new CreateUI.KVPData("Copper", Stats.GetStat<Resources>(StatsEnum.Cost)[Resources.ResourceList.Copper], null);
+            CostData[2] = new CreateUI.KVPData("Alloy", Stats.GetStat<Resources>(StatsEnum.Cost)[Resources.ResourceList.Alloy], null);
 
             CostData[0].ValueEnum = Resources.ResourceList.Iron;
             CostData[1].ValueEnum = Resources.ResourceList.Copper;
             CostData[2].ValueEnum = Resources.ResourceList.Alloy;
 
-            foreach (UIController.KVPData Data in CostData)
+            foreach (CreateUI.KVPData Data in CostData)
             {
                 Data.RefItem = this;
                 Data.ValueDelegate = KeyValuePanel.GetItemStat;
                 Data.Group = Group;
             }
-            KVPLists.Add(UIController.InstantiateKVPList("Cost", CostData, Parent, Group));
+            KVPLists.Add(CreateUI.Info.KVPList("Cost", CostData, Parent, Group));
         }
 
         return KVPs;

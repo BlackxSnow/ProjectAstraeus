@@ -6,6 +6,7 @@ using System;
 using TMPro;
 using UnityEngine.UI;
 using Medical.Conditions;
+using UI.Control;
 
 namespace UI
 {

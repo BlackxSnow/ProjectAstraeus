@@ -21,13 +21,12 @@ public class CameraControl : MonoBehaviour {
         CamFocalX = transform.parent.gameObject;
         CamControl = this;
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
 
         ZSpeed = transform.position.z * ZSpeedMultiplier;
 
-        if (ControlEnabled)
+        if (ControlEnabled && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
         {
             //Traverse
             if (Input.GetAxis("Horizontal") != 0)

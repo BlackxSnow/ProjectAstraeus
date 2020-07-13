@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using UI.Control;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -34,7 +35,7 @@ namespace AI.States
                 }
                 if(!Usable.GetNextIteration(Target, out object iterateOn, out float time)) 
                     break;
-                ProgressBar progressBar = UIController.InstantiateProgressBar(Target.gameObject, 0, time, Color.grey, Color.green);
+                ProgressBar progressBar = CreateUI.Info.ProgressBar(Target.gameObject, 0, time, Color.grey, Color.green);
                 Progress<float> progress = new Progress<float>();
                 progress.ProgressChanged += delegate(object _, float arg) { progressBar.UpdateBar(arg, true); };
                 await Utility.Async.WaitForSeconds(time, behaviourToken, progress);

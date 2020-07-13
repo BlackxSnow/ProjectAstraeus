@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using static StatsAndSkills;
+using UI.Control;
 
 public class StatsUI : Window
 {
@@ -47,7 +48,7 @@ public class StatsUI : Window
 
         for (int i = 0; i < SkillPanels.Length; i++)
         {
-            SkillPanels[i] = UIController.InstantiateLayoutPanel(SkillPanelContainer, UIController.LayoutTypes.Vertical, true, false, 5f, Enum.GetName(typeof(Skill.SkillTypes), i + 1)).transform;
+            SkillPanels[i] = CreateUI.Layout.LayoutPanel(SkillPanelContainer, CreateUI.LayoutTypes.Vertical, true, false, 5f, Enum.GetName(typeof(Skill.SkillTypes), i + 1)).transform;
             VerticalLayoutGroup VLayout = SkillPanels[i].GetComponent<VerticalLayoutGroup>();
             RectTransform RTransform = SkillPanels[i].GetComponent<RectTransform>();
 
@@ -62,7 +63,7 @@ public class StatsUI : Window
             RTransform.anchorMin = new Vector2(HorizontalOffset, VerticalOffset);
             RTransform.anchorMax = new Vector2(HorizontalOffset + XOffset, VerticalOffset + 0.5f);
 
-            GameObject TitleText = UIController.InstantiateText(Enum.GetName(typeof(Skill.SkillTypes), i + 1), SkillPanels[i], SkillsGroup);
+            GameObject TitleText = CreateUI.Info.TextPanel(Enum.GetName(typeof(Skill.SkillTypes), i + 1), SkillPanels[i], SkillsGroup);
             TextMeshProUGUI TitleTextMesh = TitleText.GetComponent<TextMeshProUGUI>();
             TitleTextMesh.fontStyle = FontStyles.Bold;
             TitleTextMesh.color = Color.red;
@@ -73,26 +74,26 @@ public class StatsUI : Window
     {
         foreach (KeyValuePair<StatsEnum, Stat> Stat in RefStats.Stats)
         {
-            UIController.KVPData Data = new UIController.KVPData(Stat.Key.ToString(), Stat.Value.Level, StatsPanel, KeyRatio: 0.8f)
+            CreateUI.KVPData Data = new CreateUI.KVPData(Stat.Key.ToString(), Stat.Value.Level, StatsPanel, KeyRatio: 0.8f)
             {
                 Group = SkillsGroup,
                 ValueDelegate = KeyValuePanel.GetStat,
                 RefStats = RefStats,
                 ValueEnum = Stat.Key
             };
-            GameObject KVP = UIController.InstantiateKVP(Data);
+            GameObject KVP = CreateUI.Info.KeyValuePanel(Data);
             KVP.AddComponent<SkillHover>().ParentStatsWindow = this;
         }
         foreach (KeyValuePair<SkillsEnum, Skill> Skill in RefStats.Skills)
         {
-            UIController.KVPData Data = new UIController.KVPData(Skill.Key.ToString(), Skill.Value.Level, SkillPanels[(int)Skill.Value.SkillType - 1], KeyRatio: 0.8f)
+            CreateUI.KVPData Data = new CreateUI.KVPData(Skill.Key.ToString(), Skill.Value.Level, SkillPanels[(int)Skill.Value.SkillType - 1], KeyRatio: 0.8f)
             {
                 Group = SkillsGroup,
                 ValueDelegate = KeyValuePanel.GetSkill,
                 RefStats = RefStats,
                 ValueEnum = Skill.Key
             };
-            GameObject KVP = UIController.InstantiateKVP(Data);
+            GameObject KVP = CreateUI.Info.KeyValuePanel(Data);
             KVP.AddComponent<SkillHover>().ParentStatsWindow = this;
         }
     }
@@ -102,30 +103,30 @@ public class StatsUI : Window
         StatSkill Skill = RefStats.GetSkillInfo(StatSkillEnum);
         //XP Gain Activities
         {
-            GameObject TitleText = UIController.InstantiateText("XP Gain Activities", InfoPanels.XPGainActivities.transform, InfoPanelGroup);
+            GameObject TitleText = CreateUI.Info.TextPanel("XP Gain Activities", InfoPanels.XPGainActivities.transform, InfoPanelGroup);
             InfoPanelObjects.Add(TitleText);
             TextMeshProUGUI TitleTextMesh = TitleText.GetComponent<TextMeshProUGUI>();
             TitleTextMesh.fontStyle = FontStyles.Bold;
             TitleTextMesh.color = Color.red;
             for (int i = 0; i < Skill.XPGainActivities.Length; i++)
             {
-                InfoPanelObjects.Add(UIController.InstantiateText(Skill.XPGainActivities[i], InfoPanels.XPGainActivities.transform, InfoPanelGroup));
+                InfoPanelObjects.Add(CreateUI.Info.TextPanel(Skill.XPGainActivities[i], InfoPanels.XPGainActivities.transform, InfoPanelGroup));
             }
         }
         //Affected Activities
         {
-            GameObject TitleText = UIController.InstantiateText("Affected Activities", InfoPanels.AffectedActivities.transform, InfoPanelGroup);
+            GameObject TitleText = CreateUI.Info.TextPanel("Affected Activities", InfoPanels.AffectedActivities.transform, InfoPanelGroup);
             InfoPanelObjects.Add(TitleText);
             TextMeshProUGUI TitleTextMesh = TitleText.GetComponent<TextMeshProUGUI>();
             TitleTextMesh.fontStyle = FontStyles.Bold;
             TitleTextMesh.color = Color.red;
             for (int i = 0; i < Skill.AffectedActivities.Length; i++)
             {
-                UIController.KVPData Data = new UIController.KVPData(Skill.AffectedActivities[i].Key, Skill.AffectedActivities[i].Value, InfoPanels.AffectedActivities.transform, KeyRatio: 0.75f)
+                CreateUI.KVPData Data = new CreateUI.KVPData(Skill.AffectedActivities[i].Key, Skill.AffectedActivities[i].Value, InfoPanels.AffectedActivities.transform, KeyRatio: 0.75f)
                 {
                     Group = InfoPanelGroup
                 };
-                InfoPanelObjects.Add(UIController.InstantiateKVP(Data));
+                InfoPanelObjects.Add(CreateUI.Info.KeyValuePanel(Data));
             }
         }
         //Level and XP
@@ -134,12 +135,12 @@ public class StatsUI : Window
         }
         //Description
         {
-            GameObject TitleText = UIController.InstantiateText("Description", InfoPanels.Description.transform, InfoPanelGroup);
+            GameObject TitleText = CreateUI.Info.TextPanel("Description", InfoPanels.Description.transform, InfoPanelGroup);
             InfoPanelObjects.Add(TitleText);
             TextMeshProUGUI TitleTextMesh = TitleText.GetComponent<TextMeshProUGUI>();
             TitleTextMesh.fontStyle = FontStyles.Bold;
             TitleTextMesh.color = Color.red;
-            InfoPanelObjects.Add(UIController.InstantiateText(Skill.Description, InfoPanels.Description.transform, InfoPanelGroup, true));
+            InfoPanelObjects.Add(CreateUI.Info.TextPanel(Skill.Description, InfoPanels.Description.transform, InfoPanelGroup, true));
         }
         InfoPanelGroup.ForceRecalculate();
 

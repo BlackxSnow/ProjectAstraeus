@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UI.Control;
 using UnityEngine;
 using UnityEngine.UI;
 using Faction = FactionManager.Faction;
@@ -17,8 +18,8 @@ public class Diplomacy : Window
     {
 
         //Creating generic faction information
-        Panels.Add(UIController.InstantiateKVP(new UIController.KVPData("Name", FactionManager.Factions[ID].Name, InfoLeft)));
-        Panels.Add(UIController.InstantiateKVP(new UIController.KVPData("ID", FactionManager.Factions[ID].ID, InfoLeft)));
+        Panels.Add(CreateUI.Info.KeyValuePanel(new CreateUI.KVPData("Name", FactionManager.Factions[ID].Name, InfoLeft)));
+        Panels.Add(CreateUI.Info.KeyValuePanel(new CreateUI.KVPData("ID", FactionManager.Factions[ID].ID, InfoLeft)));
 
         //Creating text for faction relations
         foreach (KeyValuePair<int, Faction> _KVP in FactionManager.Factions)
@@ -26,22 +27,20 @@ public class Diplomacy : Window
             if (_KVP.Key == ID)
             {
                 Gradient gradient = Utility.Colour.CreateGradient(Color.green);
-                UIController.KVPData Data = new UIController.KVPData(FactionManager.Factions[_KVP.Key].Name, "SELF", RelationsPanel)
+                CreateUI.KVPData Data = new CreateUI.KVPData(FactionManager.Factions[_KVP.Key].Name, "SELF", RelationsPanel)
                 {
-                    gradient = gradient
+                    GradientRange = new CreateUI.ColourRange(gradient, 0, 0)
                 };
-                Panels.Add(UIController.InstantiateKVP(Data));
+                Panels.Add(CreateUI.Info.KeyValuePanel(Data));
             }
             else
             {
                 Gradient gradient = Utility.Colour.CreateGradient(Color.red, Color.white, Color.green);
-                UIController.KVPData Data = new UIController.KVPData(FactionManager.Factions[_KVP.Key].Name, FactionManager.Factions[ID].GetRelations(_KVP.Key), RelationsPanel)
+                CreateUI.KVPData Data = new CreateUI.KVPData(FactionManager.Factions[_KVP.Key].Name, FactionManager.Factions[ID].GetRelations(_KVP.Key), RelationsPanel)
                 {
-                    gradient = gradient,
-                    Min = -100,
-                    Max = 100
+                    GradientRange = new CreateUI.ColourRange(gradient, -100, 100)
                 };
-                Panels.Add(UIController.InstantiateKVP(Data));
+                Panels.Add(CreateUI.Info.KeyValuePanel(Data));
             }
         }
     }

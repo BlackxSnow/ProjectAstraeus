@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UI.Control;
 using UnityEngine;
 using static ItemTypes;
 
@@ -196,21 +197,21 @@ namespace Modules
             int i = 0;
             foreach (KeyValuePair<StatsEnum, StatInfoObject> Stat in ModifiableStats)
             {
-                UIController.KVPData Data;
+                CreateUI.KVPData Data;
                 if (Stat.Value.Value is float)
                 {
-                    Data = new UIController.KVPData(Stat.Key.ToString(), GetStat<float>(Stat.Key), Parent, 2);
+                    Data = new CreateUI.KVPData(Stat.Key.ToString(), GetStat<float>(Stat.Key), Parent, 2);
                 }
                 else
                 {
-                    Data = new UIController.KVPData(Stat.Key.ToString(), GetStat<string>(Stat.Key), Parent);
+                    Data = new CreateUI.KVPData(Stat.Key.ToString(), GetStat<string>(Stat.Key), Parent);
                 }
 
                 Data.RefModule = this;
                 Data.ValueDelegate = KeyValuePanel.GetModuleStat;
                 Data.Group = KVPGroup;
                 Data.ValueEnum = Stat.Key;
-                KVPArray[i] = UIController.InstantiateKVP(Data);
+                KVPArray[i] = CreateUI.Info.KeyValuePanel(Data);
                 i++;
             }
 
@@ -224,18 +225,18 @@ namespace Modules
             int i = 0;
             foreach (KeyValuePair<StatsEnum, StatInfoObject> Stat in Stats)
             {
-                UIController.KVPData Data;
+                CreateUI.KVPData Data;
                 if (Stat.Value.Value is float)
                 {
-                    Data = new UIController.KVPData(Stat.Key.ToString(), GetStat<float>(Stat.Key), Parent, 2);
+                    Data = new CreateUI.KVPData(Stat.Key.ToString(), GetStat<float>(Stat.Key), Parent, 2);
                 }
                 else if (Stat.Value.Value is Vector2)
                 {
-                    Data = new UIController.KVPData(Stat.Key.ToString(), GetStat<Vector2>(Stat.Key), Parent);
+                    Data = new CreateUI.KVPData(Stat.Key.ToString(), GetStat<Vector2>(Stat.Key), Parent);
                 }
                 else if (Stat.Value.Value is Materials.Material)
                 {
-                    Data = new UIController.KVPData(Stat.Key.ToString(), GetStat<string>(Stat.Key), Parent);
+                    Data = new CreateUI.KVPData(Stat.Key.ToString(), GetStat<string>(Stat.Key), Parent);
                 }
                 else continue;
 
@@ -243,26 +244,26 @@ namespace Modules
                 Data.ValueDelegate = KeyValuePanel.GetModuleStat;
                 Data.Group = KVPGroup;
                 Data.ValueEnum = Stat.Key;
-                KVPArray[i] = UIController.InstantiateKVP(Data);
+                KVPArray[i] = CreateUI.Info.KeyValuePanel(Data);
                 i++;
             }
 
-            UIController.KVPData[] CostData = new UIController.KVPData[Resources.ResourceCount];
-            CostData[0] = new UIController.KVPData("Iron", GetStat<Resources>(StatsEnum.Cost)[Resources.ResourceList.Iron], null);
-            CostData[1] = new UIController.KVPData("Copper", GetStat<Resources>(StatsEnum.Cost)[Resources.ResourceList.Copper], null);
-            CostData[2] = new UIController.KVPData("Alloy", GetStat<Resources>(StatsEnum.Cost)[Resources.ResourceList.Alloy], null);
+            CreateUI.KVPData[] CostData = new CreateUI.KVPData[Resources.ResourceCount];
+            CostData[0] = new CreateUI.KVPData("Iron", GetStat<Resources>(StatsEnum.Cost)[Resources.ResourceList.Iron], null);
+            CostData[1] = new CreateUI.KVPData("Copper", GetStat<Resources>(StatsEnum.Cost)[Resources.ResourceList.Copper], null);
+            CostData[2] = new CreateUI.KVPData("Alloy", GetStat<Resources>(StatsEnum.Cost)[Resources.ResourceList.Alloy], null);
 
             CostData[0].ValueEnum = Resources.ResourceList.Iron;
             CostData[1].ValueEnum = Resources.ResourceList.Copper;
             CostData[2].ValueEnum = Resources.ResourceList.Alloy;
 
-            foreach (UIController.KVPData Data in CostData)
+            foreach (CreateUI.KVPData Data in CostData)
             {
                 Data.RefModule = this;
                 Data.ValueDelegate = KeyValuePanel.GetModuleStat;
                 Data.Group = KVPGroup;
             }
-            KVPListArray[0] = (UIController.InstantiateKVPList("Cost", CostData, Parent, KVPGroup));
+            KVPListArray[0] = (CreateUI.Info.KVPList("Cost", CostData, Parent, KVPGroup));
 
             return KVPArray;
         }

@@ -9,6 +9,7 @@ using TMPro;
 using System.Reflection;
 using System.Linq;
 using static Modules.AdditionalModule;
+using UI.Control;
 
 namespace UI
 {
@@ -216,7 +217,7 @@ namespace UI
                 
                 CurrentItem.Modules.Add(CurrentModule);
                 CurrentItem.CalculateStats();
-                ModuleDisplays.Add(CurrentModule, UIController.InstantiateModulePanel(CurrentModule, UI_ModuleDisplayList.transform, out GameObject[] ModuleKVPs, CraftingUIGroup).GetComponent<ModuleDisplayPanel>());
+                ModuleDisplays.Add(CurrentModule, CreateUI.Crafting.ModulePanel(CurrentModule, UI_ModuleDisplayList.transform, out GameObject[] ModuleKVPs, CraftingUIGroup).GetComponent<ModuleDisplayPanel>());
                 SelectModule(CurrentModule);
                 ModulePanelKVPInfo.AddKVP(ModuleKVPs);
                 UpdateKVPs(false, true);
@@ -247,7 +248,7 @@ namespace UI
 
             void InitialiseModificationUI()
             {
-                List<UIController.DropdownData> dropdownDatas = new List<UIController.DropdownData>();
+                List<CreateUI.Crafting.DropdownData> dropdownDatas = new List<CreateUI.Crafting.DropdownData>();
                 ClearModificationUI();
                 foreach (KeyValuePair<ItemTypes.StatsEnum, StatInfoObject> ModifiableStat in CurrentModule.ModifiableStats)
                 {
@@ -262,19 +263,19 @@ namespace UI
                     switch (ModifiableStat.Key)
                     {
                         case ItemTypes.StatsEnum.Material:
-                            dropdownDatas.Add(new UIController.DropdownData() { Name = "Material", Parent = UI_ModificationUIPanel.transform, Option = Crafting.ModuleDropdown.DropdownOptions.Material });
+                            dropdownDatas.Add(new CreateUI.Crafting.DropdownData() { Name = "Material", Parent = UI_ModificationUIPanel.transform, Option = Crafting.ModuleDropdown.DropdownOptions.Material });
                             break;
                         case ItemTypes.StatsEnum.FireMode:
-                            dropdownDatas.Add(new UIController.DropdownData() { Name = "Fire Mode", Parent = UI_ModificationUIPanel.transform, Option = Crafting.ModuleDropdown.DropdownOptions.FireMode });
+                            dropdownDatas.Add(new CreateUI.Crafting.DropdownData() { Name = "Fire Mode", Parent = UI_ModificationUIPanel.transform, Option = Crafting.ModuleDropdown.DropdownOptions.FireMode });
                             break;
                         default:
-                            ModificationUI.Add(UIController.InstantiateValueSlider(ModifiableStat.Key.ToString(), ModifiableStat.Key, UI_ModificationUIPanel.transform, Min, Max));
+                            ModificationUI.Add(CreateUI.Crafting.ValueSlider(ModifiableStat.Key.ToString(), ModifiableStat.Key, UI_ModificationUIPanel.transform, Min, Max));
                             break;
                     }
                 }
-                foreach(UIController.DropdownData dropdownData in dropdownDatas)
+                foreach(CreateUI.Crafting.DropdownData dropdownData in dropdownDatas)
                 {
-                    ModificationUI.Add(UIController.InstantiateDropdown(dropdownData));
+                    ModificationUI.Add(CreateUI.Crafting.Dropdown(dropdownData));
                 }
             }
 

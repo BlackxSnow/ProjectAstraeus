@@ -27,7 +27,7 @@ public class TargetSelect : MonoBehaviour//, IPointerDownHandler
     {
         Cursor.SetCursor(SelectCursor, new Vector2(64,64), CursorMode.Auto);
         //WaitingForClick = true;
-        Selection.AllowSelection = false;
+        UI.Control.Selection.AllowSelection = false;
         ISelectable Result = null;
 
         //await SelectEvent.WaitAsync();
@@ -41,7 +41,7 @@ public class TargetSelect : MonoBehaviour//, IPointerDownHandler
         }
 
         Cursor.SetCursor(null, new Vector2(0, 0), CursorMode.Auto);
-        Selection.AllowSelection = true;
+        UI.Control.Selection.AllowSelection = true;
         return Result;
     }
 }

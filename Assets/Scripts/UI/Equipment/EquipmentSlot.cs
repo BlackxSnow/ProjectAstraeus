@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UI.Control;
 
 public class EquipmentSlot : MonoBehaviour
 {

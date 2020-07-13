@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using UI.Control;
 
 public class ItemContextMenu : MonoBehaviour, IPointerDownHandler
 {
@@ -47,10 +48,10 @@ public class ItemContextMenu : MonoBehaviour, IPointerDownHandler
     private void BuildUI(Vector2 position)
     {
         if (MenuInstance) DestroyUI();
-        MenuInstance = UIController.InstantiateContextMenu(position);
+        MenuInstance = CreateUI.Interactable.ContextMenu(position);
         foreach (ButtonStruct ButtonData in Buttons)
         {
-            UIController.InstantiateButton(MenuInstance.transform, out TextMeshProUGUI ButtonText, out Button UIButton);
+            CreateUI.Interactable.Button(MenuInstance.transform, out TextMeshProUGUI ButtonText, out Button UIButton);
             ButtonText.text = ButtonData.Name;
             UIButton.onClick.AddListener(delegate { ButtonData.Listener(RefItem.StoredIn.Owner as Actor); });
         }

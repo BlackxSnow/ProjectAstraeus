@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Linq;
 using TMPro;
+using UI.Control;
 
 public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
 {
@@ -218,7 +219,7 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
     {
         if (!ToolTipObject)
         {
-            ToolTipObject = UIController.InstantiateItemToolTip(RefItem);
+            ToolTipObject = CreateUI.Info.ItemToolTip(RefItem);
             ToolTipObject.transform.position = Input.mousePosition + ToolTipOffset;
         }
     }

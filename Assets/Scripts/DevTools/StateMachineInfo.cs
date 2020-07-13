@@ -19,7 +19,7 @@ namespace DevTools
 
         private void UpdateInfo()
         {
-            ISelectable selected = Selection.SelectedObjs.Count > 0 ? Selection.SelectedObjs?[0] : null;
+            ISelectable selected = UI.Control.Selection.SelectedObjs.Count > 0 ? UI.Control.Selection.SelectedObjs?[0] : null;
             if (selected is Actor actor)
             {
                 

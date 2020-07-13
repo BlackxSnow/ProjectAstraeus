@@ -5,6 +5,7 @@ using Modules;
 using static ItemTypes;
 using static Modules.AdditionalModule;
 using System.Threading.Tasks;
+using UI.Control;
 
 public class EquippableItem : Item
 {
@@ -70,13 +71,13 @@ public class EquippableItem : Item
         List<GameObject> KVPs = new List<GameObject>();
         List<GameObject> KVPLists = new List<GameObject>();
 
-        UIController.KVPData SubTypeData = new UIController.KVPData("Sub Type", Subtype, Parent);
+        CreateUI.KVPData SubTypeData = new CreateUI.KVPData("Sub Type", Subtype, Parent);
         SubTypeData.Group = Group;
         SubTypeData.ValueEnum = ItemTypes.SubTypes.Sword;
         SubTypeData.ValueDelegate = KeyValuePanel.GetItemStat;
         SubTypeData.RefItem = this;
 
-        KVPs.Add(UIController.InstantiateKVP(SubTypeData));
+        KVPs.Add(CreateUI.Info.KeyValuePanel(SubTypeData));
 
         List<GameObject> BaseKVPs = base.InstantiateStatKVPs(Cost, out List<GameObject> BaseKVPLists, Parent, Group);
 

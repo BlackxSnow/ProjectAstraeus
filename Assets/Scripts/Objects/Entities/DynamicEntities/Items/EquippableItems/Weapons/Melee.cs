@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityAsync;
 using AI.States;
+using UI.Control;
 
 namespace Items
 {
@@ -53,38 +54,6 @@ namespace Items
             };
         }
 
-        //public override async void AttackOrder(Actor user, IDamageable target, CancellationToken token, bool isReaction)
-        //{
-        //    CancellationTokenSource attackTokenSource = new CancellationTokenSource();
-        //    Task AttackTask = null;
-        //    bool Enabled = true;
-        //    while(Enabled)
-        //    {
-        //        float Range = Stats.GetStat<float>(StatsEnum.Range);
-
-        //        if (token.IsCancellationRequested)
-        //            return;
-
-        //        if (Vector3.Distance(user.transform.position, (target as MonoBehaviour).transform.position) >= Range)
-        //        {
-        //            attackTokenSource.Cancel();
-        //            attackTokenSource = new CancellationTokenSource();
-        //            MoveWithin moveState = new MoveWithin(this, null, (target as MonoBehaviour).gameObject, Range, null);
-        //            moveState.Token = token;
-        //            user.StateMachine.SetState(moveState);
-        //            await moveState.StateCompleted.WaitAsync();
-        //        }
-        //        else
-        //        {
-        //            if (AttackTask == null || AttackTask.IsCanceled || AttackTask.IsCompleted)
-        //            {
-        //                AttackTask = AttackInstance(user, target, attackData, attackTokenSource.Token);
-        //                await AttackTask;
-        //            }
-        //            await Await.NextUpdate();
-        //        }
-        //    }
-        //}
 
 
 
@@ -92,18 +61,18 @@ namespace Items
         {
             List<GameObject> KVPs = new List<GameObject>();
             List<GameObject> KVPLists = new List<GameObject>();
-            List<UIController.KVPData> KVPDatas = new List<UIController.KVPData>();
+            List<CreateUI.KVPData> KVPDatas = new List<CreateUI.KVPData>();
 
-            KVPDatas.Add(new UIController.KVPData(StatsEnum.Block.ToString(), Stats.GetStat<float>(StatsEnum.Block), Parent, 1));
+            KVPDatas.Add(new CreateUI.KVPData(StatsEnum.Block.ToString(), Stats.GetStat<float>(StatsEnum.Block), Parent, 1));
 
             KVPDatas[0].ValueEnum = StatsEnum.Block;
 
-            foreach (UIController.KVPData Data in KVPDatas)
+            foreach (CreateUI.KVPData Data in KVPDatas)
             {
                 Data.RefItem = this;
                 Data.ValueDelegate = KeyValuePanel.GetItemStat;
                 Data.Group = Group;
-                KVPs.Add(UIController.InstantiateKVP(Data));
+                KVPs.Add(CreateUI.Info.KeyValuePanel(Data));
             }
 
             List<GameObject> BaseKVPs = base.InstantiateStatKVPs(Cost, out List<GameObject> BaseKVPLists, Parent, Group);

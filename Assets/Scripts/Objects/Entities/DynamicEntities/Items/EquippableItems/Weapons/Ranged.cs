@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UI.Control;
 using UnityEngine;
 using static ItemTypes;
 
@@ -20,20 +21,20 @@ public class Ranged : Weapon
     {
         List<GameObject> KVPs = new List<GameObject>();
         List<GameObject> KVPLists = new List<GameObject>();
-        List<UIController.KVPData> KVPDatas = new List<UIController.KVPData>();
+        List<CreateUI.KVPData> KVPDatas = new List<CreateUI.KVPData>();
 
-        KVPDatas.Add(new UIController.KVPData(StatsEnum.Range.ToString(), Stats.GetStat<float>(StatsEnum.Range), Parent, 1));
-        KVPDatas.Add(new UIController.KVPData(StatsEnum.Accuracy.ToString(), Stats.GetStat<float>(StatsEnum.Accuracy), Parent, 1));
+        KVPDatas.Add(new CreateUI.KVPData(StatsEnum.Range.ToString(), Stats.GetStat<float>(StatsEnum.Range), Parent, 1));
+        KVPDatas.Add(new CreateUI.KVPData(StatsEnum.Accuracy.ToString(), Stats.GetStat<float>(StatsEnum.Accuracy), Parent, 1));
 
         KVPDatas[0].ValueEnum = StatsEnum.Range;
         KVPDatas[1].ValueEnum = StatsEnum.Accuracy;
 
-        foreach (UIController.KVPData Data in KVPDatas)
+        foreach (CreateUI.KVPData Data in KVPDatas)
         {
             Data.RefItem = this;
             Data.ValueDelegate = KeyValuePanel.GetItemStat;
             Data.Group = Group;
-            KVPs.Add(UIController.InstantiateKVP(Data));
+            KVPs.Add(CreateUI.Info.KeyValuePanel(Data));
         }
 
         List<GameObject> BaseKVPs = base.InstantiateStatKVPs(Cost, out List<GameObject> BaseKVPLists, Parent, Group);

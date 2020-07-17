@@ -1,10 +1,11 @@
-﻿using System.Collections;
+﻿using Items;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public interface IDamageable
 {
-    void Damage(float damage, bool critical, Weapon.DamageTypesEnum damageType);
+    void Damage(Weapon.DamageInfo[] damages, bool critical);
     float GetHealth();
     bool GetDodge(float attackValue, Actor attacker);
     bool GetBlock(float attackValue, Actor attacker);

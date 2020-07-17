@@ -5,6 +5,7 @@ using System.Timers;
 using System.Runtime.Serialization;
 using Medical.Conditions;
 using System.Linq;
+using Items;
 
 namespace Medical
 {

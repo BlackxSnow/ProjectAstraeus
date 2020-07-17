@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Modules;
 using Items;
 using UnityEngine.AddressableAssets;
 using System.Threading.Tasks;
@@ -51,26 +50,26 @@ public class ItemTypes : MonoBehaviour
     public enum Types
     {
         Resource,
-        [Type(typeof(Head))]
+        //[Type(typeof(Head))]
         Head,
-        [Type(typeof(Torso))]
+        //[Type(typeof(Torso))]
         Torso,
-        [Type(typeof(Legs))]
+        //[Type(typeof(Legs))]
         Legs,
-        [Type(typeof(Feet))]
+        //[Type(typeof(Feet))]
         Feet,
-        [Type(typeof(Arms))]
+        //[Type(typeof(Arms))]
         Arms,
         //TODO Implement back and accessory slots
         //[Type(typeof(Back))]
         Back,
         //[Type(typeof(Accessory))]
         Accessory,
-        [Type(typeof(Melee))]
+        //[Type(typeof(Melee))]
         Melee,
-        [Type(typeof(Ranged))]
+        //[Type(typeof(Ranged))]
         Bow,
-        [Type(typeof(Firearm))]
+        //[Type(typeof(Firearm))]
         Firearm
     }
 

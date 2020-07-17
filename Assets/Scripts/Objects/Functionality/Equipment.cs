@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Items;
 
 public class Equipment : MonoBehaviour
 {
@@ -48,7 +49,7 @@ public class Equipment : MonoBehaviour
             Debug.Log(string.Format("Slot is already occupied by '{0}'", Equipped[(int)Slot]));
             return false;
         }
-        VectorResults SizeComparison = CompareVectorSizes(UISlot.MaxSize, RefItem.Stats.GetStat<Vector2Int>(ItemTypes.StatsEnum.Size));
+        VectorResults SizeComparison = CompareVectorSizes(UISlot.MaxSize, RefItem.Stats.Size);
         if (SizeComparison == VectorResults.None)
         {
             Debug.Log(string.Format("Item does not fit"));

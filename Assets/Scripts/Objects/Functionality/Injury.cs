@@ -1,4 +1,5 @@
-﻿using Medical.Conditions;
+﻿using Items;
+using Medical.Conditions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

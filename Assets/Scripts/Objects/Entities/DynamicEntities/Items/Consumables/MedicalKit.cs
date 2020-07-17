@@ -1,13 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System;
-using System.Threading.Tasks;
-using System.Linq;
-using UnityAsync;
-using System.Threading;
-using AI.States;
+﻿using AI.States;
 using Medical;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using UnityEngine;
 
 public class MedicalKit : Consumable, IInterruptible
 {
@@ -21,8 +17,6 @@ public class MedicalKit : Consumable, IInterruptible
     public override void Init()
     {
         base.Init();
-        Stats.AddStat(ItemTypes.StatsEnum.Quality, 0.5f);
-        Stats.AddStat(ItemTypes.StatsEnum.Range, 1f);
     }
 
     public async override void Use(Actor UsingActor)
@@ -39,12 +33,12 @@ public class MedicalKit : Consumable, IInterruptible
     {
         Injury injury = iteratedOn as Injury;
         //TODO Come up with good formula for quality
-        Stats.SetStat(ItemTypes.StatsEnum.Quantity, 1, ItemStats.OperationEnum.Subtract);
-        float Quality = Mathf.Clamp01(UnityEngine.Random.Range(0.1f, 200) * (user.EntityComponents.Stats.Skills[StatsAndSkills.SkillsEnum.Medical].GetAdjustedLevel() / 100f) * Stats.GetStat<float>(ItemTypes.StatsEnum.Quality));
+        Stats.Quantity--;
+        float Quality = Mathf.Clamp01(UnityEngine.Random.Range(0.1f, 200) * (user.EntityComponents.Stats.Skills[StatsAndSkills.SkillsEnum.Medical].GetAdjustedLevel() / 100f) * Stats.Quality);
         user.EntityComponents.Stats.Skills[StatsAndSkills.SkillsEnum.Medical].AddXP(injury.SeverityCost * 100);
         injury.Tend(Quality);
 
-        if (Stats.GetStat<int>(ItemTypes.StatsEnum.Quantity) <= 0)
+        if (Stats.Quantity <= 0)
         {
             DestroyEntity();
             return false;
@@ -64,5 +58,10 @@ public class MedicalKit : Consumable, IInterruptible
         iterateOn = injuriesBySeverity[0];
         time = Mathf.Pow(injuriesBySeverity[0].SeverityCost, 0.5f);
         return true;
+    }
+
+    public override void CalculateStats()
+    {
+        throw new System.NotImplementedException();
     }
 }

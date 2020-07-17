@@ -1,254 +1,159 @@
-﻿using System;
-using System.Collections;
+﻿using Items.Parts;
+using System;
 using System.Collections.Generic;
-using UnityEngine;
-using Modules;
-using static ItemTypes;
-using System.Threading.Tasks;
 using UI.Control;
+using UnityEngine;
 
-public class Item : DynamicEntity
+namespace Items
 {
-    [Serializable]
-    public class DebugClass
+    public abstract class Item : DynamicEntity
     {
-        public Item item;
-        public bool DEBUG = false;
-        public Vector2Int DEBUG_SIZE = new Vector2Int(1, 1);
-        public float DEBUG_MASS = 1f;
-        public Resources DEBUG_COST = new Resources(1, 1, 1);
-
-        public void SetValues()
+        [Serializable]
+        public class DebugClass
         {
-            item.Stats.SetStat(StatsEnum.Size, DEBUG_SIZE);
-            item.Stats.SetStat(StatsEnum.Mass, DEBUG_MASS);
-            item.Stats.SetStat(StatsEnum.Cost, DEBUG_COST);
-        }
-    }
-    public DebugClass DebugValues;
+            public Item item;
+            public bool DEBUG = false;
+            public Vector2Int DEBUG_SIZE = new Vector2Int(1, 1);
+            public float DEBUG_MASS = 1f;
+            public Resources DEBUG_COST = new Resources(1, 1, 1);
 
-    public BaseItemStats BaseStats = new BaseItemStats()
-    {
-        Stats = new Dictionary<StatsEnum, object>()
-        {
-            { StatsEnum.Size, new Vector2Int(1, 1) },
-            { StatsEnum.Mass, 1f },
-            { StatsEnum.Cost, new Resources(1, 0, 0) }
-        },
-        CompatibleModules = new List<AdditionalModule.ModulesEnum>(),
-    };
-
-    public class BaseItemStats : ItemStats
-    {
-        public List<AdditionalModule.ModulesEnum> CompatibleModules;
-        public List<Materials.MaterialTypes> CompatibleMaterials;
-        public List<AdditionalModule.ModulesEnum> RequiredModules;
-    }
-
-    public class ItemStats
-    {
-        public Dictionary<StatsEnum, object> Stats = new Dictionary<StatsEnum, object>()
-        {
-            { StatsEnum.Size, new Vector2Int(1,1) },
-            { StatsEnum.Mass, 0f },
-            { StatsEnum.Cost, new Resources(0,0,0) }
-        };
-
-        public object this[StatsEnum Stat]
-        {
-            get
+            public void SetValues()
             {
-                return Stats[Stat];
-            }
-            set
-            {
-                if (Stats[Stat].GetType() != value.GetType())
-                {
-                    throw new ArgumentException(string.Format("Type {0} was requested, member type was {1}", value.GetType(), Stats[Stat].GetType()));
-                }
-                Stats[Stat] = value;
+                item.Stats.Size = DEBUG_SIZE;
+                item.Stats.Mass = DEBUG_MASS;
+                item.Stats.Cost = DEBUG_COST;
             }
         }
+        public DebugClass DebugValues;
 
-        public void AddStat(StatsEnum Stat, object Value)
+
+        public class ItemStats
         {
-            Stats.Add(Stat, Value);
+            public float Range;
+
+            public Vector2Int Size;
+            public float Mass;
+            public Resources Cost;
         }
 
-        public T GetStat<T>(StatsEnum Stat) where T : struct
+        public abstract void CalculateStats();
+
+
+        public virtual List<GameObject> InstantiateStatKVPs(bool Cost, out List<GameObject> KVPLists, Transform Parent, KeyValueGroup Group = null)
         {
-            if (!Stats[Stat].GetType().IsAssignableFrom(typeof(T)))
+            List<GameObject> KVPs = new List<GameObject>();
+            KVPLists = new List<GameObject>();
+            List<CreateUI.KVPData> KVPDatas = new List<CreateUI.KVPData>();
+
+            CreateUI.KVPData TypeData = new CreateUI.KVPData("Item Type", Type, Parent)
             {
-                throw new ArgumentException(string.Format("Type {0} was requested, member type was {1}", typeof(T), Stats[Stat].GetType()));
-            }
-            return (T)Stats[Stat];
-        }
+                Group = Group
+            };
 
-        public enum OperationEnum
-        {
-            None,
-            Add,
-            Subtract,
-            Multiply,
-            Divide
-        }
+            KVPDatas.Add(new CreateUI.KVPData("Size", Stats.Size, Parent));
+            KVPDatas.Add(new CreateUI.KVPData("Mass", Stats.Mass, Parent));
 
-        public void SetStat<T>(StatsEnum Stat, T Value, OperationEnum Operation = OperationEnum.None)
-        {
-            if (Value.GetType() != Stats[Stat].GetType())
+            KVPDatas[0].ValueDelegate = () => Stats.Size.ToString();
+            KVPDatas[1].ValueDelegate = () => Utility.Misc.RoundedString(Stats.Mass);
+
+            foreach (CreateUI.KVPData Data in KVPDatas)
             {
-                throw new ArgumentException(string.Format("Type {0} was passed to member of type {1}", Value.GetType(), Stats[Stat].GetType()));
-            }
-            if (Operation != OperationEnum.None && !(Value is float || Value is double || Value is int))
-            {
-                throw new ArgumentException(string.Format("Numeric type was passing to SetStat() while Operation was not None"));
-            }
-            if (Operation != OperationEnum.None && (Value is float || Value is double || Value is int))
-            {
-                dynamic DVal = Value as dynamic;
-                switch (Operation)
-                {
-                    case OperationEnum.Add:
-                        Stats[Stat] = (T)Stats[Stat] + DVal;
-                        return;
-                    case OperationEnum.Subtract:
-                        Stats[Stat] = (T)Stats[Stat] - DVal;
-                        return;
-                    case OperationEnum.Multiply:
-                        Stats[Stat] = (T)Stats[Stat] * DVal;
-                        return;
-                    case OperationEnum.Divide:
-                        Stats[Stat] = (T)Stats[Stat] / DVal;
-                        return;
-            }
-        }
-            Stats[Stat] = Value;
-        }
-    }
-
-    public virtual void CalculateStats()
-    {
-
-    }
-
-
-    public virtual List<GameObject> InstantiateStatKVPs(bool Cost, out List<GameObject> KVPLists, Transform Parent, KeyValueGroup Group = null)
-    {
-        List<GameObject> KVPs = new List<GameObject>();
-        KVPLists = new List<GameObject>();
-        List<CreateUI.KVPData> KVPDatas = new List<CreateUI.KVPData>();
-
-        CreateUI.KVPData TypeData = new CreateUI.KVPData("Item Type", Type, Parent)
-        {
-            Group = Group
-        };
-
-        KVPDatas.Add(new CreateUI.KVPData("Size", Stats.GetStat<Vector2Int>(StatsEnum.Size), Parent));
-        KVPDatas.Add(new CreateUI.KVPData("Mass", Stats.GetStat<float>(StatsEnum.Mass), Parent));
-
-        KVPDatas[0].ValueEnum = StatsEnum.Size;
-        KVPDatas[1].ValueEnum = StatsEnum.Mass;
-
-        foreach (CreateUI.KVPData Data in KVPDatas)
-        {
-            Data.RefItem = this;
-            Data.ValueDelegate = KeyValuePanel.GetItemStat;
-            Data.Group = Group;
-            KVPs.Add(CreateUI.Info.KeyValuePanel(Data));
-        }
-        KVPs.Add(CreateUI.Info.KeyValuePanel(TypeData));
-
-
-        if (Cost)
-        {
-            CreateUI.KVPData[] CostData = new CreateUI.KVPData[Resources.ResourceCount];
-            CostData[0] = new CreateUI.KVPData("Iron", Stats.GetStat<Resources>(StatsEnum.Cost)[Resources.ResourceList.Iron], null);
-            CostData[1] = new CreateUI.KVPData("Copper", Stats.GetStat<Resources>(StatsEnum.Cost)[Resources.ResourceList.Copper], null);
-            CostData[2] = new CreateUI.KVPData("Alloy", Stats.GetStat<Resources>(StatsEnum.Cost)[Resources.ResourceList.Alloy], null);
-
-            CostData[0].ValueEnum = Resources.ResourceList.Iron;
-            CostData[1].ValueEnum = Resources.ResourceList.Copper;
-            CostData[2].ValueEnum = Resources.ResourceList.Alloy;
-
-            foreach (CreateUI.KVPData Data in CostData)
-            {
-                Data.RefItem = this;
-                Data.ValueDelegate = KeyValuePanel.GetItemStat;
                 Data.Group = Group;
+                KVPs.Add(CreateUI.Info.KeyValuePanel(Data));
             }
-            KVPLists.Add(CreateUI.Info.KVPList("Cost", CostData, Parent, Group));
+            KVPs.Add(CreateUI.Info.KeyValuePanel(TypeData));
+
+
+            if (Cost)
+            {
+                CreateUI.KVPData[] CostData = new CreateUI.KVPData[Resources.ResourceCount];
+                CostData[0] = new CreateUI.KVPData("Iron", Stats.Cost[Resources.ResourceList.Iron], null);
+                CostData[1] = new CreateUI.KVPData("Copper", Stats.Cost[Resources.ResourceList.Copper], null);
+                CostData[2] = new CreateUI.KVPData("Alloy", Stats.Cost[Resources.ResourceList.Alloy], null);
+
+                CostData[0].ValueDelegate = () => Stats.Cost[Resources.ResourceList.Iron].ToString();
+                CostData[1].ValueDelegate = () => Stats.Cost[Resources.ResourceList.Copper].ToString();
+                CostData[2].ValueDelegate = () => Stats.Cost[Resources.ResourceList.Alloy].ToString();
+
+                foreach (CreateUI.KVPData Data in CostData)
+                {
+                    Data.Group = Group;
+                }
+                KVPLists.Add(CreateUI.Info.KVPList("Cost", CostData, Parent, Group));
+            }
+
+            return KVPs;
         }
 
-        return KVPs;
-    }
+        public string ItemName;
+        public ItemStats Stats = new ItemStats();
+        public Inventory Container;
 
-    public string ItemName;
-    public ItemStats Stats = new ItemStats();
-    public Inventory StoredIn;
+        //Modular Parts
+        public ItemPart CorePart;
 
-    //Modular Parts
-    public List<AdditionalModule> Modules = new List<AdditionalModule>();
+        //Item 'definitions'
+        public ItemTypes.Types Type;
 
-    //Item 'definitions'
-    public ItemTypes.Types Type;
+        //----------------------------------------------------
 
-    //----------------------------------------------------
+        public override void Init()
+        {
+            base.Init();
+            EntityType = EntityTypes.Item;
+            if (DebugValues != null && DebugValues.DEBUG) DebugValues.SetValues();
+        }
 
-    public override void Init()
-    {
-        base.Init();
-        EntityType = EntityTypes.Item;
-        if (DebugValues != null && DebugValues.DEBUG) DebugValues.SetValues();
-    }
+        protected override void Start()
+        {
+            base.Start();
+            EntityType = EntityTypes.Item;
+            EntityManager.RegisterItem(this);
+        }
 
-    protected override void Start()
-    {
-        base.Start();
-        EntityType = EntityTypes.Item;
-        EntityManager.RegisterItem(this);
-    }
+        //Functions for moving items from world to inventory and vice versa
+        #region Item handling
+        public void Pack()
+        {
+            rendererComponent.enabled = false;
+            colliderComponent.enabled = false;
+        }
+        public void Unpack()
+        {
+            rendererComponent.enabled = true;
+            colliderComponent.enabled = true;
+        }
+        public void SetFollow(GameObject Target)
+        {
+            if (Target) transform.position = Target.transform.position;
 
-    //Functions for moving items from world to inventory and vice versa
-    public void Pack()
-    {
-        rendererComponent.enabled = false;
-        colliderComponent.enabled = false;
-    }
-    public void Unpack()
-    {
-        rendererComponent.enabled = true;
-        colliderComponent.enabled = true;
-    }
-    public void SetFollow(GameObject Target)
-    {
-        if(Target)  transform.position = Target.transform.position;
-
-        transform.parent = Target?.transform;
-    }
-    public void AddToInventory(Inventory Target)
-    {
-        Pack();
-        StoredIn = Target;
-        SetFollow(Target.gameObject);
-    }
-    public void RemoveFromInventory()
-    {
-        Unpack();
-        StoredIn = null;
-        SetFollow(null);
-    }
-    public override Enum GetEntityType()
-    {
-        return Type;
-    }
-
-    /// <summary>
-    /// Destroys the entity, deregisters it, and removes it from any storing inventory.
-    /// </summary>
-    public void DestroyEntity()
-    {
-        if (StoredIn) StoredIn.RemoveItem(this, true);
-        EntityManager.UnregisterItem(this);
-        Destroy(gameObject);
+            transform.parent = Target?.transform;
+        }
+        public void AddToInventory(Inventory Target)
+        {
+            Pack();
+            Container = Target;
+            SetFollow(Target.gameObject);
+        }
+        public void RemoveFromInventory()
+        {
+            Unpack();
+            Container = null;
+            SetFollow(null);
+        }
+        public override Enum GetEntityType()
+        {
+            return Type;
+        }
+        #endregion
+        /// <summary>
+        /// Destroys the entity, deregisters it, and removes it from any storing inventory.
+        /// </summary>
+        public void DestroyEntity()
+        {
+            if (Container) Container.RemoveItem(this, true);
+            EntityManager.UnregisterItem(this);
+            Destroy(gameObject);
+        }
     }
 }

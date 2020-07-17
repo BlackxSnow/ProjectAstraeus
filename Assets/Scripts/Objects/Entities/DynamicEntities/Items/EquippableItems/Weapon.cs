@@ -1,92 +1,105 @@
-﻿using System.Collections;
+﻿using Medical;
 using System.Collections.Generic;
-using UnityEngine;
-using Modules;
-using static ItemTypes;
-using System.Threading;
-using Medical;
-using System.Threading.Tasks;
 using System.Linq;
 using UI.Control;
+using UnityEngine;
+using static ItemTypes;
 
-public class Weapon : EquippableItem
+namespace Items
 {
-
-    public Transform RightAnchor;
-    public Transform LeftAnchor;
-
-    public enum DamageTypesEnum
+    public class Weapon : EquippableItem
     {
-        Blunt,
-        Sharp,
-        Explosive,
-        Psionic,
-        Other
-    }
-
-    //Data for an attack call
-    public struct AttackData
-    {
-        bool Ranged;
-        //Functions to check for attack speed, hit chance, and damage respectively
-        public Dictionary<Health.PartFunctions, float> SpeedFunctions;
-        public Dictionary<Health.PartFunctions, float> HitFunctions;
-        public Dictionary<Health.PartFunctions, float> DamageFunctions;
-    }
-
-    public AttackData AttackFunctions = new AttackData();
-
-    public override void Init()
-    {
-        base.Init();
-        Stats.AddStat(StatsEnum.Damage, 0f);
-        Stats.AddStat(StatsEnum.ArmourPiercing, 0f);
-        Stats.AddStat(StatsEnum.AttackSpeed, 0f);
-
-        BaseStats = new BaseItemStats()
+        public struct DamageInfo
         {
-            Stats = new Dictionary<StatsEnum, object>()
-            {
-                { StatsEnum.Damage, 1f },
-                { StatsEnum.ArmourPiercing, 1f },
-                { StatsEnum.AttackSpeed, 1f },
-                { StatsEnum.Size, new Vector2Int(1, 1) },
-                { StatsEnum.Mass, 1f },
-                { StatsEnum.Cost, new Resources(1, 0, 0) }
-            },
+            //Deserialisation data
+            public string DamageType_S;
 
-        };
-        ValidSlots = new Equipment.Slots[] { Equipment.Slots.Weapon, Equipment.Slots.SecondaryWeapon };
-    }
+            //Object data
+            public float Damage;
+            public float ArmourPiercing;
+            public DamageTypesEnum DamageType;
 
-    public override List<GameObject> InstantiateStatKVPs(bool Cost, out List<GameObject> CombinedKVPLists, Transform Parent, KeyValueGroup Group = null)
-    {
-        List<GameObject> KVPs = new List<GameObject>();
-        List<GameObject> KVPLists = new List<GameObject>();
-        List<CreateUI.KVPData> KVPDatas = new List<CreateUI.KVPData>
+        }
+        public Transform RightAnchor;
+        public Transform LeftAnchor;
+
+        public enum DamageTypesEnum
         {
-            new CreateUI.KVPData(StatsEnum.Damage.ToString(), Stats.GetStat<float>(StatsEnum.Damage), Parent, 1),
-            new CreateUI.KVPData(StatsEnum.ArmourPiercing.ToString(), Stats.GetStat<float>(StatsEnum.ArmourPiercing), Parent, 1),
-            new CreateUI.KVPData(StatsEnum.AttackSpeed.ToString(), Stats.GetStat<float>(StatsEnum.AttackSpeed), Parent, 1)
-        };
-
-        KVPDatas[0].ValueEnum = StatsEnum.Damage;
-        KVPDatas[1].ValueEnum = StatsEnum.ArmourPiercing;
-        KVPDatas[2].ValueEnum = StatsEnum.AttackSpeed;
-
-        foreach (CreateUI.KVPData Data in KVPDatas)
-        {
-            Data.RefItem = this;
-            Data.ValueDelegate = KeyValuePanel.GetItemStat;
-            Data.Group = Group;
-            KVPs.Add(CreateUI.Info.KeyValuePanel(Data));
+            Blunt,
+            Sharp,
+            Explosive,
+            Psionic,
+            Other
         }
 
-        List<GameObject> BaseKVPs = base.InstantiateStatKVPs(Cost, out List<GameObject> BaseKVPLists, Parent, Group);
+        public class WeaponStats : ItemStats
+        {
+            public struct AttackStats
+            {
+                public DamageInfo[] Damages;
+                public bool Ranged;
+                public float Range;
+                //Attacks per second
+                public float AttackSpeed;
+                public float Accuracy;
 
-        List<GameObject> CombinedKVPs = Utility.Collections.CombineLists(KVPs, BaseKVPs);
-        CombinedKVPLists = Utility.Collections.CombineLists(KVPLists, BaseKVPLists);
+                public SubTypes AttackSkill;
+                //Part Functions required for attack speed, hit chance, and damage calculations
+                //Based off of the primary damage part only
+                public Dictionary<Health.PartFunctions, float> SpeedFunctions;
+                public Dictionary<Health.PartFunctions, float> HitFunctions;
+                public Dictionary<Health.PartFunctions, float> DamageFunctions;
+            }
 
-        return CombinedKVPs;
-    }
+            public AttackStats[] Attacks;
+            public float Block;
+        }
+
+        public new WeaponStats Stats = new WeaponStats();
+
+        public override void Init()
+        {
+            base.Init();
+
+            ValidSlots = new Equipment.Slots[] { Equipment.Slots.Weapon, Equipment.Slots.SecondaryWeapon };
+        }
+
+        //TODO Implement - Source stats from parts and their modules.
+        public override void CalculateStats()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        //TODO Update statKVPs
+        public override List<GameObject> InstantiateStatKVPs(bool Cost, out List<GameObject> CombinedKVPLists, Transform Parent, KeyValueGroup Group = null)
+        {
+            List<GameObject> KVPs = new List<GameObject>();
+            List<GameObject> KVPLists = new List<GameObject>();
+            List<CreateUI.KVPData> KVPDatas = new List<CreateUI.KVPData>
+        {
+            new CreateUI.KVPData(StatsEnum.Damage.ToString(), Utility.Misc.RoundedString(Stats.Attacks[0].Damages.Sum(d => d.Damage)), Parent, 1),
+            new CreateUI.KVPData(StatsEnum.ArmourPiercing.ToString(), Utility.Misc.RoundedString(Stats.Attacks[0].Damages.Sum(d => d.ArmourPiercing)), Parent, 1),
+            new CreateUI.KVPData(StatsEnum.AttackSpeed.ToString(), Utility.Misc.RoundedString(Stats.Attacks[0].AttackSpeed), Parent, 1),
+            new CreateUI.KVPData(StatsEnum.Range.ToString(), Utility.Misc.RoundedString(Stats.Attacks[0].Range), Parent, 1),
+        };
+
+            KVPDatas[0].ValueDelegate = () => Utility.Misc.RoundedString(Stats.Attacks[0].Damages.Sum(d => d.Damage));
+            KVPDatas[1].ValueDelegate = () => Utility.Misc.RoundedString(Stats.Attacks[0].Damages.Sum(d => d.ArmourPiercing));
+            KVPDatas[2].ValueDelegate = () => Utility.Misc.RoundedString(Stats.Attacks[0].AttackSpeed);
+            KVPDatas[3].ValueDelegate = () => Utility.Misc.RoundedString(Stats.Attacks[0].Range);
+
+            foreach (CreateUI.KVPData Data in KVPDatas)
+            {
+                Data.Group = Group;
+                KVPs.Add(CreateUI.Info.KeyValuePanel(Data));
+            }
+
+            List<GameObject> BaseKVPs = base.InstantiateStatKVPs(Cost, out List<GameObject> BaseKVPLists, Parent, Group);
+
+            List<GameObject> CombinedKVPs = Utility.Collections.CombineLists(KVPs, BaseKVPs);
+            CombinedKVPLists = Utility.Collections.CombineLists(KVPLists, BaseKVPLists);
+
+            return CombinedKVPs;
+        }
+    } 
 }

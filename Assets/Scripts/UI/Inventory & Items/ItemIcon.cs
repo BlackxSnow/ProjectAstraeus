@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 using System.Linq;
 using TMPro;
 using UI.Control;
+using Items;
 
 public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
 {
@@ -56,10 +57,10 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
         CanvasRect = ParentCanvasObj.GetComponent<RectTransform>();
         ParentGraphicRaycast = ParentCanvasObj.GetComponent<GraphicRaycaster>();
 
-        if (RefItem.Stats.Stats.ContainsKey(ItemTypes.StatsEnum.Quantity))
+        if (RefItem is Consumable consumable)
         {
             DisplayQuantity = true;
-            Quantitybar.Init(RefItem.Stats.GetStat<int>(ItemTypes.StatsEnum.Quantity), RefItem.Stats.GetStat<int>(ItemTypes.StatsEnum.MaxQuantity), Color.grey, Color.green);
+            Quantitybar.Init(consumable.Stats.Quantity, consumable.Stats.MaxQuantity, Color.grey, Color.green);
         }
         else Quantitybar.gameObject.SetActive(false);
     }
@@ -79,7 +80,7 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
             ItemSlotName.text = Equippable.ValidSlots[0].ToString();
         }
 
-        if (DisplayQuantity) Quantitybar.UpdateBar(RefItem.Stats.GetStat<int>(ItemTypes.StatsEnum.Quantity), false);
+        if (DisplayQuantity && RefItem is Consumable consumable) Quantitybar.UpdateBar(consumable.Stats.Quantity, false);
         ToolTipUpdate();
     }
 
@@ -99,7 +100,7 @@ public class ItemIcon : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
 
     public void SetSizeToGrid()
     {
-        RTransform.sizeDelta = RefItem.Stats.GetStat<Vector2Int>(ItemTypes.StatsEnum.Size) * InventoryUI.GridSize;
+        RTransform.sizeDelta = RefItem.Stats.Size * InventoryUI.GridSize;
     }
 
     public void OnPointerDown(PointerEventData data)

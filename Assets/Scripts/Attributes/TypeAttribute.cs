@@ -16,8 +16,8 @@ public class TypeAttribute : Attribute
         return (TypeAttribute)ValueAttributes[0];
     }
 
-    public TypeAttribute(Type _Module)
+    public TypeAttribute(Type type)
     {
-        Type = _Module;
+        Type = type;
     }
 }

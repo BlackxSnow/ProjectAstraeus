@@ -1,4 +1,5 @@
 ﻿using AI.States;
+using Items;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace DevTools
             Attack.AttackEvent += WriteAttackLog;
         }
 
-        public void WriteAttackLog(Entity attacker, Entity defender, Weapon weapon, bool blocked, bool critical, params KeyValuePair<Weapon.DamageTypesEnum, float>[] damages)
+        public void WriteAttackLog(Entity attacker, Entity defender, Weapon weapon, bool blocked, bool critical, params Weapon.DamageInfo[] damages)
         {
             string weaponName = weapon ? weapon.Name : "fist";
             //string attackerColor = $"#{ColorUtility.ToHtmlStringRGB(FactionManager.Factions[attacker.FactionID].FactionColour)}";
@@ -30,10 +31,11 @@ namespace DevTools
             {
                 string damageText = "";
                 int i = 0;
-                foreach (KeyValuePair<Weapon.DamageTypesEnum, float> damage in damages)
+                foreach (Weapon.DamageInfo damage in damages)
                 {
                     string comma = i > 0 ? ", " : "";
-                    damageText += $"{comma}{damage.Value} {damage.Key}";
+                    string oxford = i == damages.Length - 1 && damages.Length > 1 ? "and " : "";
+                    damageText += $"{comma}{oxford}{damage.Damage} {damage.DamageType}";
                     i++;
                 }
                 if (critical) 

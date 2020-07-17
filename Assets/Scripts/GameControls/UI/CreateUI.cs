@@ -1,4 +1,4 @@
-﻿using Modules;
+﻿using Items;
 using System;
 using System.Collections.Generic;
 using TMPro;
@@ -41,11 +41,7 @@ namespace UI.Control
             public int Rounding;
             public ColourRange GradientRange;
             public KeyValueGroup Group;
-            public KeyValuePanel.GetValueDelegate ValueDelegate;
-            public AdditionalModule RefModule;
-            public Item RefItem;
-            public StatsAndSkills RefStats;
-            public Enum ValueEnum;
+            public Func<string> ValueDelegate;
             public float KeyRatio;
 
             public KVPData(string Key, dynamic Value, Transform Parent, int Rounding = 0, float KeyRatio = 0.5f)
@@ -176,12 +172,6 @@ namespace UI.Control
                 {
                     KVPScript.DoNotUpdate = true;
                 }
-                if (Data.ValueDelegate != null && !Data.RefItem && !Data.RefModule && !Data.RefStats) throw new ArgumentException("KVP with ValueDelegate requires one of: RefItem, RefModule, or RefStats");
-
-                KVPScript.GetValueEnum = Data.ValueEnum;
-                KVPScript.Refs.RefItem = Data.RefItem;
-                KVPScript.Refs.RefModule = Data.RefModule;
-                KVPScript.Refs.RefStats = Data.RefStats;
 
                 return Panel;
             }
@@ -251,67 +241,67 @@ namespace UI.Control
         public static class Crafting
         {
 
-            public static GameObject ValueSlider(string Name, ItemTypes.StatsEnum StatEnum, Transform Parent, float Min = 0, float Max = 10)
-            {
-                if (StatEnum == ItemTypes.StatsEnum.Material) throw new ArgumentException(string.Format("ValueSlider cannot be instantiated with non float target: 'Material'"));
-                GameObject ValueSlider;
+            //public static GameObject ValueSlider(string Name, ItemTypes.StatsEnum StatEnum, Transform Parent, float Min = 0, float Max = 10)
+            //{
+            //    if (StatEnum == ItemTypes.StatsEnum.Material) throw new ArgumentException(string.Format("ValueSlider cannot be instantiated with non float target: 'Material'"));
+            //    GameObject ValueSlider;
 
-                ValueSlider = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.ValueSliderPrefab], Parent);
+            //    ValueSlider = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.ValueSliderPrefab], Parent);
 
-                UI.Crafting.ModuleSlider ValueSliderScript = ValueSlider.GetComponent<UI.Crafting.ModuleSlider>();
-                TextMeshProUGUI LabelText = ValueSliderScript.LabelText;
+            //    UI.Crafting.ModuleSlider ValueSliderScript = ValueSlider.GetComponent<UI.Crafting.ModuleSlider>();
+            //    TextMeshProUGUI LabelText = ValueSliderScript.LabelText;
 
-                LabelText.text = Name;
-                ValueSliderScript.TargetStat = StatEnum;
-                ValueSliderScript.ValueBounds = new UI.Crafting.ModuleSlider.MinMax(Min, Max);
+            //    LabelText.text = Name;
+            //    ValueSliderScript.TargetStat = StatEnum;
+            //    ValueSliderScript.ValueBounds = new UI.Crafting.ModuleSlider.MinMax(Min, Max);
 
-                ValueSliderScript.SetSliderValues();
+            //    ValueSliderScript.SetSliderValues();
 
-                return ValueSlider;
+            //    return ValueSlider;
 
-            }
+            //}
 
-            public class DropdownData
-            {
-                public string Name;
-                public Transform Parent;
-                public UI.Crafting.ModuleDropdown.DropdownOptions Option;
-            }
-            public static GameObject Dropdown(DropdownData Data)
-            {
-                return Dropdown(Data.Name, Data.Parent, Data.Option);
-            }
-            public static GameObject Dropdown(string Name, Transform Parent, UI.Crafting.ModuleDropdown.DropdownOptions DropdownType)
-            {
-                GameObject DropdownObject;
+            //public class DropdownData
+            //{
+            //    public string Name;
+            //    public Transform Parent;
+            //    public UI.Crafting.ModuleDropdown.DropdownOptions Option;
+            //}
+            //public static GameObject Dropdown(DropdownData Data)
+            //{
+            //    return Dropdown(Data.Name, Data.Parent, Data.Option);
+            //}
+            //public static GameObject Dropdown(string Name, Transform Parent, UI.Crafting.ModuleDropdown.DropdownOptions DropdownType)
+            //{
+            //    GameObject DropdownObject;
 
-                DropdownObject = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.DropdownPrefab], Parent);
+            //    DropdownObject = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.DropdownPrefab], Parent);
 
-                UI.Crafting.ModuleDropdown DropdownScript = DropdownObject.GetComponent<UI.Crafting.ModuleDropdown>();
-                DropdownScript.DropdownType = DropdownType;
-                DropdownScript.TextMeshComponent.text = Name;
-                DropdownScript.Init();
+            //    UI.Crafting.ModuleDropdown DropdownScript = DropdownObject.GetComponent<UI.Crafting.ModuleDropdown>();
+            //    DropdownScript.DropdownType = DropdownType;
+            //    DropdownScript.TextMeshComponent.text = Name;
+            //    DropdownScript.Init();
 
-                return DropdownObject;
-            }
+            //    return DropdownObject;
+            //}
 
-            public static GameObject ModulePanel(AdditionalModule Module, Transform Parent, out GameObject[] KVPs, KeyValueGroup Group = null)
-            {
-                GameObject DisplayPanel = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.ModuleDisplayPrefab], Parent);
-                ModuleDisplayPanel Script = DisplayPanel.GetComponent<ModuleDisplayPanel>();
-                Script.Module = Module;
-                if (!Group)
-                {
-                    Group = ScriptableObject.CreateInstance<KeyValueGroup>();
-                    Group.Font.Max = 18;
-                }
+            //public static GameObject ModulePanel(AdditionalModule Module, Transform Parent, out GameObject[] KVPs, KeyValueGroup Group = null)
+            //{
+            //    GameObject DisplayPanel = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.ModuleDisplayPrefab], Parent);
+            //    ModuleDisplayPanel Script = DisplayPanel.GetComponent<ModuleDisplayPanel>();
+            //    Script.Module = Module;
+            //    if (!Group)
+            //    {
+            //        Group = ScriptableObject.CreateInstance<KeyValueGroup>();
+            //        Group.Font.Max = 18;
+            //    }
 
-                Group.Init();
-                KVPs = Module.InstantiateModifiableStatKVPs(Script.StatPanel.transform, Group);
-                Script.Name.text = Module.ModuleName;
+            //    Group.Init();
+            //    KVPs = Module.InstantiateModifiableStatKVPs(Script.StatPanel.transform, Group);
+            //    Script.Name.text = Module.ModuleName;
 
-                return DisplayPanel;
-            }
+            //    return DisplayPanel;
+            //}
         }
 
         public static class Layout

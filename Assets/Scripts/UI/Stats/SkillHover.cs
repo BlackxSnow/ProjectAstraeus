@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -16,7 +14,8 @@ public class SkillHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        ParentStatsWindow.DisplaySkillInfo(SkillKVP.GetValueEnum);
+        //TODO Fix this
+        //ParentStatsWindow.DisplaySkillInfo(SkillKVP.GetValueEnum);
     }
 
     public void OnPointerExit(PointerEventData eventData)

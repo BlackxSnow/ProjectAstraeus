@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections;
+﻿using Nito.AsyncEx;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.AddressableAssets;
-using TMPro;
-using Modules;
 using System.Threading.Tasks;
-using Nito.AsyncEx;
+using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace UI.Control
 {

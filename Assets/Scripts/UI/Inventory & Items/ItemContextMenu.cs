@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 using UI.Control;
+using Items;
 
 public class ItemContextMenu : MonoBehaviour, IPointerDownHandler
 {
@@ -33,7 +34,7 @@ public class ItemContextMenu : MonoBehaviour, IPointerDownHandler
 
     private void GetValidButtons()
     {
-        if (RefItem.StoredIn?.Owner.FactionID == 0 && RefItem.StoredIn?.Owner is Character) //Ensure the item is stored in an inventory, that the inventory is owned by the player, and that it's a character inventory
+        if (RefItem.Container?.Owner.FactionID == 0 && RefItem.Container?.Owner is Character) //Ensure the item is stored in an inventory, that the inventory is owned by the player, and that it's a character inventory
         {
             if (RefItem is IUsable UsableItem)
             {
@@ -53,7 +54,7 @@ public class ItemContextMenu : MonoBehaviour, IPointerDownHandler
         {
             CreateUI.Interactable.Button(MenuInstance.transform, out TextMeshProUGUI ButtonText, out Button UIButton);
             ButtonText.text = ButtonData.Name;
-            UIButton.onClick.AddListener(delegate { ButtonData.Listener(RefItem.StoredIn.Owner as Actor); });
+            UIButton.onClick.AddListener(delegate { ButtonData.Listener(RefItem.Container.Owner as Actor); });
         }
         MenuInstance.SetActive(true);
     }

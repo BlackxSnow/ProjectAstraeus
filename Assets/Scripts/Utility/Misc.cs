@@ -80,5 +80,10 @@ namespace Utility
                 else return new KeyValuePair<string, float>("ms", totalMiliseconds);
             }
         }
+
+        public static string RoundedString(float input, int decimals = 1)
+        {
+            return Math.RoundToNDecimals(input, decimals).ToString();
+        }
     } 
 }

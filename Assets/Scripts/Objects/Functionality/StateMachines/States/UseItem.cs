@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Items;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,7 +27,7 @@ namespace AI.States
             bool completed = false;
             while(!completed)
             {
-                float range = (Usable as Item).Stats.GetStat<float>(ItemTypes.StatsEnum.Range);
+                float range = (Usable as Item).Stats.Range;
                 if (Vector3.Distance(EntitySelf.transform.position, Target.transform.position) > range)
                 {
                     SubState = MoveWithin.MoveState(EntitySelf, (Target as MonoBehaviour).gameObject, range, behaviourToken);

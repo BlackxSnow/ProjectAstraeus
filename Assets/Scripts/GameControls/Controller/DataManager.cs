@@ -61,7 +61,6 @@ public class DataManager : MonoBehaviour
             string FilePath = Path.Combine(FolderPath, Files[i].Name);
             string JsonData = File.ReadAllText(FilePath);
             DataStruct<T> LoadedData = Newtonsoft.Json.JsonConvert.DeserializeObject<DataStruct<T>>(JsonData);
-            //DataStruct<T> LoadedData = JsonUtility.FromJson<DataStruct<T>>(JsonData);
 
             AllLoadedData.DataArray = Utility.Collections.CombineLists(AllLoadedData.DataArray, LoadedData.DataArray);
 

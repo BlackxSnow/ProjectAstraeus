@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using Medical.Conditions;
 using System.Linq;
+using Items;
 
 namespace Medical
 {

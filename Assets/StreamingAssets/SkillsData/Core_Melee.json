@@ -4,7 +4,7 @@
 	{
 		"SkillName": "Unarmed",
 		"SkillType": "Melee",
-		"Description": "smacc",
+		"Description": "Smacc",
 		"XPGainActivities": ["Fisticuffs"],
 		"AffectedActivities": 
 		[
@@ -102,7 +102,7 @@
 	{
 		"SkillName": "Swords",
 		"SkillType": "Melee",
-		"Description": "smacc sword",
+		"Description": "Sharp smacc",
 		"SubTypes": ["Sword", "Dagger"],
 		"SecondaryTypeCoefficient": 0.2,
 		"XPGainActivities": ["Sword combat"],

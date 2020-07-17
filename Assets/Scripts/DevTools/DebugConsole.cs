@@ -7,6 +7,7 @@ using System;
 using UnityEngine.UI;
 using System.Linq;
 using UnityEditor;
+using Items;
 
 namespace DevTools
 {

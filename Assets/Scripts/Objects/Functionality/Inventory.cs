@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Items;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -20,7 +21,7 @@ public class Inventory : MonoBehaviour
         if (!ItemCheck(item, location))
             return false;
 
-        Vector2Int ItemSize = item.Stats.GetStat<Vector2Int>(ItemTypes.StatsEnum.Size);
+        Vector2Int ItemSize = item.Stats.Size;
         for (int y = 0; y < ItemSize.y; y++)
         {
             for (int x = 0; x < ItemSize.x; x++)
@@ -77,7 +78,7 @@ public class Inventory : MonoBehaviour
 
     public bool ItemCheck(Item item, Vector2Int location)
     {
-        Vector2Int ItemSize = item.Stats.GetStat<Vector2Int>(ItemTypes.StatsEnum.Size);
+        Vector2Int ItemSize = item.Stats.Size;
         if (ItemSize.x + location.x > InventorySize.x || ItemSize.y + location.y > InventorySize.y || location.x < 0 || location.y < 0)
         {
             Debug.Log(string.Format("Item Size too large for Inventory or invalid location... Item Size: {0}, location: {1}, Inventory Size: {2}", ItemSize, location, InventorySize));

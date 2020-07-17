@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UI.Control;
+using Items;
 
 public class HUDController : MonoBehaviour
 {

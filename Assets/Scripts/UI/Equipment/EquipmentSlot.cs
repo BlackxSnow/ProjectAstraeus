@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UI.Control;
+using Items;
 
 public class EquipmentSlot : MonoBehaviour
 {
@@ -78,7 +79,7 @@ public class EquipmentSlot : MonoBehaviour
             ItemIconScript.RefItem = EquippedItem;
 
             RectTransform ItemIconRectTransform = ItemIconInstance.GetComponent<RectTransform>();
-            SetSize(EquippedItem.Stats.GetStat<Vector2Int>(ItemTypes.StatsEnum.Size), ItemIconRectTransform, ContainerRectTransform);
+            SetSize(EquippedItem.Stats.Size, ItemIconRectTransform, ContainerRectTransform);
             //if (HorizontalAxis == Equipment.VectorResults.y)
             //{
             //    ItemIconRectTransform.Rotate(Vector3.forward, -90);

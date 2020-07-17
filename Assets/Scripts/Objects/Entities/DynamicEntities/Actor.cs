@@ -12,45 +12,43 @@ using UnityAsync;
 using System;
 using AI.States;
 using UI.Control;
+using Items;
 
 public class Actor : DynamicEntity, IOrderable, IDamageable
 {
-    public struct UnarmedDataStruct
-    {
-        public float Range;
-        public float AttackSpeed;
-        public float Damage;
-        public Weapon.DamageTypesEnum DamageType;
-        public Weapon.AttackData Data;
-    }
     public enum CombatStances
     {
         Aggressive,
         Defensive,
         Flee
     }
-    public UnarmedDataStruct UnarmedData = new UnarmedDataStruct()
+
+    public Weapon.WeaponStats.AttackStats UnarmedAttack = new Weapon.WeaponStats.AttackStats
     {
+        Damages = new Weapon.DamageInfo[]
+        {
+            new Weapon.DamageInfo
+            {
+                Damage = 2.0f,
+                DamageType = Weapon.DamageTypesEnum.Blunt,
+                ArmourPiercing = 0
+            }
+        },
         Range = 2.0f,
         AttackSpeed = 2.0f,
-        Damage = 2.0f,
-        DamageType = Weapon.DamageTypesEnum.Blunt,
-        Data = new Weapon.AttackData
+        SpeedFunctions = new Dictionary<Health.PartFunctions, float>
         {
-            SpeedFunctions = new Dictionary<Health.PartFunctions, float>
-                {
-                    { Health.PartFunctions.Manipulation, 1.0f }
-                },
-            HitFunctions = new Dictionary<Health.PartFunctions, float>
-                {
-                    { Health.PartFunctions.Manipulation, 1.5f },
-                    { Health.PartFunctions.Vision, 1.0f }
-                },
+            { Health.PartFunctions.Manipulation, 1.0f }
+        },
+        HitFunctions = new Dictionary<Health.PartFunctions, float>
+        {
+            { Health.PartFunctions.Manipulation, 1.5f },
+            { Health.PartFunctions.Vision, 1.0f }
+        },
 
-            DamageFunctions = new Dictionary<Health.PartFunctions, float>
-                {
-                    { Health.PartFunctions.Manipulation, 4.0f }
-                }
+        DamageFunctions = new Dictionary<Health.PartFunctions, float>
+        {
+            { Health.PartFunctions.Manipulation, 4.0f }
         }
     };
 
@@ -91,9 +89,10 @@ public class Actor : DynamicEntity, IOrderable, IDamageable
         CurrentStance = targetStance;
     }
 
-    public void Damage(float amount, bool critical, Weapon.DamageTypesEnum damageType)
+    public void Damage(Weapon.DamageInfo[] damages, bool critical)
     {
-        EntityComponents.Health.Damage(amount, critical, damageType);
+        //TODO make this only cause a maximum of one injury. Figure out how different damage types impact injury rolls.
+        EntityComponents.Health.Damage(damages.Sum(d => d.Damage), critical, damages[0].DamageType);
     }
     public float GetHealth()
     {

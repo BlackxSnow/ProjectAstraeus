@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Nito.AsyncEx;
 using UnityAsync;
+using Items;
 
 namespace AI.States
 {
@@ -17,7 +18,7 @@ namespace AI.States
 	{
         public IDamageable Target;
         protected CancellationTokenSource waitTokenSource;
-        public delegate void AttackEventHandler(Entity attacker, Entity defender, Weapon weapon, bool blocked, bool critical, params KeyValuePair<Weapon.DamageTypesEnum, float>[] damages);
+        public delegate void AttackEventHandler(Entity attacker, Entity defender, Weapon weapon, bool blocked, bool critical, params Weapon.DamageInfo[] damages);
         public static event AttackEventHandler AttackEvent;
 
         public Attack(Entity ai,  Del callback, IDamageable target) : base(ai, callback)
@@ -47,7 +48,7 @@ namespace AI.States
                     waitTokenSource = CancellationTokenSource.CreateLinkedTokenSource(BehaviourTokenSource.Token);
                     behaviourToken.ThrowIfCancellationRequested();
 
-                    GetStats(out float range, out float attackSpeed, out float damage, out StatsAndSkills.Skill[] skills, out Weapon.AttackData attackFunctions, out Weapon.DamageTypesEnum damageType, out Weapon weapon);
+                    GetStats(out float range, out float attackSpeed, out Weapon.DamageInfo[] damages, out StatsAndSkills.Skill[] skills, out Dictionary<Health.PartFunctions, float>[] attackFunctions, out Weapon weapon);
                     if(!ProximityCheck(range))
                     {
                         EntitySelf.animator.SetBool("MeleeStance", false);
@@ -68,11 +69,11 @@ namespace AI.States
                     float attackTime = BaseAttackTime / (attackSpeed * primarySpeedImpact * secondarySpeedImpact);
 
                     //Get total modifier for functionality. If all related limbs are fine, this should be 1.
-                    KeyValuePair<Health.PartFunctions, float>[] speedFunctionData = EntitySelf.EntityComponents.Health.GetPartFunctions(attackFunctions.SpeedFunctions.Keys.ToArray());
+                    KeyValuePair<Health.PartFunctions, float>[] speedFunctionData = EntitySelf.EntityComponents.Health.GetPartFunctions(attackFunctions[1].Keys.ToArray());
                     float totalSpeedFunctionality = 1;
                     for (int i = 0; i < speedFunctionData.Length; i++)
                     {
-                        float statImpact = attackFunctions.SpeedFunctions[speedFunctionData[i].Key];
+                        float statImpact = attackFunctions[1][speedFunctionData[i].Key];
                         totalSpeedFunctionality *= Mathf.Pow(speedFunctionData[i].Value, statImpact);
                     }
 
@@ -82,11 +83,11 @@ namespace AI.States
                     behaviourToken.ThrowIfCancellationRequested();
 
                     //Get total modifier for functionality. If all related limbs are fine, this should be 1.
-                    KeyValuePair<Health.PartFunctions, float>[] hitFunctionData = EntitySelf.EntityComponents.Health.GetPartFunctions(attackFunctions.HitFunctions.Keys.ToArray());
+                    KeyValuePair<Health.PartFunctions, float>[] hitFunctionData = EntitySelf.EntityComponents.Health.GetPartFunctions(attackFunctions[2].Keys.ToArray());
                     float totalHitFunctionality = 1;
                     for (int i = 0; i < hitFunctionData.Length; i++)
                     {
-                        float statImpact = attackFunctions.HitFunctions[hitFunctionData[i].Key];
+                        float statImpact = attackFunctions[2][hitFunctionData[i].Key];
                         totalHitFunctionality *= Mathf.Pow(hitFunctionData[i].Value, statImpact);
                     }
 
@@ -116,21 +117,34 @@ namespace AI.States
                     //Get total relevant body functionality
                     //Get total relevant stat bonuses from StatsAndSkills.cs
                     //Get total relevant skill bonuses
-                    KeyValuePair<Health.PartFunctions, float>[] damageFunctionData = EntitySelf.EntityComponents.Health.GetPartFunctions(attackFunctions.DamageFunctions.Keys.ToArray());
+                    KeyValuePair<Health.PartFunctions, float>[] damageFunctionData = EntitySelf.EntityComponents.Health.GetPartFunctions(attackFunctions[0].Keys.ToArray());
                     float totalDamageFunctionality = 1;
                     for (int i = 0; i < damageFunctionData.Length; i++)
                     {
-                        float statImpact = attackFunctions.DamageFunctions[damageFunctionData[i].Key];
+                        float statImpact = attackFunctions[0][damageFunctionData[i].Key];
                         totalDamageFunctionality *= Mathf.Pow(damageFunctionData[i].Value, statImpact);
                     }
 
                     float primaryDamageImpact = 1 + (skills[0].GetAdjustedLevel("Damage") / skillImpactCoefficient);
                     float secondaryDamageImpact = skills.Length > 1 ? 1 + skills[1].GetAdjustedLevel("Damage") / skillImpactCoefficient * skills[1].SecondaryTypeCoefficient : 1;
 
-                    float totalDamage = UnityEngine.Random.Range(0.75f, 1.25f) * (damage * totalDamageFunctionality * primaryDamageImpact * secondaryDamageImpact);
+                    float totalDamage = 0;
+                    Weapon.DamageInfo[] modifiedDamages = new Weapon.DamageInfo[damages.Length];
 
-                    Target.Damage(damage, critical, damageType);
-                    AttackEvent?.Invoke(EntitySelf, Target as Entity, weapon, false, critical, new KeyValuePair<Weapon.DamageTypesEnum, float>(damageType, damage));
+                    foreach(Weapon.DamageInfo damagegroup in damages)
+                    {
+                        totalDamage += UnityEngine.Random.Range(0.75f, 1.25f) * (damagegroup.Damage * totalDamageFunctionality * primaryDamageImpact * secondaryDamageImpact);
+                    }
+                    for(int i = 0; i < damages.Length; i++)
+                    {
+                        float total = UnityEngine.Random.Range(0.75f, 1.25f) * (damages[i].Damage * totalDamageFunctionality * primaryDamageImpact * secondaryDamageImpact);
+                        modifiedDamages[i] = damages[i];
+                        modifiedDamages[i].Damage = total;
+                        totalDamage += total;
+                    }
+
+                    Target.Damage(modifiedDamages, critical);
+                    AttackEvent?.Invoke(EntitySelf, Target as Entity, weapon, false, critical, modifiedDamages);
                 }
                 catch (OperationCanceledException)
                 {
@@ -157,31 +171,30 @@ namespace AI.States
             base.EndState();
         }
 
-        protected void GetStats(out float range, out float attackSpeed, out float damage, out StatsAndSkills.Skill[] skills, out Weapon.AttackData attackFunctions, out Weapon.DamageTypesEnum damageType, out Weapon weapon)
+        protected void GetStats(out float range, out float attackSpeed, out Weapon.DamageInfo[] damages, out StatsAndSkills.Skill[] skills, out Dictionary<Health.PartFunctions, float>[] attackFunctions, out Weapon weapon)
         {
             EquippableItem item = EntitySelf.EntityComponents.Equipment.Equipped?[(int)Equipment.Slots.Weapon];
             if(item == null) item = EntitySelf.EntityComponents.Equipment.Equipped?[(int)Equipment.Slots.SecondaryWeapon];
 
             if (item && item is Weapon w)
             {
+                Weapon.WeaponStats.AttackStats selectedAttack = w.Stats.Attacks[0];
+
                 weapon = w;
-                range = weapon.Stats.GetStat<float>(ItemTypes.StatsEnum.Range);
-                attackSpeed = weapon.Stats.GetStat<float>(ItemTypes.StatsEnum.AttackSpeed);
-                damage = weapon.Stats.GetStat<float>(ItemTypes.StatsEnum.Damage);
+                range = selectedAttack.Range;
+                attackSpeed = selectedAttack.AttackSpeed;
+                damages = selectedAttack.Damages;
                 skills = EntitySelf.EntityComponents.Stats.GetItemSkills(item.Subtype);
-                attackFunctions = weapon.AttackFunctions;
-                //TODO get actual damage type
-                damageType = Weapon.DamageTypesEnum.Sharp;
+                attackFunctions = new Dictionary<Health.PartFunctions, float>[]{ selectedAttack.DamageFunctions, selectedAttack.SpeedFunctions, selectedAttack.HitFunctions};
             }
             else
             {
                 weapon = null;
-                range = (EntitySelf as Actor).UnarmedData.Range;
-                attackSpeed = (EntitySelf as Actor).UnarmedData.AttackSpeed;
-                damage = (EntitySelf as Actor).UnarmedData.Damage;
+                range = (EntitySelf as Actor).UnarmedAttack.Range;
+                attackSpeed = (EntitySelf as Actor).UnarmedAttack.AttackSpeed;
+                damages = (EntitySelf as Actor).UnarmedAttack.Damages;
                 skills = new StatsAndSkills.Skill[] { EntitySelf.EntityComponents.Stats.Skills[StatsAndSkills.SkillsEnum.Unarmed] };
-                attackFunctions = (EntitySelf as Actor).UnarmedData.Data;
-                damageType = (EntitySelf as Actor).UnarmedData.DamageType;
+                attackFunctions = new Dictionary<Health.PartFunctions, float>[] { (EntitySelf as Actor).UnarmedAttack.DamageFunctions, (EntitySelf as Actor).UnarmedAttack.SpeedFunctions, (EntitySelf as Actor).UnarmedAttack.HitFunctions };
             }
         }
 

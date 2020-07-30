@@ -183,7 +183,7 @@ namespace AI.States
                 weapon = w;
                 range = selectedAttack.Range;
                 attackSpeed = selectedAttack.AttackSpeed;
-                damages = selectedAttack.Damages;
+                damages = selectedAttack.Damages.ToArray();
                 skills = EntitySelf.EntityComponents.Stats.GetItemSkills(item.Subtype);
                 attackFunctions = new Dictionary<Health.PartFunctions, float>[]{ selectedAttack.DamageFunctions, selectedAttack.SpeedFunctions, selectedAttack.HitFunctions};
             }
@@ -192,7 +192,7 @@ namespace AI.States
                 weapon = null;
                 range = (EntitySelf as Actor).UnarmedAttack.Range;
                 attackSpeed = (EntitySelf as Actor).UnarmedAttack.AttackSpeed;
-                damages = (EntitySelf as Actor).UnarmedAttack.Damages;
+                damages = (EntitySelf as Actor).UnarmedAttack.Damages.ToArray();
                 skills = new StatsAndSkills.Skill[] { EntitySelf.EntityComponents.Stats.Skills[StatsAndSkills.SkillsEnum.Unarmed] };
                 attackFunctions = new Dictionary<Health.PartFunctions, float>[] { (EntitySelf as Actor).UnarmedAttack.DamageFunctions, (EntitySelf as Actor).UnarmedAttack.SpeedFunctions, (EntitySelf as Actor).UnarmedAttack.HitFunctions };
             }

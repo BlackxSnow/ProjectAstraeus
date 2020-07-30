@@ -84,5 +84,17 @@ namespace Utility
                 return false;
             }
         }
+        public static bool WithinBounds(Vector2 value, float boundSize)
+        {
+            if(WithinBounds(value.x, -boundSize, boundSize) && WithinBounds(value.y, -boundSize, boundSize))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        
     } 
 }

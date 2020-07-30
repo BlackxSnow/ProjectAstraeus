@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace UI.Control
@@ -27,30 +28,35 @@ namespace UI.Control
             RectSelectTex.Apply();
         }
 
+        private void OnEnable()
+        {
+            Controller.InputControls.InGame.Select.performed += OnSelectPerformed;
+        }
+
         void OnGUI()
         {
             if (Selecting)
             {
-                float _Width = Input.mousePosition.x - MousePosInit.x;
-                float _Height = (Screen.height - Input.mousePosition.y) - MousePosInit.y;
+                Vector2 mousePosition = Mouse.current.position.ReadValue();
+                float _Width = mousePosition.x - MousePosInit.x;
+                float _Height = (Screen.height - mousePosition.y) - MousePosInit.y;
                 RectSelect = new Rect(MousePosInit.x, MousePosInit.y, _Width, _Height);
                 GUI.DrawTexture(RectSelect, RectSelectTex);
                 if (Mathf.Abs(_Width) > 5 || Mathf.Abs(_Height) > 5) MultiSelect(); //Only enable selection if the rectangle is large enough -- Stops instant deselection when raycasting for SingleSelect()
             }
         }
-
+        //TODO: Fix selection
         void Update()
         {
             if (Cam != Camera.main) Cam = Camera.main;
+
+        }
+
+        private void OnSelectPerformed(InputAction.CallbackContext context)
+        {
             if (AllowSelection)
             {
-                if (Input.GetButtonDown("Click") && !EventSystem.current.IsPointerOverGameObject())
-                {
-                    Selecting = true;
-                    MousePosInit = Input.mousePosition;
-                    MousePosInit.y = Screen.height - Input.mousePosition.y;
-                }
-                else if (Input.GetButtonUp("Click"))
+                if (!context.ReadValueAsButton())
                 {
                     if (!MultiSelected && !EventSystem.current.IsPointerOverGameObject()) SingleSelect();
                     Selecting = false;
@@ -58,14 +64,22 @@ namespace UI.Control
                     MultiSelected = false;
                     FinaliseSelection();
                 }
+                else if (context.ReadValueAsButton() && !EventSystem.current.IsPointerOverGameObject())
+                {
+                    Selecting = true;
+                    MousePosInit = Mouse.current.position.ReadValue();
+                    MousePosInit.y = Screen.height - MousePosInit.y;
+                }
+
             }
         }
 
         public void SelectPCByName(string Name)
         {
-            if (!Input.GetButton("Add Select") || ViewableSelected == true) Deselect();
+            if (Controller.InputControls.InGame.AdditiveModifier.ReadValue<float>() == 0 || ViewableSelected == true) Deselect();
             Character _PC = EntityManager.PlayerCharacters.Find(PlayerCharacters => PlayerCharacters.Name == Name);
-            if (Input.GetButton("Add Select"))
+
+            if (Controller.InputControls.InGame.AdditiveModifier.ReadValue<float>() > 0)
             {
                 if (_PC.Selected) SelectedObjs.Remove(_PC); else SelectedObjs.Add(_PC);
                 _PC.Selected = !_PC.Selected;
@@ -96,10 +110,10 @@ namespace UI.Control
 
         void SingleSelect() //Select single with raycast
         {
-            if (!Input.GetButton("Add Select") || ViewableSelected == true) Deselect(); //If shift is not held or a viewable was selected, deselect
+            if (Controller.InputControls.InGame.AdditiveModifier.ReadValue<float>() == 0 || ViewableSelected == true) Deselect(); //If shift is not held or a viewable was selected, deselect
 
             RaycastHit _SelectRayHit;
-            Ray _ray = Cam.ScreenPointToRay(Input.mousePosition);
+            Ray _ray = Cam.ScreenPointToRay(Mouse.current.position.ReadValue());
             if (Physics.Raycast(_ray, out _SelectRayHit))
             {
                 GameObject _HitObject = _SelectRayHit.collider.gameObject;
@@ -115,7 +129,7 @@ namespace UI.Control
                     {
                         ViewableSelected = false;
                     }
-                    if (Input.GetButton("Add Select"))
+                    if (Controller.InputControls.InGame.AdditiveModifier.ReadValue<float>() > 0)
                     {
                         if (_HitIselectable.Selected) _HitIselectable.FinalisedSelection = false;
                         if (_HitIselectable.Selected)
@@ -144,7 +158,7 @@ namespace UI.Control
             foreach (ISelectable _Selectable in EntityManager.Selectables)
             {
                 if (_Selectable.ViewableOnly) continue; //Does not select viewables
-                if (Input.GetButton("Add Select") && _Selectable.FinalisedSelection) continue; //Does not run on finalised selections if shift is held
+                if (Controller.InputControls.InGame.AdditiveModifier.ReadValue<float>() > 0 && _Selectable.FinalisedSelection) continue; //Does not run on finalised selections if shift is held
 
                 MonoBehaviour SelectableObj = _Selectable as MonoBehaviour;
                 Vector3 _WTSP = Cam.WorldToScreenPoint(SelectableObj.transform.position);

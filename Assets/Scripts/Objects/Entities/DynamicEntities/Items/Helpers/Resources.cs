@@ -11,12 +11,11 @@ public struct Resources
         Copper,
         Alloy
     }
+    Dictionary<ResourceList, float> ResourceDict { get; set; }
 
-    Dictionary<ResourceList, int> ResourceDict;
-
-    public Resources(int Iron, int Copper, int Alloy)
+    public Resources(float Iron, float Copper, float Alloy)
     {
-        ResourceDict = new Dictionary<ResourceList, int>()
+        ResourceDict = new Dictionary<ResourceList, float>()
         {
             { ResourceList.Iron, Iron },
             { ResourceList.Copper, Copper },
@@ -24,15 +23,15 @@ public struct Resources
         };
     }
 
-    public int this[ResourceList Resource]
+    public float this[ResourceList resource]
     {
         get
         {
-            return ResourceDict[Resource];
+            return ResourceDict[resource];
         }
         set
         {
-            ResourceDict[Resource] = value;
+            ResourceDict[resource] = value;
         }
     }
 
@@ -49,17 +48,17 @@ public struct Resources
     public static Resources operator* (Resources A, Resources B)
     {
         Resources Result = new Resources(0, 0, 0);
-        foreach (KeyValuePair<ResourceList, int> Res in A.ResourceDict)
+        foreach (KeyValuePair<ResourceList, float> Res in A.ResourceDict)
         {
             Result[Res.Key] = A[Res.Key] * B[Res.Key];
         };
         return Result;
     }
 
-    public static Resources operator *(Resources A, int B)
+    public static Resources operator *(Resources A, float B)
     {
         Resources Result = new Resources(0, 0, 0);
-        foreach (KeyValuePair<ResourceList, int> Res in A.ResourceDict)
+        foreach (KeyValuePair<ResourceList, float> Res in A.ResourceDict)
         {
             Result[Res.Key] = A[Res.Key] * B;
         };

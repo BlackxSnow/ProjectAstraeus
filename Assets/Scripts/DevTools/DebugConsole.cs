@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using System.Linq;
 using UnityEditor;
 using Items;
+using Items.Parts;
 
 namespace DevTools
 {
@@ -54,40 +55,43 @@ namespace DevTools
             CommandString = InputCommand;
             string[] CommandWords = CommandString.Split(' ');
 
-            try
+            //try
+        //{
+            switch (CommandWords[0])
             {
-                switch (CommandWords[0])
-                {
-                    case "SetRace":
-                        SetRace(CommandWords[1], CommandWords[2]);
-                        break;
-                    case "Damage":
-                        Damage(CommandWords[1], float.Parse(CommandWords[2]), bool.Parse(CommandWords[3]));
-                        break;
-                    case "SetFaction":
-                        SetFaction(CommandWords[1], int.Parse(CommandWords[2]));
-                        break;
-                    case "Clear":
-                        HistoryText.text = "";
-                        break;
-                    case "Help":
-                        Help(CommandWords.Length > 1 ? CommandWords?[1] : "");
-                        break;
-                    case "SC":
-                        SetRace("John", "Human");
-                        SetRace("Nick", "Human");
-                        SetFaction("John", 1);
-                        break;
-                    default:
-                        HistoryText.text += $"\n'{InputCommand}' is not recognised as a valid command.";
-                        break;
-                }
+                case "SetRace":
+                    SetRace(CommandWords[1], CommandWords[2]);
+                    break;
+                case "Damage":
+                    Damage(CommandWords[1], float.Parse(CommandWords[2]), bool.Parse(CommandWords[3]));
+                    break;
+                case "SetFaction":
+                    SetFaction(CommandWords[1], int.Parse(CommandWords[2]));
+                    break;
+                case "Clear":
+                    HistoryText.text = "";
+                    break;
+                case "Help":
+                    Help(CommandWords.Length > 1 ? CommandWords?[1] : "");
+                    break;
+                case "CreateWeapon":
+                    CreateWeapon();
+                    break;
+                case "SC":
+                    SetRace("John", "Human");
+                    SetRace("Nick", "Human");
+                    SetFaction("John", 1);
+                    break;
+                default:
+                    HistoryText.text += $"\n'{InputCommand}' is not recognised as a valid command.";
+                    break;
             }
-            catch (Exception e)
-            {
-                Help(CommandWords[0]);
-                throw e;
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    Help(CommandWords[0]);
+            //    throw e;
+            //}
         }
         public void ParseCommand(TextMeshProUGUI CommandText)
         {
@@ -157,6 +161,31 @@ namespace DevTools
         {
             Character TargetChar = EntityManager.Characters.Find(c => c.Name == Target);
             TargetChar.ChangeFaction(ID);
+        }
+
+        public void CreateWeapon()
+        {
+            GameObject itemBase = Instantiate(ItemTypes.ItemBasePrefab, new Vector3(0, 1, 0), Quaternion.identity);
+            Weapon weapon = itemBase.AddComponent<Weapon>();
+            Handle handle = new Handle();
+            handle.ModifiableStats.SizeY.value = 1.0f;
+            handle.CalculateStats();
+
+            Hammer hammer = new Hammer();
+            hammer.ModifiableStats.SizeX.value = 2.0f;
+            hammer.ModifiableStats.SizeY.value = 1.0f;
+            hammer.CalculateStats();
+
+            Blade blade = new Blade();
+            blade.ModifiableStats.SizeY.value = 1.0f;
+            blade.CalculateStats();
+
+            hammer.AttachmentPoints.First(p => p.Position == new Vector2(0.5f, 0)).Attach(handle.AttachmentPoints.First(p => p.Position == new Vector2(0.5f, 1)));
+            blade.AttachmentPoints[0].Attach(hammer.AttachmentPoints.First(p => p.Position == new Vector2(0, 0.5f)));
+
+            weapon.CorePart = handle;
+            weapon.CalculateStats();
+            
         }
         #endregion
     }

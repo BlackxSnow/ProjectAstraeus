@@ -6,6 +6,7 @@ using TMPro;
 using UI.Control;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class ContextMenu : MonoBehaviour
@@ -42,6 +43,11 @@ public class ContextMenu : MonoBehaviour
     {
         await UIController.DataLoadedEvent.WaitAsync();
         ContextGUIInstance = CreateUI.Interactable.ContextMenu(Vector2.zero);
+    }
+
+    private void OnEnable()
+    {
+        Controller.InputControls.InGame.Context.performed += OnContextPerformed;
     }
 
     // Update is called once per frame
@@ -117,29 +123,32 @@ public class ContextMenu : MonoBehaviour
         Buttons.Clear();
     }
 
-    //Should the context menu be shown?
-    void MouseCheck() 
+    private void OnContextPerformed(InputAction.CallbackContext context)
     {
-        if (Input.GetKeyDown(KeyCode.Mouse1) && !EventSystem.current.IsPointerOverGameObject())
+        if (context.ReadValueAsButton() && !EventSystem.current.IsPointerOverGameObject())
         {
-            ClickPosition = Input.mousePosition; //Set initial position clicked
+            ClickPosition = Mouse.current.position.ReadValue(); //Set initial position clicked
             ContextCheck();
         }
-
-        if (Input.GetKey(KeyCode.Mouse1) && !EventSystem.current.IsPointerOverGameObject()) //Find the distance between the click and current mouse position while held.
+        else if (!context.ReadValueAsButton()) //Disable when Mouse1 is no longer pressed
         {
-            float MouseDistance = Mathf.Sqrt(Mathf.Abs(Input.mousePosition.x - ClickPosition.x) + Mathf.Abs(Input.mousePosition.y - ClickPosition.y)); 
+            UIEnabled = false;
+            ContextGUIInstance.SetActive(false);
+        }
+    }
+
+
+    void MouseCheck() 
+    {
+        if (Controller.InputControls.InGame.Context.ReadValue<float>() > 0 && !EventSystem.current.IsPointerOverGameObject()) //Find the distance between the click and current mouse position while held.
+        {
+            Vector2 mousePosition = Mouse.current.position.ReadValue();
+            float MouseDistance = Mathf.Sqrt(Mathf.Abs(mousePosition.x - ClickPosition.x) + Mathf.Abs(mousePosition.y - ClickPosition.y)); 
             if (MouseDistance > 5 && MouseDistance < 10 && !UIEnabled)
             {
                 UIEnabled = true;
                 SetUIStates();
             }
-        }
-        
-        if(Input.GetKeyUp(KeyCode.Mouse1)) //Disable when Mouse1 is no longer pressed
-        {
-            UIEnabled = false;
-            ContextGUIInstance.SetActive(false);
         }
     }
 

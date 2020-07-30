@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Controller : MonoBehaviour {
+public class Controller : MonoBehaviour 
+{
+    public static PlayerControls InputControls;
 
     public GameObject Music;
     public static Controller Control;
@@ -11,34 +13,39 @@ public class Controller : MonoBehaviour {
 
     public static bool Dev = true; //Development / debug mode
 
-	void Awake () {
-        if (Control == null)
+    private void OnEnable()
+    {
+        Init();
+    }
+
+    private bool init;
+    private void Init()
+    {
+        if(!init)
         {
-            Control = this;
-            DontDestroyOnLoad(gameObject);
-            DontDestroyOnLoad(Music);
-        } else if (Control != this)
-        {
-            Destroy(gameObject);
+            if (Control == null)
+            {
+                Control = this;
+                DontDestroyOnLoad(gameObject);
+                DontDestroyOnLoad(Music);
+            }
+            else if (Control != this)
+            {
+                Destroy(gameObject);
+            }
+
+            if (SplashStart)
+            {
+                SceneManager.LoadScene(2);
+            }
+            InputControls = new PlayerControls();
+            InputControls.Enable();
         }
-        if (SplashStart)
-        {
-            SceneManager.LoadScene(2);
-        }
-	}
+    }
 
     public static void LoadScene(int Index)
     {
         SceneManager.LoadScene(1); //Loading Screen
         SceneManager.LoadScene(Index);
-    }
-
-    public void StartCoroutineWrapper(IEnumerator Routine)
-    {
-        StartCoroutine(Routine);
-    }
-    public void StopCoroutineWrapper(IEnumerator Routine)
-    {
-        StopCoroutine(Routine);
     }
 }

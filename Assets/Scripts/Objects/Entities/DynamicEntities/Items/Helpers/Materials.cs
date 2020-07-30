@@ -2,17 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Materials
+namespace Items
 {
-    public enum MaterialTypes
+    public class Materials
     {
-        Wood,
-        Iron,
-        Steel
-        //Additional materials here
-    }
+        public enum MaterialTypes
+        {
+            Wood,
+            Iron,
+            Steel
+            //Additional materials here
+        }
 
-    public static Dictionary<MaterialTypes, Material> MaterialDict = new Dictionary<MaterialTypes, Material>()
+        public static Dictionary<MaterialTypes, Material> MaterialDict = new Dictionary<MaterialTypes, Material>()
     {
         { MaterialTypes.Wood, new Material()
         {
@@ -40,12 +42,14 @@ public class Materials
         } }
     };
 
-    public class Material
-    {
-        public MaterialTypes Name;
-        public float MassModifier;
-        public float DamageModifier;
-        public float ArmourModifier;
-        public Resources BaseCost;
+        public class Material
+        {
+            public MaterialTypes Name;
+            public float MassModifier;
+            public float DamageModifier;
+            public float ArmourModifier;
+            public Resources BaseCost;
+        }
     }
+
 }

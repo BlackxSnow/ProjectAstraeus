@@ -1,23 +1,30 @@
-﻿using Medical;
+﻿using Items.Parts;
+using Medical;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UI.Control;
 using UnityEngine;
+using UnityEngine.Experimental.AI;
 using static ItemTypes;
 
 namespace Items
 {
     public class Weapon : EquippableItem
     {
+        [Serializable]
         public struct DamageInfo
         {
-            //Deserialisation data
-            public string DamageType_S;
-
-            //Object data
             public float Damage;
             public float ArmourPiercing;
             public DamageTypesEnum DamageType;
+
+            public DamageInfo(float damage, float armourPiercing, DamageTypesEnum damageType)
+            {
+                Damage = damage;
+                ArmourPiercing = armourPiercing;
+                DamageType = damageType;
+            }
 
         }
         public Transform RightAnchor;
@@ -29,14 +36,16 @@ namespace Items
             Sharp,
             Explosive,
             Psionic,
+            Electrical,
             Other
         }
-
+        [Serializable]
         public class WeaponStats : ItemStats
         {
-            public struct AttackStats
+            [Serializable]
+            public class AttackStats : ICloneable
             {
-                public DamageInfo[] Damages;
+                public List<DamageInfo> Damages;
                 public bool Ranged;
                 public float Range;
                 //Attacks per second
@@ -49,9 +58,16 @@ namespace Items
                 public Dictionary<Health.PartFunctions, float> SpeedFunctions;
                 public Dictionary<Health.PartFunctions, float> HitFunctions;
                 public Dictionary<Health.PartFunctions, float> DamageFunctions;
+
+                public object Clone()
+                {
+                    AttackStats result = (AttackStats)MemberwiseClone();
+                    result.Damages = new List<DamageInfo>(Damages);
+                    return result;
+                }
             }
 
-            public AttackStats[] Attacks;
+            public List<AttackStats> Attacks;
             public float Block;
         }
 
@@ -64,11 +80,85 @@ namespace Items
             ValidSlots = new Equipment.Slots[] { Equipment.Slots.Weapon, Equipment.Slots.SecondaryWeapon };
         }
 
-        //TODO Implement - Source stats from parts and their modules.
+        #region Calculate Stats
         public override void CalculateStats()
         {
-            throw new System.NotImplementedException();
+            EvaluatePart(CorePart);
         }
+
+        /// <summary>
+        /// Evaluate the attacks for a single primary part
+        /// </summary>
+        /// <param name="part"></param>
+        private void EvaluatePart(ItemPart part)
+        {
+            Stats.Attacks = new List<WeaponStats.AttackStats>();
+            WeaponStats.AttackStats baseAttack = new WeaponStats.AttackStats()
+            {
+                Accuracy = part.PartStats.Accuracy,
+                AttackSkill = part.PartStats.AttackSkill,
+                AttackSpeed = part.PartStats.AttackSpeed,
+                DamageFunctions = part.PartStats.DamageFunctions,
+                Damages = part.PartStats.Damage.Value,
+                HitFunctions = part.PartStats.HitFunctions,
+                Range = part.PartStats.Range + CorePart.PartStats.Range,
+                Ranged = part.PartStats.Ranged,
+                SpeedFunctions = part.PartStats.SpeedFunctions
+            };
+            bool givenAttack = false;
+            foreach (ItemPart.AttachmentPoint aPoint in part.AttachmentPoints)
+            {
+                if(aPoint.AttachmentFlags.HasFlag(ItemPart.AttachmentTypeFlags.Output))
+                {
+                    if(aPoint.AttachedPart != null)
+                    {
+                        if(aPoint.AttachmentFlags.HasFlag(ItemPart.AttachmentTypeFlags.Primary))
+                        {
+                            EvaluatePart(aPoint.AttachedPart);
+                        }
+                        else if (aPoint.AttachmentFlags.HasFlag(ItemPart.AttachmentTypeFlags.Secondary))
+                        {
+                            givenAttack = true;
+                            Stats.Attacks.Add(EvaluateSecondaryPart(baseAttack, aPoint.AttachedPart));
+                        }
+                    }
+                    else if (aPoint.AttachmentFlags.HasFlag(ItemPart.AttachmentTypeFlags.HasAttack))
+                    {
+                        givenAttack = true;
+                        Stats.Attacks.Add((WeaponStats.AttackStats)baseAttack.Clone());
+                    }
+                }
+            }
+            if (!givenAttack)
+            {
+                Stats.Attacks.Add((WeaponStats.AttackStats)baseAttack.Clone());
+            }
+        }
+
+        /// <summary>
+        /// Evaluate and return the attack modifed by a secondary part
+        /// </summary>
+        /// <param name="primaryAttack">The base attack from the primary part</param>
+        /// <param name="secondaryPart"></param>
+        /// <returns></returns>
+        private WeaponStats.AttackStats EvaluateSecondaryPart(WeaponStats.AttackStats primaryAttack, ItemPart secondaryPart)
+        {
+            WeaponStats.AttackStats resultant = (WeaponStats.AttackStats)primaryAttack.Clone();
+
+            foreach(DamageInfo damage in secondaryPart.PartStats.Damage.Value)
+            {
+                resultant.Damages.Add(damage);
+            }
+
+            for(int i = 0; i < resultant.Damages.Count; i++)
+            {
+                DamageInfo modifiedDamage = resultant.Damages[i];
+                modifiedDamage.Damage *= 0.6f;
+                resultant.Damages[i] = modifiedDamage;
+            }
+            return resultant;
+        }
+        #endregion
 
         //TODO Update statKVPs
         public override List<GameObject> InstantiateStatKVPs(bool Cost, out List<GameObject> CombinedKVPLists, Transform Parent, KeyValueGroup Group = null)

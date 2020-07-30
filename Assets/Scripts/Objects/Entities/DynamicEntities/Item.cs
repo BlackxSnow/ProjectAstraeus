@@ -31,6 +31,7 @@ namespace Items
         {
             public float Range;
 
+            public Vector2 Sizef;
             public Vector2Int Size;
             public float Mass;
             public Resources Cost;

@@ -1,13 +1,10 @@
 ﻿using Items.Parts;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using UnityEngine;
-using static ItemTypes;
 
 
 namespace Items.Modules
 {
-    public class PartModule
+    public abstract class PartModule
     {
         public enum ModuleGroups
         {
@@ -15,46 +12,29 @@ namespace Items.Modules
             Defensive,
             Utility
         }
-
-        public struct ModuleModifiableStatsToggle
-        {
-            public bool SizeX;
-            public bool SizeY;
-
-            public bool Strength;
-        }
         public struct ModuleModifiableStats
         {
-            public float SizeX;
-            public float SizeY;
-
-            public float Strength;
+            public (bool enabled, float value) Size;
+            public (bool enabled, int value) TechLevel;
+            public (bool enabled, float value) Strength;
         }
 
-        #region Serialisation data
-        public List<string> ValidGroups_S;
-        #endregion
-
         #region Object data
-        public List<ModuleGroups> ValidGroups;
-        public ItemPart.ModularStats BaseModuleStats;
-        public ModuleModifiableStatsToggle ModifiableStatsToggle;
+        public abstract List<ModuleGroups> ValidGroups { get; protected set; }
+        public abstract ItemPart.ModularStats BaseModuleStats { get; }
         #endregion
 
         #region Runtime data
-        public ItemPart ParentPart;
-        public ItemPart.ModularStats ModuleStats;
-        public ModuleModifiableStats ModifiableStats;
+        public ItemPart ParentPart { get; set; }
+        public ItemPart.ModularStats ModuleStats { get; protected set; }
+        public abstract ModuleModifiableStats ModifiableStats { get; protected set; }
         #endregion
 
 
-
-        [OnDeserialized]
-        public void OnDeserialised(StreamingContext context)
-        {
-            ValidGroups = Utility.Collections.DeserializeEnumCollection<ModuleGroups>(ValidGroups_S);
-            ValidGroups_S.Clear();
-        }
+        /// <summary>
+        /// Sets ModuleStats based on ModifiableStats and BaseModuleStats values
+        /// </summary>
+        public abstract void CalculateStats(); 
     }
 
 

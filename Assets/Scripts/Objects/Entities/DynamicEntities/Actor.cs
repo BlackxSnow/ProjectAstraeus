@@ -25,7 +25,7 @@ public class Actor : DynamicEntity, IOrderable, IDamageable
 
     public Weapon.WeaponStats.AttackStats UnarmedAttack = new Weapon.WeaponStats.AttackStats
     {
-        Damages = new Weapon.DamageInfo[]
+        Damages = new List<Weapon.DamageInfo>
         {
             new Weapon.DamageInfo
             {

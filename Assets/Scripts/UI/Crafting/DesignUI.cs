@@ -1,6 +1,7 @@
-﻿using Items.Parts;
-using System.Collections;
-using System.Collections.Generic;
+﻿using Boo.Lang;
+using Items;
+using Items.Parts;
+using UI.Control;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -9,10 +10,13 @@ namespace UI.Crafting
 {
     public class DesignUI : MonoBehaviour, IDragHandler
     {
-        private const string GridName = "BackingGrid";
-        private const string ItemContainerName = "ItemContainer";
-        private Image GridImage;
-        private RectTransform ItemContainer;
+#pragma warning disable 0649
+        public CraftingUI CraftingScript;
+        [SerializeField]
+        private Image UI_GridImage;
+        [SerializeField]
+        private RectTransform UI_ItemContainer;
+#pragma warning restore 0649
 
         private Vector2 Offset = new Vector2();
         private Vector2 TexelOffset = new Vector2();
@@ -21,13 +25,32 @@ namespace UI.Crafting
         // Start is called before the first frame update
         void Start()
         {
-            GridImage = transform.Find(GridName).GetComponent<Image>();
-            ItemContainer = transform.Find(ItemContainerName).GetComponent<RectTransform>();
-            GridImage.material.SetTextureOffset("_MainTex", new Vector2(0, 0));
-            Material gridMaterial = new Material(GridImage.material);
-            GridImage.material = gridMaterial;
-            TextureSize = GridImage.sprite.texture.texelSize;
+            CheckReferences();
+            UI_GridImage.material.SetTextureOffset("_MainTex", new Vector2(0, 0));
+            Material gridMaterial = new Material(UI_GridImage.material);
+            UI_GridImage.material = gridMaterial;
+            TextureSize = UI_GridImage.sprite.texture.texelSize;
         }
+
+        private void CheckReferences()
+        {
+            List<bool> checks = new List<bool>
+            {
+                CraftingScript != null,
+                UI_GridImage != null,
+                UI_ItemContainer != null
+            };
+
+            foreach (bool check in checks)
+            {
+                if (!check)
+                {
+                    Debug.LogWarning("One or more serialized fields is null");
+                    return;
+                }
+            }
+        }
+
 
         public const float WorkAreaRadius = 500;
         private const float MinReturnSpeed = 1;
@@ -64,13 +87,42 @@ namespace UI.Crafting
             Offset += offset;
             TexelOffset.x += offset.x * TextureSize.x;
             TexelOffset.y += offset.y * TextureSize.y;
-            GridImage.material.mainTextureOffset = TexelOffset;
-            ItemContainer.anchoredPosition = -Offset;
+            UI_GridImage.material.mainTextureOffset = TexelOffset;
+            UI_ItemContainer.anchoredPosition = -Offset;
         }
 
-        public void InstantiatePart(ItemPart part)
+        public void CreatePart(ItemPart part)
         {
+            GameObject obj = Instantiate(UIController.ObjectPrefabs[UIController.ObjectPrefabsEnum.Crafting_PartIcon], UI_ItemContainer.transform);
+            PartIcon partScript = obj.GetComponent<PartIcon>();
+            partScript.DesignScript = this;
+            partScript.Part = part;
 
+            foreach(ItemPart.AttachmentPoint point in part.AttachmentPoints)
+            {
+                GameObject pointObj = Instantiate(UIController.ObjectPrefabs[UIController.ObjectPrefabsEnum.Crafting_AttachmentPoint], obj.transform);
+                AttachmentIcon pointScript = pointObj.GetComponent<AttachmentIcon>();
+                pointScript.Point = point;
+                Image pointImage = pointObj.GetComponent<Image>();
+
+                if(point.AttachmentFlags.HasFlag(ItemPart.AttachmentTypeFlags.Input))
+                {
+                    pointImage.sprite = UIController.LoadedSprites[UIController.SpritesEnum.Crafting_Attachment_Input];
+                }
+                else if (point.AttachmentFlags.HasFlag(ItemPart.AttachmentTypeFlags.Secondary))
+                {
+                    pointImage.sprite = UIController.LoadedSprites[UIController.SpritesEnum.Crafting_Attachment_Secondary];
+                }
+                else if (point.AttachmentFlags.HasFlag(ItemPart.AttachmentTypeFlags.Primary))
+                {
+                    pointImage.sprite = UIController.LoadedSprites[UIController.SpritesEnum.Crafting_Attachment_Primary];
+                }
+            }
+
+            if(part.IsCore && CraftingScript.CurrentDesign.CorePart == null)
+            {
+                CraftingScript.CurrentDesign.CorePart = part;
+            }
         }
     } 
 }

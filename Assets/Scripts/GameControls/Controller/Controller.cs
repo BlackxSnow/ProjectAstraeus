@@ -13,15 +13,16 @@ public class Controller : MonoBehaviour
 
     public static bool Dev = true; //Development / debug mode
 
+    private bool IsInitialised = false;
+
     private void OnEnable()
     {
         Init();
     }
 
-    private bool init;
     private void Init()
     {
-        if(!init)
+        if(!IsInitialised)
         {
             if (Control == null)
             {
@@ -40,6 +41,7 @@ public class Controller : MonoBehaviour
             }
             InputControls = new PlayerControls();
             InputControls.Enable();
+            IsInitialised = true;
         }
     }
 

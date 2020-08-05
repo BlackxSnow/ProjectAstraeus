@@ -168,16 +168,16 @@ namespace DevTools
             GameObject itemBase = Instantiate(ItemTypes.ItemBasePrefab, new Vector3(0, 1, 0), Quaternion.identity);
             Weapon weapon = itemBase.AddComponent<Weapon>();
             Handle handle = new Handle();
-            handle.ModifiableStats.SizeY.value = 1.0f;
+            handle.ModifiableStats["SizeY"].Value = 1.0f;
             handle.CalculateStats();
 
             Hammer hammer = new Hammer();
-            hammer.ModifiableStats.SizeX.value = 2.0f;
-            hammer.ModifiableStats.SizeY.value = 1.0f;
+            hammer.ModifiableStats["SizeX"].Value = 2.0f;
+            hammer.ModifiableStats["SizeY"].Value = 1.0f;
             hammer.CalculateStats();
 
             Blade blade = new Blade();
-            blade.ModifiableStats.SizeY.value = 1.0f;
+            blade.ModifiableStats["SizeY"].Value = 1.0f;
             blade.CalculateStats();
 
             hammer.AttachmentPoints.First(p => p.Position == new Vector2(0.5f, 0)).Attach(handle.AttachmentPoints.First(p => p.Position == new Vector2(0.5f, 1)));

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using static UI.Control.UIController;
@@ -241,67 +242,6 @@ namespace UI.Control
         public static class Crafting
         {
 
-            //public static GameObject ValueSlider(string Name, ItemTypes.StatsEnum StatEnum, Transform Parent, float Min = 0, float Max = 10)
-            //{
-            //    if (StatEnum == ItemTypes.StatsEnum.Material) throw new ArgumentException(string.Format("ValueSlider cannot be instantiated with non float target: 'Material'"));
-            //    GameObject ValueSlider;
-
-            //    ValueSlider = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.ValueSliderPrefab], Parent);
-
-            //    UI.Crafting.ModuleSlider ValueSliderScript = ValueSlider.GetComponent<UI.Crafting.ModuleSlider>();
-            //    TextMeshProUGUI LabelText = ValueSliderScript.LabelText;
-
-            //    LabelText.text = Name;
-            //    ValueSliderScript.TargetStat = StatEnum;
-            //    ValueSliderScript.ValueBounds = new UI.Crafting.ModuleSlider.MinMax(Min, Max);
-
-            //    ValueSliderScript.SetSliderValues();
-
-            //    return ValueSlider;
-
-            //}
-
-            //public class DropdownData
-            //{
-            //    public string Name;
-            //    public Transform Parent;
-            //    public UI.Crafting.ModuleDropdown.DropdownOptions Option;
-            //}
-            //public static GameObject Dropdown(DropdownData Data)
-            //{
-            //    return Dropdown(Data.Name, Data.Parent, Data.Option);
-            //}
-            //public static GameObject Dropdown(string Name, Transform Parent, UI.Crafting.ModuleDropdown.DropdownOptions DropdownType)
-            //{
-            //    GameObject DropdownObject;
-
-            //    DropdownObject = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.DropdownPrefab], Parent);
-
-            //    UI.Crafting.ModuleDropdown DropdownScript = DropdownObject.GetComponent<UI.Crafting.ModuleDropdown>();
-            //    DropdownScript.DropdownType = DropdownType;
-            //    DropdownScript.TextMeshComponent.text = Name;
-            //    DropdownScript.Init();
-
-            //    return DropdownObject;
-            //}
-
-            //public static GameObject ModulePanel(AdditionalModule Module, Transform Parent, out GameObject[] KVPs, KeyValueGroup Group = null)
-            //{
-            //    GameObject DisplayPanel = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.ModuleDisplayPrefab], Parent);
-            //    ModuleDisplayPanel Script = DisplayPanel.GetComponent<ModuleDisplayPanel>();
-            //    Script.Module = Module;
-            //    if (!Group)
-            //    {
-            //        Group = ScriptableObject.CreateInstance<KeyValueGroup>();
-            //        Group.Font.Max = 18;
-            //    }
-
-            //    Group.Init();
-            //    KVPs = Module.InstantiateModifiableStatKVPs(Script.StatPanel.transform, Group);
-            //    Script.Name.text = Module.ModuleName;
-
-            //    return DisplayPanel;
-            //}
         }
 
         public static class Layout
@@ -353,6 +293,25 @@ namespace UI.Control
                 ButtonText = ButtonInstance.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
                 UIButton = ButtonInstance.GetComponent<Button>();
                 return ButtonInstance;
+            }
+
+            public static (GameObject, DropdownHandler) Dropdown(Transform parent, string title, DropdownHandler.GetDataDelegate getData, DropdownHandler.SetDataDelegate setData)
+            {
+                GameObject obj = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.Dropdown], parent);
+                DropdownHandler handler = obj.GetComponent<DropdownHandler>();
+
+                handler.Initialise(title, getData, setData);
+                return (obj, handler);
+            }
+
+            public static (GameObject, SliderHandler) Slider(Transform parent, string title, SliderHandler.GetDataDelegate getData, SliderHandler.SetDataDelegate setData, Vector2 bounds)
+            {
+                GameObject obj = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.Slider], parent);
+                SliderHandler handler = obj.GetComponent<SliderHandler>();
+
+                handler.Initialise(title, getData, setData);
+                handler.SetSliderBounds(bounds.x, bounds.y);
+                return (obj, handler);
             }
         }
     }

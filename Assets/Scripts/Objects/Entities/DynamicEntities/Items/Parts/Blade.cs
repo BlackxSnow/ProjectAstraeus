@@ -6,10 +6,14 @@ namespace Items.Parts
 {
     public class Blade : ItemPart
     {
+        public override string PartName { get; protected set; } = "Blade";
+        public override string Description { get; protected set; } = "Cutty cutty, stabby stabby";
+        public override bool IsCore { get; protected set; } = false;
         public override List<PartModule.ModuleGroups> ValidGroups { get; protected set; } = new List<PartModule.ModuleGroups>()
         {
             PartModule.ModuleGroups.Offensive
         };
+        public override string PartGroup { get; protected set; } = "Weapon";
         public override AttachmentPoint[] AttachmentPoints { get; protected set; } = new AttachmentPoint[]
         {
             new AttachmentPoint(new Vector2(0.5f, 0), AttachmentPoint.DirectionEnum.Down, AttachmentTypeFlags.Input),
@@ -43,24 +47,30 @@ namespace Items.Parts
                 { Medical.Health.PartFunctions.Control, 1.0f }
             })
         };
-        public new PartModifiableStats ModifiableStats = new PartModifiableStats()
+        public override Dictionary<string, ModifiableStat> ModifiableStats { get; set; } = new Dictionary<string, ModifiableStat>()
         {
-            SizeY = (true, 1.0f),
-            Material = (true, Materials.MaterialDict[Materials.MaterialTypes.Iron])
+            { "SizeX", new ModifiableStat() { StatName = "Size X", IsEnabled = false, TargetType = typeof(int), Value = 5 } },
+            { "SizeY", new ModifiableStat() { StatName = "Size Y", IsEnabled = true, TargetType = typeof(int), Value = 60, Bounds = new Vector2(10, 150) } },
+            { "Material", new ModifiableStat() { StatName = "Material", IsEnabled = true, TargetType = typeof(Materials.Material), Value = Materials.MaterialDict[Materials.MaterialTypes.Iron] } }
         };
 
         public override void CalculateStats()
         {
             PartStats = BasePartStats.Clone();
             Weapon.DamageInfo modifiedDamageInfo = PartStats.Damage.Value[0];
-            modifiedDamageInfo.Damage *= ModifiableStats.SizeX.value * ModifiableStats.SizeY.value;
-            PartStats.AttackSpeed.Value /= ModifiableStats.SizeY.value / 2.0f;
-            PartStats.Block.Value *= ModifiableStats.SizeY.value;
-            PartStats.Cost.Value = ModifiableStats.Material.value.BaseCost * (ModifiableStats.SizeY.value / 10f);
-            PartStats.Mass.Value *= ModifiableStats.SizeY.value / 10.0f;
-            PartStats.Range.Value = ModifiableStats.SizeY.value;
-            PartStats.Sizef.Value.y *= ModifiableStats.SizeY.value;
+            modifiedDamageInfo.Damage *= (int)ModifiableStats["SizeX"].Value * (int)ModifiableStats["SizeY"].Value;
+            PartStats.AttackSpeed.Value /= (int)ModifiableStats["SizeY"].Value / 2.0f;
+            PartStats.Block.Value *= (int)ModifiableStats["SizeY"].Value;
+            PartStats.Cost.Value = ((Materials.Material)ModifiableStats["Material"].Value).BaseCost * ((int)ModifiableStats["SizeY"].Value / 10f);
+            PartStats.Mass.Value *= (int)ModifiableStats["SizeY"].Value / 10.0f;
+            PartStats.Range.Value = (int)ModifiableStats["SizeY"].Value;
+            PartStats.Sizef.Value.y *= (int)ModifiableStats["SizeY"].Value;
             PartStats.Size.Value = new Vector2Int(Mathf.RoundToInt(PartStats.Sizef.Value.x), Mathf.RoundToInt(PartStats.Sizef.Value.y));
+        }
+
+        public Blade() : base()
+        {
+
         }
     }
 }

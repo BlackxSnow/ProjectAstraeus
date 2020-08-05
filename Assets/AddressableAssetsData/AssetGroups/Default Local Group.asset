@@ -17,12 +17,6 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 0eab680ee5a3cf340999eefe974d4f59
   m_SerializeEntries:
-  - m_GUID: 0a3c648d9c4aaab42a1c158168fc3260
-    m_Address: ValueSlider
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    m_MainAsset: {fileID: 0}
-    m_TargetAsset: {fileID: 0}
   - m_GUID: 0f5f00b4267e33245b4e94f067e74930
     m_Address: ItemBase
     m_ReadOnly: 0
@@ -35,8 +29,14 @@ MonoBehaviour:
     m_SerializedLabels: []
     m_MainAsset: {fileID: 0}
     m_TargetAsset: {fileID: 0}
-  - m_GUID: 1dbba977907a45f4ca99e542f6756850
-    m_Address: Dropdown
+  - m_GUID: 13b71cc547f960d4d906396da844a3e0
+    m_Address: Crafting_Attachment_Input
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
+  - m_GUID: 3f5300a7a120ea244bdb255aef663eaf
+    m_Address: Crafting_Attachment_Primary
     m_ReadOnly: 0
     m_SerializedLabels: []
     m_MainAsset: {fileID: 0}
@@ -59,6 +59,12 @@ MonoBehaviour:
     m_SerializedLabels: []
     m_MainAsset: {fileID: 0}
     m_TargetAsset: {fileID: 0}
+  - m_GUID: 5aa283d8bef95e04e893a2f719fb2142
+    m_Address: Dropdown
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
   - m_GUID: 622d7a9684de2ef41ad998be08bfad5f
     m_Address: LayoutPanel
     m_ReadOnly: 0
@@ -77,8 +83,20 @@ MonoBehaviour:
     m_SerializedLabels: []
     m_MainAsset: {fileID: 0}
     m_TargetAsset: {fileID: 0}
+  - m_GUID: 71c79345e624aa447be1a3391acb5d28
+    m_Address: Crafting_PartIcon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
   - m_GUID: 77d747ef71088674abcbf5ed8390021d
     m_Address: ContextMenu
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
+  - m_GUID: 77db4da6b2578e74a96cd12062ed05fc
+    m_Address: CollapsibleList
     m_ReadOnly: 0
     m_SerializedLabels: []
     m_MainAsset: {fileID: 0}
@@ -89,14 +107,26 @@ MonoBehaviour:
     m_SerializedLabels: []
     m_MainAsset: {fileID: 0}
     m_TargetAsset: {fileID: 0}
-  - m_GUID: a0fc7e1eab0c10445a1be745b4b7a108
-    m_Address: KeyValuePanel
+  - m_GUID: 96f52058c598fe04da0fee01758a85dc
+    m_Address: Crafting_Attachment_Secondary
     m_ReadOnly: 0
     m_SerializedLabels: []
     m_MainAsset: {fileID: 0}
     m_TargetAsset: {fileID: 0}
-  - m_GUID: a2ce212d6e9731948ac30a9806532db4
-    m_Address: ModuleDisplayPanel
+  - m_GUID: 971ea5c8ae9532e4c9cea76728253c93
+    m_Address: Crafting_AttachmentPoint
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
+  - m_GUID: 9c8ce4a7c07a6b34387c72608aed85f3
+    m_Address: Toggle
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
+  - m_GUID: a0fc7e1eab0c10445a1be745b4b7a108
+    m_Address: KeyValuePanel
     m_ReadOnly: 0
     m_SerializedLabels: []
     m_MainAsset: {fileID: 0}
@@ -169,6 +199,12 @@ MonoBehaviour:
     m_TargetAsset: {fileID: 0}
   - m_GUID: fdeada54c18749a469bc16d1c07cb226
     m_Address: Condition_Bleeding
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
+  - m_GUID: ffcb3c6c8ecedd8468c08cfb68bc126d
+    m_Address: Slider
     m_ReadOnly: 0
     m_SerializedLabels: []
     m_MainAsset: {fileID: 0}

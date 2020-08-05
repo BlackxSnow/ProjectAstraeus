@@ -13,18 +13,17 @@ namespace UI.Control
             KeyValuePanelObjectPrefab,
             KeyValueListObjectPrefab,
             TextObjectPrefab,
-            ValueSliderPrefab,
-            ModuleDisplayPrefab,
             PanelPrefab,
             ItemToolTipPrefab,
             ToolTipPrefab,
             ToolTippedIconPrefab,
-            DropdownPrefab,
             ProgressBarPrefab,
             OrderButtonPrefab,
             ContextMenuPrefab,
             SelectionCirclePrefab,
             ItemIconPrefab,
+            TogglePrefab,
+            ButtonDescription,
 
             InventoryPrefab,
             EquipmentPrefab,
@@ -32,25 +31,29 @@ namespace UI.Control
 
             MedicalDetailsPrefab,
             InjuryIconPrefab,
-            ConditionIconPrefab
+            ConditionIconPrefab,
+
+            Crafting_AttachmentPoint,
+            Crafting_PartIcon,
+            Slider,
+            Dropdown
         }
         public static string[] AssetKeys = new string[]
         {
             "KeyValuePanel",
             "KeyValueList",
             "TextObject",
-            "ValueSlider",
-            "ModuleDisplayPanel",
             "LayoutPanel",
             "ItemToolTip",
             "ToolTip",
             "ToolTippedIcon",
-            "Dropdown",
             "ProgressBar",
             "OrderButton",
             "ContextMenu",
             "SelectionCircle",
             "ItemIcon",
+            "Toggle",
+            "Button_Description",
 
             "InventoryUI",
             "EquipmentUI",
@@ -58,15 +61,28 @@ namespace UI.Control
 
             "MedicalInfo",
             "InjuryIcon",
-            "ConditionIcon"
+            "ConditionIcon",
+
+            "Crafting_AttachmentPoint",
+            "Crafting_PartIcon",
+            "Slider",
+            "Dropdown"
         };
         public enum SpritesEnum
         {
-            Condition_Bleeding
+            Condition_Bleeding,
+
+            Crafting_Attachment_Primary,
+            Crafting_Attachment_Secondary,
+            Crafting_Attachment_Input
         }
         public static string[] SpriteKeys = new string[]
         {
-            "Condition_Bleeding"
+            "Condition_Bleeding",
+
+            "Crafting_Attachment_Primary",
+            "Crafting_Attachment_Secondary",
+            "Crafting_Attachment_Input",
         };
 
         public static Dictionary<ObjectPrefabsEnum, GameObject> ObjectPrefabs = new Dictionary<ObjectPrefabsEnum, GameObject>();

@@ -1,12 +1,9 @@
 ﻿using Items.Modules;
-using JetBrains.Annotations;
 using Medical;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Net.Mail;
-using UnityEditorInternal;
 using UnityEngine;
+using Utility;
 
 namespace Items.Parts
 {
@@ -94,12 +91,33 @@ namespace Items.Parts
                 AttachmentFlags = flags;
             }
         }
-        public struct PartModifiableStats
+
+        public class ModifiableStat
         {
-            public (bool enabled, float value) SizeX;
-            public (bool enabled, float value) SizeY;
-            public (bool enabled, Materials.Material value) Material;
+            public string StatName;
+            public bool IsEnabled;
+            public Type TargetType;
+            private object _value;
+            public object Value
+            {
+                get => _value;
+                set
+                {
+                    if (TargetType.IsAssignableFrom(value.GetType()))
+                    {
+                        _value = value;
+                    }
+                    else
+                    {
+                        Debug.LogError($"Incorrect type '{value.GetType()} was given to stat \"{StatName}\"; '{TargetType}' was expected.");
+                        return;
+                    }
+                    
+                }
+            }
+            public Vector2 Bounds;
         }
+
         public enum StatTypeEnum
         {
             Additive,
@@ -162,7 +180,17 @@ namespace Items.Parts
         }
 
         #region Object data
+        public abstract string PartName { get; protected set; }
+        public abstract string Description { get; protected set; }
+        public abstract bool IsCore { get; protected set; }
+        /// <summary>
+        /// Which modules can be applied to this part
+        /// </summary>
         public abstract List<PartModule.ModuleGroups> ValidGroups { get; protected set; }
+        /// <summary>
+        /// The part group this part is valid in - determines what item types this can be used in
+        /// </summary>
+        public abstract string PartGroup { get; protected set; }
         public abstract AttachmentPoint[] AttachmentPoints { get; protected set; }
         public abstract ModularStats BasePartStats { get; }
         #endregion
@@ -170,7 +198,7 @@ namespace Items.Parts
         #region Runtime data
         public PartModule[] InstalledModules;
         public ModularStats PartStats;
-        public PartModifiableStats ModifiableStats;
+        public abstract Dictionary<string, ModifiableStat> ModifiableStats { get; set; }
         #endregion
 
         /// <summary>
@@ -189,7 +217,6 @@ namespace Items.Parts
         public ItemPart()
         {
             Init();
-            Debug.Log("ItemPart Initialised");
         }
     }
 }

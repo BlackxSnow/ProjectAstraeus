@@ -3,17 +3,23 @@ using System.Collections.Generic;
 using UI.Control;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 public class Window : MonoBehaviour, IDraggable, IResizable, IDragHandler, IEndDragHandler, IPointerDownHandler
 {
-    public GameObject WindowBar;
-    public GameObject ResizeBox;
+    [Header("Window Settings")]
+    [SerializeField]
+    protected GameObject WindowBar;
+    [SerializeField]
+    protected GameObject ResizeBox;
 
-    public Vector2 MinSize;
-    public Vector2 MaxSize;
+    [SerializeField]
+    protected Vector2 MinSize;
+    [SerializeField]
+    protected Vector2 MaxSize;
 
     List<RaycastResult> Results = new List<RaycastResult>();
-    Vector3 InitialPosition;
+    Vector2 InitialPosition;
     Vector3 InitialWindowPosition;
     Vector2 InitialWindowSize;
     bool Dragging;
@@ -22,7 +28,7 @@ public class Window : MonoBehaviour, IDraggable, IResizable, IDragHandler, IEndD
     RectTransform WindowRect;
     RectTransform CanvasRect;
 
-    void Start()
+    protected virtual void Start()
     {
         CanvasRect = UIController.CanvasObject.GetComponent<RectTransform>();
         WindowRect = gameObject.GetComponent<RectTransform>();
@@ -39,13 +45,13 @@ public class Window : MonoBehaviour, IDraggable, IResizable, IDragHandler, IEndD
         if (WindowBarDragCheck(Results))
         {
             Dragging = true;
-            InitialPosition = Input.mousePosition;
+            InitialPosition = Mouse.current.position.ReadValue();
             InitialWindowPosition = gameObject.transform.position;
         }
         else if (ResizeSquareDragCheck(Results))
         {
             Resizing = true;
-            InitialPosition = Input.mousePosition;
+            InitialPosition = Mouse.current.position.ReadValue();
             InitialWindowSize = WindowRect.rect.size;
         }
     }
@@ -71,12 +77,12 @@ public class Window : MonoBehaviour, IDraggable, IResizable, IDragHandler, IEndD
     {
         if (Dragging)
         {
-            Vector3 MouseDifference = Input.mousePosition - InitialPosition;
+            Vector3 MouseDifference = Mouse.current.position.ReadValue() - InitialPosition;
             gameObject.transform.position = InitialWindowPosition + MouseDifference;
         }
         if (Resizing)
         {
-            Vector3 MouseDifference = Input.mousePosition - InitialPosition;
+            Vector3 MouseDifference = Mouse.current.position.ReadValue() - InitialPosition;
             Vector2 ConstrainedSize;
             Vector2 MouseDifferenceCanvas = Utility.Vector.ScreenToCanvasSpace(MouseDifference, CanvasRect);
             ConstrainedSize.x = Mathf.Max(InitialWindowSize.x + MouseDifferenceCanvas.x, MinSize.x);
@@ -107,17 +113,7 @@ public class Window : MonoBehaviour, IDraggable, IResizable, IDragHandler, IEndD
 
     public void Close()
     {
-        Destroy(this.gameObject);
+        Destroy(gameObject);
     }
 
-    void Update()
-    {
-        if(Input.GetMouseButtonDown(0) && EventSystem.current.IsPointerOverGameObject())
-        {
-            if(EventSystem.current.currentSelectedGameObject != this.gameObject || EventSystem.current.currentSelectedGameObject.transform.IsChildOf(gameObject.transform))
-            {
-
-            }
-        }
-    }
 }

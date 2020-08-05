@@ -1,27 +1,23 @@
 ﻿using Items.Parts;
-using JetBrains.Annotations;
-using MoreLinq.Extensions;
 using UI.Crafting;
 using UnityEngine;
 using UnityEngine.UI;
-using Utility;
 
 public class AttachmentIcon : MonoBehaviour
 {
+
     public Vector2 Normal => CalculateNormal();
     [HideInInspector]
     public ItemPart.AttachmentPoint Point;
     [HideInInspector]
-    public PartIcon PartIconScript;
+    public PartIcon PartIconScript { get; protected set; }
     private Collider2D SelfCollider;
     public ItemPart.AttachmentTypeFlags TargetFlag { get; private set; }
-#if DEBUG
-    public Vector2 Position;
-    public ItemPart.AttachmentPoint.DirectionEnum Direction;
-    public ItemPart.AttachmentTypeFlags Flags;
-#endif
 
     private Image image;
+
+    private RectTransform selfRect;
+    private RectTransform parentRect;
 
     private Vector2 CalculateNormal()
     {
@@ -33,21 +29,32 @@ public class AttachmentIcon : MonoBehaviour
 
     private void Start()
     {
-#if DEBUG
-        Point = new ItemPart.AttachmentPoint(Position, Direction, Flags);
-#endif
         SelfCollider = GetComponent<Collider2D>();
         PartIconScript = GetComponentInParent<PartIcon>();
         image = GetComponent<Image>();
         TargetFlag = Point.AttachmentFlags.HasFlag(ItemPart.AttachmentTypeFlags.Input) ? ItemPart.AttachmentTypeFlags.Output : ItemPart.AttachmentTypeFlags.Input;
 
-        RectTransform selfRect = GetComponent<RectTransform>();
-        RectTransform parentRect = transform.parent.GetComponent<RectTransform>();
+        selfRect = GetComponent<RectTransform>();
+        parentRect = transform.parent.GetComponent<RectTransform>();
+
         selfRect.anchorMin = new Vector2(0f, 0f);
         selfRect.anchorMax = new Vector2(0f, 0f);
-        Vector3 offset = Point.AttachmentFlags.HasFlag(ItemPart.AttachmentTypeFlags.Input) ? -transform.up * selfRect.rect.width / 2.0f : Vector3.zero;
-        selfRect.anchoredPosition = new Vector3(parentRect.rect.width * Point.Position.x, parentRect.rect.height * Point.Position.y) + offset;
         selfRect.rotation = Quaternion.Euler(new Vector3(0, 0, (int)Point.Direction * ItemPart.AttachmentPoint.RotationStep));
+        UpdatePosition();
+       
+    }
+
+    private void Update()
+    {
+        UpdatePosition();
+    }
+
+    private void UpdatePosition()
+    {
+        //TODO fix offset calculation
+        Vector2 normal = Normal;
+        Vector3 offset = Point.AttachmentFlags.HasFlag(ItemPart.AttachmentTypeFlags.Input) ? new Vector3(-normal.x, -normal.y) * selfRect.rect.width / 2.0f : Vector3.zero;
+        selfRect.anchoredPosition = new Vector3(parentRect.rect.width * Point.Position.x, parentRect.rect.height * Point.Position.y) + offset;
     }
 
     private void OnTriggerEnter2D(Collider2D other)

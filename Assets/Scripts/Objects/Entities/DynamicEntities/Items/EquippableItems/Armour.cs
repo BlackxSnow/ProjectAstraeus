@@ -1,14 +1,13 @@
-﻿using System.Collections;
+﻿using Interfaces;
+using System;
 using System.Collections.Generic;
+using UI.Control;
 using UnityEngine;
 using static ItemTypes;
-using System.Threading.Tasks;
-using UI.Control;
-using System;
 
 namespace Items
 {
-    public class Armour : EquippableItem
+    public class Armour : EquippableItem, ICraftable
     {
 
         public class ArmourStats : ItemStats
@@ -20,7 +19,7 @@ namespace Items
         }
 
         public new ArmourStats Stats = new ArmourStats();
-
+        public string PartGroup { get; protected set; } = "Armour";
         public override void Init()
         {
             base.Init();
@@ -59,7 +58,7 @@ namespace Items
 
         public override void CalculateStats()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     } 
 }

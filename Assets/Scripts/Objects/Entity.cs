@@ -93,7 +93,15 @@ public class Entity : MonoBehaviour, IOwnable
         animator = GetComponent<Animator>();
         if (Name == "") Name = name;
         FactionID = 0;//Mathf.RoundToInt(Random.value * (FactionManager.Factions.Count - 1));
-        rendererComponent = transform.Find("Mesh").GetComponent<Renderer>();
+
+        Transform mesh = transform.Find("Mesh");
+        if (mesh)
+        {
+            if (mesh.TryGetComponent(out Renderer renderer))
+            {
+                rendererComponent = renderer;
+            } 
+        }
         InitAsync();
     }
 

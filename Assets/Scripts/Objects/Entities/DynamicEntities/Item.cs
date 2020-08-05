@@ -91,7 +91,7 @@ namespace Items
         public Inventory Container;
 
         //Modular Parts
-        public ItemPart CorePart;
+        public ItemPart CorePart { get; set; }
 
         //Item 'definitions'
         public ItemTypes.Types Type;

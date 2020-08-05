@@ -1,16 +1,16 @@
-﻿using Items.Parts;
+﻿using Interfaces;
+using Items.Parts;
 using Medical;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UI.Control;
 using UnityEngine;
-using UnityEngine.Experimental.AI;
 using static ItemTypes;
 
 namespace Items
 {
-    public class Weapon : EquippableItem
+    public class Weapon : EquippableItem, ICraftable
     {
         [Serializable]
         public struct DamageInfo
@@ -72,6 +72,7 @@ namespace Items
         }
 
         public new WeaponStats Stats = new WeaponStats();
+        public string PartGroup { get; protected set; } = "Weapon";
 
         public override void Init()
         {

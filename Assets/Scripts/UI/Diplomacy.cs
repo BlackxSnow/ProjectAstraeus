@@ -69,8 +69,9 @@ public class Diplomacy : Window
     }
 
     // Start is called before the first frame update
-    void Start()
+    protected override void Start()
     {
+        base.Start();
         //Generate faction buttons
         foreach (KeyValuePair<int, Faction> _KVP in FactionManager.Factions)
         {

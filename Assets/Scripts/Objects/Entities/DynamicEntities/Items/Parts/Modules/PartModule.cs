@@ -12,12 +12,6 @@ namespace Items.Modules
             Defensive,
             Utility
         }
-        public struct ModuleModifiableStats
-        {
-            public (bool enabled, float value) Size;
-            public (bool enabled, int value) TechLevel;
-            public (bool enabled, float value) Strength;
-        }
 
         #region Object data
         public abstract List<ModuleGroups> ValidGroups { get; protected set; }
@@ -27,10 +21,10 @@ namespace Items.Modules
         #region Runtime data
         public ItemPart ParentPart { get; set; }
         public ItemPart.ModularStats ModuleStats { get; protected set; }
-        public abstract ModuleModifiableStats ModifiableStats { get; protected set; }
+        public abstract Dictionary<string, ModifiableStat> ModifiableStats { get; protected set; }
         #endregion
 
-
+        
         /// <summary>
         /// Sets ModuleStats based on ModifiableStats and BaseModuleStats values
         /// </summary>

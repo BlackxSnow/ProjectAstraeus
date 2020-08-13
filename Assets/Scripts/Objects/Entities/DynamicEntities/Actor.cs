@@ -31,9 +31,9 @@ public class Actor : DynamicEntity, IOrderable, IDamageable
             {
                 Damage = 2.0f,
                 DamageType = Weapon.DamageTypesEnum.Blunt,
-                ArmourPiercing = 0
             }
         },
+        ArmourPiercing = 0,
         Range = 2.0f,
         AttackSpeed = 2.0f,
         SpeedFunctions = new Dictionary<Health.PartFunctions, float>

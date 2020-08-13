@@ -11,7 +11,7 @@ namespace UI.Crafting
 {
     public static class ModifiableStatsHandler
     {
-        public delegate GameObject StatsTypeHandler(Transform parent, string name, ItemPart.ModifiableStat statData);
+        public delegate GameObject StatsTypeHandler(Transform parent, string name, ModifiableStat statData);
         public static Dictionary<Type, StatsTypeHandler> TypeHandlers = new Dictionary<Type, StatsTypeHandler>()
         {
             {typeof(float), new StatsTypeHandler(FloatHandler) },
@@ -21,7 +21,7 @@ namespace UI.Crafting
         };
 
         #region Handlers
-        public static GameObject FloatHandler(Transform parent, string name, ItemPart.ModifiableStat statData)
+        public static GameObject FloatHandler(Transform parent, string name, ModifiableStat statData)
         {
             if (statData.TargetType != typeof(float))
             {
@@ -36,7 +36,7 @@ namespace UI.Crafting
             return result.Item1;
         }
 
-        public static GameObject IntHandler(Transform parent, string name, ItemPart.ModifiableStat statData)
+        public static GameObject IntHandler(Transform parent, string name, ModifiableStat statData)
         {
             if (!statData.TargetType.IsAssignableFrom(typeof(int)))
             {
@@ -53,7 +53,7 @@ namespace UI.Crafting
             return result.Item1;
         }
 
-        public static GameObject StringHandler(Transform parent, string name, ItemPart.ModifiableStat statData)
+        public static GameObject StringHandler(Transform parent, string name, ModifiableStat statData)
         {
             if (statData.TargetType != typeof(string))
             {
@@ -62,7 +62,7 @@ namespace UI.Crafting
             throw new NotImplementedException();
         }
 
-        public static GameObject MaterialHandler(Transform parent, string name, ItemPart.ModifiableStat statData)
+        public static GameObject MaterialHandler(Transform parent, string name, ModifiableStat statData)
         {
             if (statData.TargetType != typeof(Materials.Material))
             {

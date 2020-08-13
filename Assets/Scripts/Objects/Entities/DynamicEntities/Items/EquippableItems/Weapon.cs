@@ -46,6 +46,7 @@ namespace Items
             public class AttackStats : ICloneable
             {
                 public List<DamageInfo> Damages;
+                public float ArmourPiercing;
                 public bool Ranged;
                 public float Range;
                 //Attacks per second
@@ -169,13 +170,13 @@ namespace Items
             List<CreateUI.KVPData> KVPDatas = new List<CreateUI.KVPData>
         {
             new CreateUI.KVPData(StatsEnum.Damage.ToString(), Utility.Misc.RoundedString(Stats.Attacks[0].Damages.Sum(d => d.Damage)), Parent, 1),
-            new CreateUI.KVPData(StatsEnum.ArmourPiercing.ToString(), Utility.Misc.RoundedString(Stats.Attacks[0].Damages.Sum(d => d.ArmourPiercing)), Parent, 1),
+            new CreateUI.KVPData(StatsEnum.ArmourPiercing.ToString(), Utility.Misc.RoundedString(Stats.Attacks[0].ArmourPiercing), Parent, 1),
             new CreateUI.KVPData(StatsEnum.AttackSpeed.ToString(), Utility.Misc.RoundedString(Stats.Attacks[0].AttackSpeed), Parent, 1),
             new CreateUI.KVPData(StatsEnum.Range.ToString(), Utility.Misc.RoundedString(Stats.Attacks[0].Range), Parent, 1),
         };
 
             KVPDatas[0].ValueDelegate = () => Utility.Misc.RoundedString(Stats.Attacks[0].Damages.Sum(d => d.Damage));
-            KVPDatas[1].ValueDelegate = () => Utility.Misc.RoundedString(Stats.Attacks[0].Damages.Sum(d => d.ArmourPiercing));
+            KVPDatas[1].ValueDelegate = () => Utility.Misc.RoundedString(Stats.Attacks[0].ArmourPiercing);
             KVPDatas[2].ValueDelegate = () => Utility.Misc.RoundedString(Stats.Attacks[0].AttackSpeed);
             KVPDatas[3].ValueDelegate = () => Utility.Misc.RoundedString(Stats.Attacks[0].Range);
 

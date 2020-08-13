@@ -77,20 +77,22 @@ public class Window : MonoBehaviour, IDraggable, IResizable, IDragHandler, IEndD
     {
         if (Dragging)
         {
-            Vector3 MouseDifference = Mouse.current.position.ReadValue() - InitialPosition;
-            gameObject.transform.position = InitialWindowPosition + MouseDifference;
+            Vector2 delta = Mouse.current.delta.ReadValue();
+            WindowRect.anchoredPosition += delta;
         }
         if (Resizing)
         {
-            Vector3 MouseDifference = Mouse.current.position.ReadValue() - InitialPosition;
+            Vector3 delta = Mouse.current.position.ReadValue() - InitialPosition;
             Vector2 ConstrainedSize;
-            Vector2 MouseDifferenceCanvas = Utility.Vector.ScreenToCanvasSpace(MouseDifference, CanvasRect);
-            ConstrainedSize.x = Mathf.Max(InitialWindowSize.x + MouseDifferenceCanvas.x, MinSize.x);
-            ConstrainedSize.y = Mathf.Max(InitialWindowSize.y + MouseDifferenceCanvas.y, MinSize.y);
+            Vector2 deltaCanvas = Utility.Vector.ScreenToCanvasSpace(delta, CanvasRect);
+            ConstrainedSize.x = Mathf.Max(InitialWindowSize.x + deltaCanvas.x, MinSize.x);
+            ConstrainedSize.y = Mathf.Max(InitialWindowSize.y + deltaCanvas.y, MinSize.y);
             WindowRect.sizeDelta = ConstrainedSize;
         }
     }
-
+    private void Update()
+    {
+    }
     public void OnEndDrag(PointerEventData Data)
     {
         Dragging = false;

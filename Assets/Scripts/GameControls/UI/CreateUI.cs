@@ -313,6 +313,16 @@ namespace UI.Control
                 handler.SetSliderBounds(bounds.x, bounds.y);
                 return (obj, handler);
             }
+
+            public static GameObject ModuleButton(Transform parent, string title, Items.Modules.PartModule module)
+            {
+                GameObject obj = Instantiate(ObjectPrefabs[ObjectPrefabsEnum.Crafting_ModuleButton], parent);
+                ModuleButton mbutton = obj.GetComponent<ModuleButton>();
+
+                mbutton.RefModule = module;
+                mbutton.SetTitle(title);
+                return obj;
+            }
         }
     }
 }

@@ -23,10 +23,18 @@ namespace UI.Crafting
         [SerializeField]
         private GameObject UI_PropertiesPanel;
         [SerializeField]
+        private GameObject UI_ModulesList;
+        [SerializeField]
+        private GameObject UI_ModulePropertiesPanel;
+        [SerializeField]
         private ToggleGroup TGroup;
 #pragma warning restore 0649
 
+        private List<GameObject> UI_PartButtons = new List<GameObject>();
         private List<GameObject> UI_PartProperties = new List<GameObject>();
+
+        private List<GameObject> UI_ModuleButtons = new List<GameObject>();
+        private List<GameObject> UI_ModuleProperties = new List<GameObject>();
 
         public ICraftable CurrentDesign { get; private set; }
         private PartIcon selectedPart;
@@ -37,6 +45,16 @@ namespace UI.Crafting
             { 
                 selectedPart = value;
                 DisplayPartProperties();
+            }
+        }
+        private ModuleButton selectedModule;
+        public ModuleButton SelectedModule
+        {
+            get => selectedModule;
+            set
+            {
+                selectedModule = value;
+                DisplayModuleProperties();
             }
         }
 
@@ -54,7 +72,8 @@ namespace UI.Crafting
                 DesignBench != null,
                 UI_PartsList != null,
                 TGroup != null,
-                UI_PropertiesPanel != null
+                UI_PropertiesPanel != null,
+                UI_ModulePropertiesPanel != null
             };
 
             foreach (bool check in checks)
@@ -82,8 +101,18 @@ namespace UI.Crafting
             UI_ItemSelection.SetActive(false);
         }
 
+        private void ClearPartsList()
+        {
+            foreach(GameObject obj in UI_PartButtons)
+            {
+                Destroy(obj);
+            }
+            UI_PartButtons.Clear();
+        }
+
         private void DisplayParts(string partGroup)
         {
+            ClearPartsList();
             List<ItemPart> validParts = GetPartsList(partGroup);
             foreach(ItemPart part in validParts)
             {
@@ -92,6 +121,7 @@ namespace UI.Crafting
                 button.Title.text = part.PartName;
                 button.Description.text = part.Description;
                 button.ActivateAction = delegate { DesignBench.CreatePart(part); };
+                UI_PartButtons.Add(obj);
             }
         }
 
@@ -121,25 +151,49 @@ namespace UI.Crafting
             UI_PartProperties.Clear();
         }
 
-        private void DisplayPartProperties()
+        private GameObject[] DisplayProperties(Dictionary<string, ModifiableStat> modifiableStats, Transform parent)
         {
-            ClearPartProperties();
+            GameObject[] result = new GameObject[modifiableStats.Count];
 
-            foreach(KeyValuePair<string, ItemPart.ModifiableStat> stat in SelectedPart.Part.ModifiableStats)
+            int i = 0;
+            foreach(KeyValuePair<string, ModifiableStat> stat in modifiableStats)
             {
-                if(!stat.Value.IsEnabled)
+                if (!stat.Value.IsEnabled)
                 {
                     continue;
                 }
                 try
                 {
-                    UI_PartProperties.Add(ModifiableStatsHandler.TypeHandlers[stat.Value.TargetType](UI_PropertiesPanel.transform, stat.Key, stat.Value));
+                    result[i] = ModifiableStatsHandler.TypeHandlers[stat.Value.TargetType](parent, stat.Key, stat.Value);
                 }
                 catch (KeyNotFoundException)
                 {
                     Debug.LogWarning($"Type \"{stat.Value.TargetType}\" was not found in StatsHandler dictionary!");
                 }
+                i++;
             }
+            return result;
+        }
+
+        private void DisplayPartProperties()
+        {
+            ClearPartProperties();
+            UI_PartProperties.AddRange(DisplayProperties(SelectedPart.Part.ModifiableStats, UI_PropertiesPanel.transform));
+        }
+
+        private void ClearModuleProperties()
+        {
+            foreach(GameObject obj in UI_ModuleProperties)
+            {
+                Destroy(obj);
+            }
+            UI_ModuleProperties.Clear();
+        }
+
+        private void DisplayModuleProperties()
+        {
+            ClearModuleProperties();
+            UI_ModuleProperties.AddRange(DisplayProperties(SelectedModule.RefModule.ModifiableStats, UI_ModulePropertiesPanel.transform));
         }
     }
 }

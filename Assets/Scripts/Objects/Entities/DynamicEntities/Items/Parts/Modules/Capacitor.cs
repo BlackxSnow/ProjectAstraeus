@@ -19,11 +19,11 @@ namespace Items.Modules
             Mass = new ItemPart.StatData<float>(true, ItemPart.StatTypeEnum.Additive, 0.3f),
         };
 
-        public override ModuleModifiableStats ModifiableStats { get; protected set; } = new ModuleModifiableStats()
+        public override Dictionary<string, ModifiableStat> ModifiableStats { get; protected set; } = new Dictionary<string, ModifiableStat>()
         {
-            Size = (true, 5f),
-            TechLevel = (true, 1),
-            Strength = (true, 1.0f)
+            { "Size", new ModifiableStat() { StatName = "Size", IsEnabled = true, TargetType = typeof(float), Value = 5f, Bounds = new Vector2(0.5f, 15f) } },
+            { "Tech Level", new ModifiableStat() { StatName = "Tech Level", IsEnabled = true, TargetType = typeof(int), Value = 5, Bounds = new Vector2(1, 10) } },
+            { "Energy", new ModifiableStat() { StatName = "Energy", IsEnabled = true, TargetType = typeof(float), Value = 1f, Bounds = new Vector2(0.25f, 5f) } },
         };
 
         public override void CalculateStats()
@@ -32,12 +32,12 @@ namespace Items.Modules
 
             Weapon.DamageInfo modifiedDamageInfo = ModuleStats.Damage.Value[0];
             Weapon.DamageInfo baseDamageInfo = modifiedDamageInfo;
-            modifiedDamageInfo.Damage = baseDamageInfo.Damage * Mathf.Pow(ModifiableStats.Size.value, 2) * ModifiableStats.Strength.value;
-            modifiedDamageInfo.ArmourPiercing = 1.0f - Mathf.Pow(1.0f - baseDamageInfo.ArmourPiercing, ModifiableStats.Strength.value / 2.0f);
+            modifiedDamageInfo.Damage = baseDamageInfo.Damage * Mathf.Pow((float)ModifiableStats["Size"].Value, 2) * (float)ModifiableStats["Energy"].Value;
+            modifiedDamageInfo.ArmourPiercing = 1.0f - Mathf.Pow(1.0f - baseDamageInfo.ArmourPiercing, (float)ModifiableStats["Energy"].Value / 2.0f);
 
-            ModuleStats.Sizef.Value *= ModifiableStats.Size.value;
-            ModuleStats.Cost.Value *= Mathf.Pow(ModifiableStats.Size.value, 2.0f) * Mathf.Pow(ModifiableStats.Strength.value, ModifiableStats.Strength.value);
-            ModuleStats.Mass.Value *= Mathf.Pow(ModifiableStats.Size.value, 2.0f) * Mathf.Pow(ModifiableStats.Strength.value, ModifiableStats.Strength.value);
+            ModuleStats.Sizef.Value *= (float)ModifiableStats["Size"].Value;
+            ModuleStats.Cost.Value *= Mathf.Pow((float)ModifiableStats["Size"].Value, 2.0f) * Mathf.Pow((float)ModifiableStats["Energy"].Value, 2);
+            ModuleStats.Mass.Value *= Mathf.Pow((float)ModifiableStats["Size"].Value, 2.0f) * Mathf.Pow((float)ModifiableStats["Energy"].Value, 2);
         }
     }
 }

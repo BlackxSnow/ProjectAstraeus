@@ -35,6 +35,7 @@ namespace UI.Control
 
             Crafting_AttachmentPoint,
             Crafting_PartIcon,
+            Crafting_ModuleButton,
             Slider,
             Dropdown
         }
@@ -65,6 +66,7 @@ namespace UI.Control
 
             "Crafting_AttachmentPoint",
             "Crafting_PartIcon",
+            "Crafting_ModuleButton",
             "Slider",
             "Dropdown"
         };

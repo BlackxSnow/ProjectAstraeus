@@ -20,6 +20,9 @@ namespace UI.Crafting
 		[SerializeField]
 		private CraftingUI CraftingWindow;
 #pragma warning restore 0649
+
+		List<GameObject> ItemInstances = new List<GameObject>();
+
 		private async void Start()
 		{
 			await UIController.DataLoadedEvent.WaitAsync();
@@ -46,7 +49,6 @@ namespace UI.Crafting
 			}
 		}
 
-		List<GameObject> ItemInstances = new List<GameObject>();
 		private void CreateToggles()
 		{
 			for(int i = 0; i < UI_ListContent.transform.childCount; i++)
